@@ -2314,26 +2314,124 @@ end`;
         }
     }
 
+    // 处理URL中的锚点
+    function handleHashChange() {
+        const hash = window.location.hash;
+        if (hash) {
+            // 移除井号并提取目标标签
+            const targetTab = hash.substring(1);
+            
+            // 找到并点击相应的标签按钮
+            const tabButton = document.querySelector(`.tab-button[data-tab="${targetTab}"]`);
+            if (tabButton && !tabButton.classList.contains('active')) {
+                tabButton.click();
+            }
+        }
+    }
+    
+    // 页面加载时和hash变化时处理
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // 页面加载时立即执行一次
+    
     // 处理底部导航链接点击事件
     const tabLinks = document.querySelectorAll('[data-tab-link]');
     tabLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
             const targetTab = this.getAttribute('data-tab-link');
             
-            // 找到并点击相应的标签按钮
-            const tabButton = document.querySelector(`.tab-button[data-tab="${targetTab}"]`);
-            if (tabButton) {
-                tabButton.click();
-                
-                // 滚动到页面顶部
+            // 由于链接已经有href=./#tab-name格式，不需要preventDefault
+            // URL的变化会触发hashchange事件，所以不需要手动点击按钮
+            
+            // 但仍需要滚动到页面顶部
+            setTimeout(() => {
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
+            }, 100);
+        });
+    });
+
+    // 检查当前URL中的锚点，并切换到相应的选项卡
+    function checkAndSwitchTab() {
+        // 直接从URL获取hash
+        const hash = window.location.hash;
+        if (hash) {
+            // 移除#号并获取目标标签名称
+            const targetTab = hash.substring(1);
+            
+            // 直接处理已知的选项卡
+            switch(targetTab) {
+                case 'router-config':
+                case 'bulk-extract':
+                case 'cidr-to-ip':
+                case 'ip-to-cidr':
+                    // 找到对应的标签按钮
+                    const tabButton = document.querySelector(`.tab-button[data-tab="${targetTab}"]`);
+                    if (tabButton && !tabButton.classList.contains('active')) {
+                        // 模拟点击事件
+                        tabButton.click();
+                        // 滚动到页面顶部
+                        window.scrollTo(0, 0);
+                    }
+                    break;
+            }
+        }
+    }
+    
+    // 初始化时检查一次
+    checkAndSwitchTab();
+    
+    // 监听hash变化
+    window.addEventListener('hashchange', checkAndSwitchTab);
+    
+    // 处理底部导航链接点击，添加自定义处理逻辑
+    document.querySelectorAll('footer a[href^="./#"], footer a[href^="../#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            const hash = href.includes('#') ? href.split('#')[1] : '';
+            
+            if (hash) {
+                // 设置URL hash
+                window.location.hash = hash;
+                
+                // 确保页面滚动到顶部
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }, 100);
+            } else {
+                // 如果没有hash，直接导航到href
+                window.location.href = href;
             }
         });
     });
+
+    // 处理从sessionStorage中读取的初始标签信息
+    function handleSessionStorageTab() {
+        const activeTab = sessionStorage.getItem('activeTab');
+        if (activeTab) {
+            // 清除sessionStorage中的信息，避免后续刷新也使用它
+            sessionStorage.removeItem('activeTab');
+            
+            // 找到对应的标签按钮
+            const tabButton = document.querySelector(`.tab-button[data-tab="${activeTab}"]`);
+            if (tabButton && !tabButton.classList.contains('active')) {
+                // 模拟点击事件
+                tabButton.click();
+            }
+        }
+    }
+    
+    // 初始化时检查一次sessionStorage
+    handleSessionStorageTab();
+    
+    // 检查当前URL中的锚点...
+    
+    // ... rest of the code ...
 });
 
 // Resizer functionality

@@ -56,6 +56,28 @@
       ]
     }
     </script>
+    
+    <!-- 提前处理hash参数以确保可以直接访问特定标签 -->
+    <script>
+        (function() {
+            // 存储URL中的hash参数以供后续使用
+            window.__initialHash = window.location.hash;
+            
+            // 如果直接通过hash访问页面，预处理hash
+            function handleInitialHash() {
+                var hash = window.__initialHash;
+                if (!hash) return;
+                
+                var targetTab = hash.substring(1);
+                // 在DOM加载完成后由主脚本处理
+                // 这里仅存储信息
+                sessionStorage.setItem('activeTab', targetTab);
+            }
+            
+            // 执行预处理
+            handleInitialHash();
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
