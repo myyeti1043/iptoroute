@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online tool to convert IP addresses between formats and generate router configurations for MikroTik, Cisco, Huawei, Juniper, and Fortinet. Extract IP addresses from text or JSON.">
+    <meta name="keywords" content="IP address converter, router configuration, CIDR notation, subnet mask, MikroTik, Cisco, Huawei, Juniper, Fortinet, IP extraction, network tools">
+    <meta name="author" content="IPToRoute">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#3498db">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://iptoroute.com/">
+    <meta property="og:title" content="IPToRoute - IP Address & Router Configuration Tool">
+    <meta property="og:description" content="Free online tool to convert IP addresses between formats and generate router configurations for multiple vendors. Extract IPs from any text.">
+    <meta property="og:image" content="https://iptoroute.com/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://iptoroute.com/">
+    <meta property="twitter:title" content="IPToRoute - IP Address & Router Configuration Tool">
+    <meta property="twitter:description" content="Free online tool to convert IP addresses between formats and generate router configurations for multiple vendors. Extract IPs from any text.">
+    <meta property="twitter:image" content="https://iptoroute.com/twitter-image.png">
+    
+    <title>IPToRoute - IP Address & Router Configuration Tool | CIDR Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="canonical" href="https://iptoroute.com/">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Add preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Add apple touch icon for better PWA support -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    
+    <!-- Structured data for Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "IPToRoute",
+      "applicationCategory": "NetworkingApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Free online tool to convert IP addresses between formats and generate router configurations for MikroTik, Cisco, Huawei, Juniper, and Fortinet.",
+      "screenshot": "https://iptoroute.com/screenshot.png",
+      "featureList": [
+        "IP address format conversion",
+        "Router configuration generation",
+        "IP extraction from text and JSON",
+        "Support for multiple router vendors",
+        "CIDR to netmask conversion"
+      ]
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <a href="./" data-lang="title-main">IPToRoute</a>
+                <span class="subtitle" data-lang="title">IP地址转换与路由配置生成工具</span>
+            </h1>
+            <div class="header-controls">
+                <div class="theme-toggle">
+                    <button id="themeToggle" aria-label="Toggle dark mode" class="tooltip">
+                        <span class="light-icon">☀️</span>
+                        <span class="dark-icon">🌙</span>
+                        <span class="tooltip-text" data-lang="theme-tooltip">Switch between light and dark mode</span>
+                    </button>
+                </div>
+                <div class="language-selector">
+                    <button id="langEn" class="lang-btn active" aria-label="Switch to English">English</button>
+                    <button id="langZh" class="lang-btn" aria-label="Switch to Chinese">中文</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <nav class="tabs-vertical" aria-label="Main navigation">
+                <button class="tab-button active" data-tab="router-config" data-lang="tab-router">Router Configuration Generator</button>
+                <button class="tab-button" data-tab="bulk-extract" data-lang="tab-bulk">IP Address Extraction Tool</button>
+                <button class="tab-button" data-tab="cidr-to-ip" data-lang="tab-cidr-ip">CIDR to IP+Netmask Converter</button>
+                <button class="tab-button" data-tab="ip-to-cidr" data-lang="tab-ip-cidr">IP+Netmask to CIDR Converter</button>
+                <section class="recent-operations">
+                    <h3 data-lang="recent-operations">Recent Operations</h3>
+                    <ul id="recentOperations" aria-label="List of recent operations">
+                        <!-- Will be populated by JavaScript -->
+                    </ul>
+                    <button id="clearHistoryBtn" class="secondary-button" style="width: 100%; margin-top: 0.5rem;">
+                        <span class="button-icon">🗑️</span> <span data-lang="clear-history">Clear History</span>
+                    </button>
+                </section>
+            </nav>
+            
+            <main class="conversion-panel">
+                <section class="input-section">
+                    <h2 data-lang="input-title">Input</h2>
+                    
+                    <!-- Tab descriptions with improved guidance -->
+                    <article class="tab-description" id="bulk-extract-description" style="display: none;">
+                        <h3 data-lang="ip-address-extraction-tool">IP Address Extraction Tool</h3>
+                        <p data-lang="bulk-extract-desc">Extract IPv4 and IPv6 addresses and CIDR ranges from any text, logs, or JSON format. Perfect for processing network logs, configurations, or cloud provider IP lists.</p>
+                        <div class="example-box">
+                            <p data-lang="example-input">Input Example:</p>
+                            <pre>{"prefixes": [{"ip_prefix": "192.168.1.0/24"}, {"ip_prefix": "10.0.0.0/16"}]}
+<span data-lang="input-example-basic"># Or plain text with IPs</span>
+192.168.1.0/24
+10.0.0.0/16</pre>
+                        </div>
+                        <div class="guidance-message">
+                            <p data-lang="bulk-guidance">💡 Paste any text containing IP addresses and the tool will automatically find and extract them for you.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="tab-description" id="router-config-description">
+                        <h3 data-lang="network-router-configuration-generator">Network Router Configuration Generator</h3>
+                        <p data-lang="router-config-desc">Convert CIDR notation or domain names (FQDN) to router configuration commands for MikroTik, Cisco, Huawei, Juniper, and Fortinet devices. Generate firewall rules, static routes, and address lists.</p>
+                        <div class="example-box">
+                            <p data-lang="example-input">Input Example:</p>
+                            <pre id="router-example-basic">192.168.1.0/24
+10.0.0.0/16</pre>
+                            <pre id="router-example-fortinet" style="display: none;">192.168.1.0/24
+10.0.0.0/16
+example.com
+www.example.com
+
+<span data-lang="input-example-fortinet-mixed"># 也可以粘贴包含IP和域名的混合文本：</span>
+"我们的服务器位于192.168.1.0/24和example.com"</pre>
+                        </div>
+                        <div class="guidance-message">
+                            <p data-lang="router-guidance">💡 Select your router type and configure additional options before converting.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="tab-description" id="cidr-to-ip-description" style="display: none;">
+                        <h3 data-lang="cidr-to-ip-address-subnet-mask-converter">CIDR to IP Address and Subnet Mask Converter</h3>
+                        <p data-lang="cidr-to-ip-desc">Convert CIDR notation (e.g., 192.168.1.0/24) to traditional IP address with subnet mask format (192.168.1.0 255.255.255.0). Useful for legacy network configurations.</p>
+                        <div class="example-box">
+                            <p data-lang="example-input">Input Example:</p>
+                            <pre>192.168.1.0/24
+10.0.0.0/16</pre>
+                        </div>
+                        <div class="guidance-message">
+                            <p data-lang="cidr-ip-guidance">💡 Enter one CIDR subnet per line to convert to IP with netmask format.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="tab-description" id="ip-to-cidr-description" style="display: none;">
+                        <h3 data-lang="ip-address-subnet-mask-to-cidr-converter">IP Address and Subnet Mask to CIDR Converter</h3>
+                        <p data-lang="ip-to-cidr-desc">Convert traditional IP address with subnet mask format (192.168.1.0 255.255.255.0) to modern CIDR notation (192.168.1.0/24). Ideal for updating network configurations.</p>
+                        <div class="example-box">
+                            <p data-lang="example-input">Input Example:</p>
+                            <pre>192.168.1.0 255.255.255.0
+10.0.0.0 255.255.0.0</pre>
+                        </div>
+                        <div class="guidance-message">
+                            <p data-lang="ip-cidr-guidance">💡 Enter IP and netmask separated by space, one per line.</p>
+                        </div>
+                    </article>
+                    
+                    <div class="input-method">
+                        <label>
+                            <input type="radio" name="input-method" value="paste" checked> <span data-lang="input-paste">Paste Text</span>
+                        </label>
+                    </div>
+                    
+                    <textarea id="inputArea" rows="10" placeholder="Enter your IP addresses or domain names here (one per line)..." aria-label="Input text area"></textarea>
+                    
+                    <div class="input-actions">
+                        <button id="clearBtn" class="secondary-button" data-lang="clear-input">
+                            <span class="button-icon">🗑️</span> Clear
+                        </button>
+                        <button id="pasteFromClipboardBtn" class="secondary-button" data-lang="paste-clipboard">
+                            <span class="button-icon">📋</span> Paste from Clipboard
+                        </button>
+                    </div>
+                    
+                    <div class="options-panel">
+                        <h3 data-lang="options-title" class="options-title">Options</h3>
+                        
+                        <!-- Bulk Extract options -->
+                        <div class="option-group" id="optionsBulkExtract" style="display: none;">
+                            <div class="filter-options">
+                                <label for="ipv4Only" class="checkbox-label">
+                                    <input type="checkbox" id="ipv4Only" checked> 
+                                    <span data-lang="ipv4-only">Extract IPv4 only (skip IPv6)</span>
+                                </label>
+                                
+                                <label for="removeDuplicates" class="checkbox-label">
+                                    <input type="checkbox" id="removeDuplicates" checked> 
+                                    <span data-lang="remove-duplicates">Remove duplicate IP addresses</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- CIDR to IP options -->
+                        <div class="option-group" id="optionsCidrToIp" style="display: none;">
+                            <!-- Empty options group for CIDR to IP, kept for structure -->
+                        </div>
+                        
+                        <!-- IP to CIDR options -->
+                        <div class="option-group" id="optionsIpToCidr" style="display: none;">
+                            <!-- Empty options group for IP to CIDR, kept for structure -->
+                        </div>
+                        
+                        <!-- Router Config options -->
+                        <div class="option-group" id="optionsRouter">
+                            <label for="routerType" data-lang="router-type">Router Type:</label>
+                            <select id="routerType">
+                                <option value="routeros" data-lang="router-routeros">MikroTik</option>
+                                <option value="cisco" data-lang="router-cisco">Cisco</option>
+                                <option value="huawei" data-lang="router-huawei">Huawei</option>
+                                <option value="juniper" data-lang="router-juniper">Juniper</option>
+                                <option value="fortinet" data-lang="router-fortinet">Fortinet</option>
+                            </select>
+                            
+                            <!-- Cisco Options -->
+                            <div id="ciscoOptions" class="router-specific-options" style="display: none;">
+                                <label for="nextHopIp" data-lang="next-hop">Next Hop IP:</label>
+                                <input type="text" id="nextHopIp" placeholder="e.g., 192.168.1.1">
+                                
+                                <label for="routeName" data-lang="route-name">Route Name:</label>
+                                <input type="text" id="routeName" placeholder="e.g., CN" value="CN">
+                                
+                                <div class="validation-feedback" id="ciscoValidation" data-lang="validation-feedback"></div>
+                            </div>
+                            
+                            <!-- RouterOS Options -->
+                            <div id="routerosOptions" class="router-specific-options">
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="routeros-type" value="route" checked> 
+                                        <span data-lang="route">Route</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="routeros-type" value="address-list"> 
+                                        <span data-lang="address-list">Address List</span>
+                                    </label>
+                                </div>
+                                
+                                <div id="routerosRouteOptions">
+                                    <label for="routerosGateway" data-lang="gateway">Gateway:</label>
+                                    <input type="text" id="routerosGateway" placeholder="e.g., 192.168.1.1">
+                                </div>
+                                
+                                <div id="routerosAddressListOptions" style="display: none;">
+                                    <label for="listName" data-lang="list-name">List Name:</label>
+                                    <input type="text" id="listName" placeholder="e.g., CN" value="CN">
+                                </div>
+                                
+                                <div class="validation-feedback" id="routerosValidation" data-lang="validation-feedback"></div>
+                            </div>
+                            
+                            <!-- Huawei Options -->
+                            <div id="huaweiOptions" class="router-specific-options" style="display: none;">
+                                <label for="huaweiNextHop" data-lang="next-hop">Next Hop IP:</label>
+                                <input type="text" id="huaweiNextHop" placeholder="e.g., 192.168.1.1">
+                                
+                                <div class="validation-feedback" id="huaweiValidation" data-lang="validation-feedback"></div>
+                            </div>
+                            
+                            <!-- Juniper Options -->
+                            <div id="juniperOptions" class="router-specific-options" style="display: none;">
+                                <label for="juniperNextHop" data-lang="next-hop">Next Hop IP:</label>
+                                <input type="text" id="juniperNextHop" placeholder="e.g., 192.168.1.1">
+                                
+                                <div class="validation-feedback" id="juniperValidation" data-lang="validation-feedback"></div>
+                            </div>
+                            
+                            <!-- Fortinet Options -->
+                            <div id="fortinetOptions" class="router-specific-options" style="display: none;">
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="fortinet-type" value="address" checked> 
+                                        <span data-lang="address-only">IP Address Only</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="fortinet-type" value="addrgrp"> 
+                                        <span data-lang="address-group">Add to Address Group</span>
+                                    </label>
+                                </div>
+                                
+                                <div id="addrGroupNameContainer" style="display: none;">
+                                    <label for="addrGroupName" data-lang="addr-group-name">Address Group Name:</label>
+                                    <input type="text" id="addrGroupName" placeholder="e.g., OpenAI_IP" value="IP_Group">
+                                </div>
+                                
+                                <div class="info-text">
+                                    <p data-lang="fortinet-auto-extract">💡 Fortinet mode supports automatic extraction of IP addresses and domain names from any text.</p>
+                                </div>
+                                
+                                <div class="validation-feedback" id="fortinetValidation"></div>
+                            </div>
+                            
+                            <label for="sortOutput" class="checkbox-label">
+                                <input type="checkbox" id="sortOutput" checked> 
+                                <span data-lang="sort-output">Sort IP addresses</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button id="convertBtn" class="primary-button" data-lang="convert">
+                        <span class="button-icon">⚡</span> Convert
+                    </button>
+                    
+                    <!-- Processing indicator -->
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                </section>
+                
+                <!-- Horizontal Resizer -->
+                <div class="resizer" id="horizontalResizer">
+                    <div class="resizer-handle"></div>
+                </div>
+                
+                <div class="output-section">
+                    <h2 data-lang="output-title">Output</h2>
+                    <div class="results-info">
+                        <span id="resultsSummary" data-lang="initial-summary">Your results will appear here after conversion</span>
+                    </div>
+                    
+                    <div class="output-container">
+                        <div class="loading-indicator">
+                            <div class="spinner"></div>
+                        </div>
+                        <textarea id="outputArea" rows="10" readonly placeholder="Output will appear here..." aria-label="Output text area"></textarea>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="copyBtn" class="secondary-button" data-lang="copy">
+                            <span class="button-icon">📋</span> Copy to Clipboard
+                        </button>
+                        <button id="downloadBtn" class="secondary-button" data-lang="download">
+                            <span class="button-icon">⬇️</span> Download as TXT
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Notification component -->
+    <div id="notification" class="notification-container">
+        <span id="notificationMessage"></span>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h4>IPToRoute</h4>
+                    <p data-lang="footer-description">Free networking tools for IT professionals, network engineers, and system administrators.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-lang="navigation">Navigation</h4>
+                    <ul>
+                        <li><a href="./" class="active" data-lang="home">Home</a></li>
+                        <li><a href="./router-config/" data-lang="router-configuration">Router Configuration</a></li>
+                        <li><a href="./bulk-extract/" data-lang="ip-extraction">IP Extraction</a></li>
+                        <li><a href="./cidr-to-ip/" data-lang="cidr-converter">CIDR Converter</a></li>
+                        <li><a href="./ip-to-cidr/" data-lang="ip-to-cidr">IP to CIDR</a></li>
+                        <li><a href="./sitemap.xml" data-lang="sitemap">Sitemap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-lang="legal">Legal</h4>
+                    <ul>
+                        <li><a href="./privacy-policy" data-lang="privacy-policy">Privacy Policy</a></li>
+                        <li><a href="./terms-of-service" data-lang="terms-of-service">Terms of Service</a></li>
+                        <li><a href="./cookie-policy" data-lang="cookie-policy">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-lang="contact">Contact</h4>
+                    <ul>
+                        <li><a href="./contact" data-lang="contact-us">Contact Us</a></li>
+                        <li><a href="https://github.com/myyeti1043/iptoroute" target="_blank" rel="noopener" data-lang="github">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>IPToRoute © <span id="current-year">2024</span> <span data-lang="all-rights-reserved">All rights reserved</span></p>
+                <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>

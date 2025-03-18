@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact IPToRoute - Get in touch with us about our IP address and router configuration tools.">
+    <meta name="keywords" content="contact IPToRoute, IP tools support, network configuration help">
+    <meta name="author" content="IPToRoute">
+    <meta name="robots" content="index, follow">
+    
+    <title>Contact Us | IPToRoute - IP Address Conversion & Router Configuration Generator</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="canonical" href="https://iptoroute.com/contact/">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <a href="../" data-lang="title-main">IPToRoute</a>
+                <span class="subtitle" data-lang="contact-title">联系我们</span>
+            </h1>
+            <div class="header-controls">
+                <div class="theme-toggle">
+                    <button id="themeToggle" aria-label="Toggle dark mode" class="tooltip">
+                        <span class="light-icon">☀️</span>
+                        <span class="dark-icon">🌙</span>
+                        <span class="tooltip-text" data-lang="theme-tooltip">Switch between light and dark mode</span>
+                    </button>
+                </div>
+                <div class="language-selector">
+                    <button id="langEn" class="lang-btn active" aria-label="Switch to English">English</button>
+                    <button id="langZh" class="lang-btn" aria-label="Switch to Chinese">中文</button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="contact-page">
+            <section class="contact-info">
+                <h2 data-lang="get-in-touch">Get in Touch</h2>
+                <p data-lang="contact-intro">Have questions, feedback, or need assistance with our tools? We'd love to hear from you. Fill out the form below, and we'll get back to you as soon as possible.</p>
+                
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <h3 data-lang="email-title">📧 Email</h3>
+                        <p><span data-lang="general-inquiries">For general inquiries:</span> <a href="mailto:contact@iptoroute.com">contact@iptoroute.com</a></p>
+                        <p><span data-lang="tech-support">For technical support:</span> <a href="mailto:support@iptoroute.com">support@iptoroute.com</a></p>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <h3 data-lang="github-title">💻 GitHub</h3>
+                        <p data-lang="bug-reports">For bug reports or feature requests, visit our <a href="https://github.com/myyeti1043/iptoroute" target="_blank" rel="noopener">GitHub repository</a>.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="contact-form-container">
+                <h2 data-lang="contact-form-title">Contact Form</h2>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-group">
+                        <label for="name" data-lang="name-label">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" data-lang="email-label">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject" data-lang="subject-label">Subject</label>
+                        <select id="subject" name="subject">
+                            <option value="general" data-lang="general-inquiry">General Inquiry</option>
+                            <option value="support" data-lang="tech-support-option">Technical Support</option>
+                            <option value="feedback" data-lang="feedback">Feedback</option>
+                            <option value="feature" data-lang="feature-request">Feature Request</option>
+                            <option value="bug" data-lang="bug-report">Bug Report</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" data-lang="message-label">Message</label>
+                        <textarea id="message" name="message" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary" data-lang="send-message">Send Message</button>
+                        <div id="formStatus" class="form-status"></div>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="faq">
+                <h2 data-lang="faq-title">Frequently Asked Questions</h2>
+                
+                <div class="faq-item">
+                    <h3 data-lang="faq-free">Are the tools free to use?</h3>
+                    <p data-lang="faq-free-answer">Yes, all IPToRoute tools are completely free for both personal and commercial use.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 data-lang="faq-secure">Is my data secure?</h3>
+                    <p data-lang="faq-secure-answer">IPToRoute is a client-side application. All processing happens in your browser, and your IP addresses and network configurations are not transmitted to our servers.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 data-lang="faq-offline">Can I use IPToRoute offline?</h3>
+                    <p data-lang="faq-offline-answer">Currently, IPToRoute requires an internet connection to load. However, once loaded, the core tools will function without further internet access.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3 data-lang="faq-bug">How do I report a bug?</h3>
+                    <p data-lang="faq-bug-answer">You can report bugs through our <a href="https://github.com/myyeti1043/iptoroute/issues" target="_blank" rel="noopener">GitHub Issues</a> page or by using the contact form on this page.</p>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-sections">
+                    <div class="footer-section">
+                        <h4>IPToRoute</h4>
+                        <p data-lang="footer-description">Free networking tools for IT professionals, network engineers, and system administrators.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4 data-lang="navigation">Navigation</h4>
+                        <ul>
+                            <li><a href="../" data-lang="home">Home</a></li>
+                            <li><a href="../router-config" data-lang="router-configuration">Router Configuration</a></li>
+                            <li><a href="../bulk-extract" data-lang="ip-extraction">IP Extraction</a></li>
+                            <li><a href="../cidr-to-ip" data-lang="cidr-converter">CIDR Converter</a></li>
+                            <li><a href="../sitemap.xml" data-lang="sitemap">Sitemap</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 data-lang="legal">Legal</h4>
+                        <ul>
+                            <li><a href="../privacy-policy" data-lang="privacy-policy">Privacy Policy</a></li>
+                            <li><a href="../terms-of-service" data-lang="terms-of-service">Terms of Service</a></li>
+                            <li><a href="../cookie-policy" data-lang="cookie-policy">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4 data-lang="contact">Contact</h4>
+                        <ul>
+                            <li><a href="../contact" class="active" data-lang="contact-us">Contact Us</a></li>
+                            <li><a href="https://github.com/myyeti1043/iptoroute" target="_blank" rel="noopener" data-lang="github">GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>IPToRoute © <span id="current-year">2024</span> <span data-lang="all-rights-reserved">All rights reserved</span></p>
+                    <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="../script.js"></script>
+    <script>
+        // Form submission handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formStatus = document.getElementById('formStatus');
+            const sendingMessage = document.querySelector('[data-lang="sending-message"]')?.textContent || 'Sending message...';
+            const thankYouMessage = document.querySelector('[data-lang="thank-you-message"]')?.textContent || 'Thank you for your message. We will get back to you soon!';
+            
+            formStatus.textContent = sendingMessage;
+            formStatus.className = 'form-status sending';
+            
+            // Simulate form submission (replace with actual form handling)
+            setTimeout(() => {
+                formStatus.textContent = thankYouMessage;
+                formStatus.className = 'form-status success';
+                document.getElementById('contactForm').reset();
+            }, 1500);
+        });
+    </script>
+</body>
+</html> 
