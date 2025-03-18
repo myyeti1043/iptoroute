@@ -2313,6 +2313,27 @@ end`;
             aElem.setAttribute('data-lang', 'title-main');
         }
     }
+
+    // 处理底部导航链接点击事件
+    const tabLinks = document.querySelectorAll('[data-tab-link]');
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetTab = this.getAttribute('data-tab-link');
+            
+            // 找到并点击相应的标签按钮
+            const tabButton = document.querySelector(`.tab-button[data-tab="${targetTab}"]`);
+            if (tabButton) {
+                tabButton.click();
+                
+                // 滚动到页面顶部
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
 });
 
 // Resizer functionality

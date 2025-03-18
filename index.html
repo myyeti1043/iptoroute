@@ -225,8 +225,6 @@ www.example.com
                                 
                                 <label for="routeName" data-lang="route-name">Route Name:</label>
                                 <input type="text" id="routeName" placeholder="e.g., CN" value="CN">
-                                
-                                <div class="validation-feedback" id="ciscoValidation" data-lang="validation-feedback"></div>
                             </div>
                             
                             <!-- RouterOS Options -->
@@ -251,24 +249,18 @@ www.example.com
                                     <label for="listName" data-lang="list-name">List Name:</label>
                                     <input type="text" id="listName" placeholder="e.g., CN" value="CN">
                                 </div>
-                                
-                                <div class="validation-feedback" id="routerosValidation" data-lang="validation-feedback"></div>
                             </div>
                             
                             <!-- Huawei Options -->
                             <div id="huaweiOptions" class="router-specific-options" style="display: none;">
                                 <label for="huaweiNextHop" data-lang="next-hop">Next Hop IP:</label>
                                 <input type="text" id="huaweiNextHop" placeholder="e.g., 192.168.1.1">
-                                
-                                <div class="validation-feedback" id="huaweiValidation" data-lang="validation-feedback"></div>
                             </div>
                             
                             <!-- Juniper Options -->
                             <div id="juniperOptions" class="router-specific-options" style="display: none;">
                                 <label for="juniperNextHop" data-lang="next-hop">Next Hop IP:</label>
                                 <input type="text" id="juniperNextHop" placeholder="e.g., 192.168.1.1">
-                                
-                                <div class="validation-feedback" id="juniperValidation" data-lang="validation-feedback"></div>
                             </div>
                             
                             <!-- Fortinet Options -->
@@ -292,8 +284,6 @@ www.example.com
                                 <div class="info-text">
                                     <p data-lang="fortinet-auto-extract">💡 Fortinet mode supports automatic extraction of IP addresses and domain names from any text.</p>
                                 </div>
-                                
-                                <div class="validation-feedback" id="fortinetValidation"></div>
                             </div>
                             
                             <label for="sortOutput" class="checkbox-label">
@@ -360,10 +350,10 @@ www.example.com
                     <h4 data-lang="navigation">Navigation</h4>
                     <ul>
                         <li><a href="./" class="active" data-lang="home">Home</a></li>
-                        <li><a href="./router-config/" data-lang="router-configuration">Router Configuration</a></li>
-                        <li><a href="./bulk-extract/" data-lang="ip-extraction">IP Extraction</a></li>
-                        <li><a href="./cidr-to-ip/" data-lang="cidr-converter">CIDR Converter</a></li>
-                        <li><a href="./ip-to-cidr/" data-lang="ip-to-cidr">IP to CIDR</a></li>
+                        <li><a href="./#router-config" data-tab-link="router-config" data-lang="router-configuration">Router Configuration</a></li>
+                        <li><a href="./#bulk-extract" data-tab-link="bulk-extract" data-lang="ip-extraction">IP Extraction</a></li>
+                        <li><a href="./#cidr-to-ip" data-tab-link="cidr-to-ip" data-lang="cidr-converter">CIDR Converter</a></li>
+                        <li><a href="./#ip-to-cidr" data-tab-link="ip-to-cidr" data-lang="ip-to-cidr">IP to CIDR</a></li>
                         <li><a href="./sitemap.xml" data-lang="sitemap">Sitemap</a></li>
                     </ul>
                 </div>
