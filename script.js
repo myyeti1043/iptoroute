@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         en: {
             'title': 'IP Address Conversion & Router Configuration Generator',
             'title-main': 'IPToRoute',
+            'title-sub': 'IP Address Conversion & Router Configuration Generator',
             'tab-bulk': 'IPs Extract',
             'tab-router': 'Router Cfg',
             'tab-cidr-ip': 'CIDR → IP',
@@ -106,11 +107,97 @@ document.addEventListener('DOMContentLoaded', function() {
             'ip-address-subnet-mask-to-cidr-converter': 'IP Address and Subnet Mask to CIDR Converter',
             'input-example-basic': '# Or plain text with IPs',
             'input-example-fortinet-mixed': '# Also works with mixed text containing IPs and domains:',
-            'validation-feedback': 'Validation Feedback'
+            'validation-feedback': 'Validation Feedback',
+            'contact-title': 'Contact Us',
+            'get-in-touch': 'Get in Touch',
+            'contact-intro': 'Have questions, feedback, or need assistance with our tools? We\'d love to hear from you. Fill out the form below, and we\'ll get back to you as soon as possible.',
+            'email-title': '📧 Email',
+            'github-title': '💻 GitHub',
+            'general-inquiries': 'For general inquiries:',
+            'tech-support': 'For technical support:',
+            'bug-reports': 'For bug reports or feature requests, visit our GitHub repository.',
+            'contact-form-title': 'Contact Form',
+            'name-label': 'Name',
+            'email-label': 'Email',
+            'subject-label': 'Subject',
+            'message-label': 'Message',
+            'send-message': 'Send Message',
+            'sending-message': 'Sending message...',
+            'thank-you-message': 'Thank you for your message. We will get back to you soon!',
+            'faq-title': 'Frequently Asked Questions',
+            'faq-free': 'Are the tools free to use?',
+            'faq-free-answer': 'Yes, all IPToRoute tools are completely free for both personal and commercial use.',
+            'faq-secure': 'Is my data secure?',
+            'faq-secure-answer': 'IPToRoute is a client-side application. All processing happens in your browser, and your IP addresses and network configurations are not transmitted to our servers.',
+            'faq-offline': 'Can I use IPToRoute offline?',
+            'faq-offline-answer': 'Currently, IPToRoute requires an internet connection to load. However, once loaded, the core tools will function without further internet access.',
+            'faq-bug': 'How do I report a bug?',
+            'faq-bug-answer': 'You can report bugs through our GitHub Issues page or by using the contact form on this page.',
+            
+            // Privacy Policy Page
+            'privacy-title': 'Privacy Policy',
+            'last-updated': 'Last updated: March 18, 2024',
+            'privacy-intro': 'Welcome to IPToRoute. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we handle your personal data when you visit our website and tell you about your privacy rights.',
+            
+            // Terms of Service Page
+            'terms-title': 'Terms of Service',
+            
+            // Cookie Policy Page
+            'cookie-title': 'Cookie Policy',
+            'contact-cookies': 'Contact Us',
+            'questions-cookies': 'If you have any questions about our use of cookies or other technologies, please contact us through our <a href="../contact">Contact Page</a>.',
+            
+            // 联系页面
+            'contact-title': '联系我们',
+            'get-in-touch': '与我们联系',
+            'contact-intro': '对我们的工具有疑问、反馈或需要帮助？我们很乐意听取您的意见。请填写下面的表单，我们会尽快回复您。',
+            'contact-methods': '联系方式',
+            'email-us': '发送电子邮件',
+            'email-address': '电子邮件地址',
+            'email-address-placeholder': '您的电子邮件地址',
+            'your-name': '您的姓名',
+            'your-name-placeholder': '您的姓名（可选）',
+            'your-message': '您的消息',
+            'message-placeholder': '请在此输入您的消息...',
+            'send-message': '发送消息',
+            'sending': '发送中...',
+            'message-sent': '消息已发送！',
+            'message-error': '发送失败，请稍后再试',
+            'faq-heading': '常见问题',
+            'faq-intro': '在联系我们之前，请查看以下常见问题：',
+            'faq1-question': '我无法生成路由器配置，怎么办？',
+            'faq1-answer': '请确保您已输入有效的IP地址和子网掩码。如果问题仍然存在，请通过联系表单向我们发送具体错误信息。',
+            'faq2-question': '你们的工具支持哪些路由器？',
+            'faq2-answer': '我们当前支持Cisco、Huawei和Juniper路由器配置。我们计划在未来添加更多品牌的支持。',
+            'faq3-question': '我可以在不同浏览器上使用IPToRoute吗？',
+            'faq3-answer': '是的，IPToRoute兼容所有现代浏览器，包括Chrome、Firefox、Safari和Edge。',
+            'faq4-question': '你们提供API或集成选项吗？',
+            'faq4-answer': '目前我们不提供公共API。如果您对集成感兴趣，请通过联系表单联系我们讨论您的需求。',
+            'faq5-question': '我可以离线使用IPToRoute吗？',
+            'faq5-answer': '目前，IPToRoute需要互联网连接才能访问。我们正在考虑未来提供离线版本的可能性。',
+            
+            // 页脚导航链接翻译
+            'home': '首页',
+            'router-configuration': '路由配置',
+            'ip-extraction': 'IP提取',
+            'cidr-converter': 'CIDR转换器',
+            'ip-to-cidr': 'IP到CIDR',
+            'sitemap': '网站地图',
+            'privacy-policy': '隐私政策',
+            'terms-of-service': '服务条款',
+            'cookie-policy': 'Cookie政策',
+            'contact-us': '联系我们',
+            'github': 'GitHub',
+            'processing': 'Processing...',
+            'error-occurred': 'An error occurred during conversion',
+            'enter-ip': 'Please enter IP addresses.',
+            'no-valid-ip': 'No valid IP addresses found in the input.',
+            'invalid-ip': 'Invalid IP address format',
         },
         zh: {
             'title': 'IP地址转换与路由配置生成工具',
             'title-main': 'IPToRoute',
+            'title-sub': 'IP Address Conversion & Router Configuration Generator',
             'tab-bulk': 'IP提取',
             'tab-router': '路由配置',
             'tab-cidr-ip': 'CIDR 转 IP',
@@ -185,9 +272,9 @@ document.addEventListener('DOMContentLoaded', function() {
             'output-placeholder-default': '转换后的结果将显示在这里...',
             'output-placeholder-routeros': '输出示例：\n/ip firewall address-list add address=192.168.1.0/24 list=CN\n/ip firewall address-list add address=10.0.0.0/16 list=CN',
             'output-placeholder-cisco': '输出示例：\nip route 192.168.1.0 255.255.255.0 192.168.0.1 name CN\nip route 10.0.0.0 255.255.0.0 192.168.0.1 name CN',
-            'output-placeholder-fortinet': '输出示例：\nconfig firewall address\n    edit "192_168_1_0_24"\n        set subnet 192.168.1.0 255.255.255.0\n    next\nend\nconfig firewall addrgrp\n    edit IP_Group\n        append member "192_168_1_0_24"\n    next\nend\n\n# FQDN示例：\nconfig firewall address\n    edit "example.com"\n        set type fqdn\n        set fqdn "example.com"\n    next\nend\nconfig firewall addrgrp\n    edit IP_Group\n        append member "example.com"\n    next\nend\n\n# 自动提取功能适用于混合内容：\n# "我们的服务器位于 192.168.1.0/24 和 example.com"',
+            'output-placeholder-fortinet': 'Example output:\nconfig firewall address\n    edit "192_168_1_0_24"\n        set subnet 192.168.1.0 255.255.255.0\n    next\nend\nconfig firewall addrgrp\n    edit IP_Group\n        append member "192_168_1_0_24"\n    next\nend\n\n# FQDN Example:\nconfig firewall address\n    edit "example.com"\n        set type fqdn\n        set fqdn "example.com"\n    next\nend\nconfig firewall addrgrp\n    edit IP_Group\n        append member "example.com"\n    next\nend\n\n# Auto-extraction works with mixed content:\n# "Our servers are at 192.168.1.0/24 and example.com"',
             'output-placeholder-huawei': '输出示例：\nip route-static 192.168.1.0 255.255.255.0 192.168.1.1\nip route-static 10.0.0.0 255.255.0.0 192.168.1.1',
-            'output-placeholder-juniper': '输出示例：\nset routing-options static route 192.168.1.0/24 next-hop 192.168.1.1\nset routing-options static route 10.0.0.0/16 next-hop 192.168.1.1',
+            'output-placeholder-juniper': 'Example output:\nset routing-options static route 192.168.1.0/24 next-hop 192.168.1.1\nset routing-options static route 10.0.0.0/16 next-hop 192.168.1.1',
             'output-placeholder-cidr-ip': '输出示例：\n192.168.1.0 255.255.255.0\n10.0.0.0 255.255.0.0',
             'output-placeholder-ip-cidr': '输出示例：\n192.168.1.0/24\n10.0.0.0/16',
             'output-placeholder-bulk': '输出示例：\n192.168.1.0/24\n10.0.0.0/16',
@@ -219,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-intro': '对我们的工具有疑问、反馈或需要帮助？我们很乐意听取您的意见。填写下面的表单，我们将尽快回复您。',
             'email-title': '📧 电子邮件',
             'github-title': '💻 GitHub',
-            'general-inquiries': '一般查询：',
+            'general-inquiries': '一般咨询：',
             'tech-support': '技术支持：',
             'bug-reports': '如需报告错误或请求新功能，请访问我们的GitHub仓库。',
             'contact-form-title': '联系表单',
@@ -257,111 +344,120 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 隐私政策页面
             'privacy-title': '隐私政策',
-            'last-updated': '最后更新：2024年3月18日',
-            'privacy-intro': '欢迎访问IPToRoute。我们尊重您的隐私并致力于保护您的个人数据。本隐私政策将告知您我们如何处理您访问我们网站时的个人数据，并告诉您有关您的隐私权利。',
-            'introduction': '介绍',
-            'data-we-collect': '我们收集的数据',
-            'client-side-app': 'IPToRoute是一个客户端应用程序。您输入的IP地址和网络配置完全在您的浏览器中处理，不会传输到我们的服务器。我们不存储您的IP地址或配置。',
-            'however-collect': '但是，我们确实收集以下信息：',
-            'usage-data': '使用数据',
-            'usage-data-desc': '匿名分析，帮助我们了解用户如何与我们的工具交互',
-            'cookies': 'Cookies',
-            'cookies-desc': '存储在您设备上的小型文本文件，用于记住您的偏好设置',
-            'analytics': '分析',
-            'analytics-desc': '我们使用Google Analytics收集关于用户如何与我们的网站交互的匿名数据。这有助于我们改进服务和用户体验。收集的信息包括：',
-            'pages-visited': '访问的页面',
-            'time-spent': '在网站上花费的时间',
-            'browser-info': '浏览器和设备信息',
-            'referring-sites': '引荐网站',
-            'analytics-cookies': 'Google Analytics使用cookies收集此信息。您可以使用<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics退出浏览器插件</a>来选择退出Google Analytics。',
-            'how-we-use': '我们如何使用您的数据',
-            'use-collected-data': '我们使用收集的数据来：',
-            'improve-website': '改进我们的网站和服务',
-            'understand-users': '了解用户如何与我们的工具交互',
-            'remember-prefs': '记住您的偏好设置',
+            'privacy-heading': '隐私政策',
+            'last-updated': '最后更新: 2024年3月15日',
+            'privacy-intro': '欢迎访问IPToRoute。我们尊重您的隐私，并致力于保护您的个人数据。本隐私政策将告知您我们如何处理您访问我们网站时的个人数据，并告知您的隐私权。',
+            'what-we-collect': '我们收集的信息',
+            'client-side-processing': 'IPToRoute是一个客户端应用程序。所有IP地址转换和路由器配置操作都直接在您的浏览器中执行。我们不在服务器上收集、存储或处理您的IP地址或其他网络配置数据。',
+            'collect-when-contact': '然而，当您使用我们的联系表单时，我们可能会收集以下信息：',
+            'name-collect': '姓名（如提供）',
+            'email-collect': '电子邮件地址',
+            'message-collect': '消息内容',
+            'how-we-use': '我们如何使用您的信息',
+            'use-info-for': '我们使用收集的信息来：',
+            'respond-inquiries': '回应您的询问或支持请求',
+            'improve-service': '根据您的反馈改进我们的服务',
+            'communicate': '就我们服务的更新或变更与您沟通',
+            'cookies-heading': 'Cookie',
+            'cookies-info': '我们的网站使用cookie来增强您的浏览体验。Cookie是放置在您设备上的小型文本文件，用于收集标准互联网日志信息和访问者行为信息。有关我们使用的cookie的详细信息，请参阅我们的<a href="../cookie-policy">Cookie政策</a>。',
+            'third-party': '第三方服务',
+            'analytics-info': '我们使用分析服务来帮助我们了解访问者如何使用我们的网站。这些服务可能会收集有关您使用我们网站的信息，包括您的IP地址、浏览器类型、引荐/退出页面和日期/时间戳。',
             'data-security': '数据安全',
-            'security-important': '您数据的安全对我们很重要。由于IPToRoute在客户端处理数据，您的敏感网络信息永远不会离开您的浏览器。我们对我们确实收集的有限数据实施适当的安全措施。',
+            'security-measures': '我们已实施适当的技术和组织措施，以保护您的个人数据免受意外丢失和未经授权的访问、使用、更改或披露。',
             'your-rights': '您的权利',
-            'rights-description': '根据您所在的地区，您可能对您的个人数据拥有某些权利，包括：',
-            'right-access': '访问您数据的权利',
-            'right-correct': '更正不准确数据的权利',
-            'right-erasure': '删除您数据的权利',
-            'right-restrict': '限制处理的权利',
-            'right-portability': '数据可携带性权利',
-            'right-object': '反对处理的权利',
-            'exercise-rights': '要行使这些权利中的任何一项，请使用我们的<a href="../contact/">联系表单</a>联系我们。',
-            'changes-policy': '本政策的变更',
-            'update-policy': '我们可能会不时更新我们的隐私政策。我们将通过在此页面上发布新的隐私政策并更新"最后更新"日期来通知您任何变更。',
-            'contact-us': '联系我们',
-            'questions-contact': '如果您对本隐私政策有任何疑问，请通过我们的<a href="../contact/">联系页面</a>联系我们。',
+            'rights-info': '根据您所在的位置，您可能对您的个人数据拥有某些权利，包括：',
+            'right-access': '访问您个人数据的权利',
+            'right-rectification': '纠正不准确个人数据的权利',
+            'right-erasure': '删除您个人数据的权利',
+            'right-restriction': '限制处理您个人数据的权利',
+            'right-data-portability': '数据可移植性的权利',
+            'right-object': '反对处理您个人数据的权利',
+            'changes-policy': '本隐私政策的变更',
+            'update-policy': '我们可能会不时更新我们的隐私政策。我们将通过在此页面上发布新的隐私政策并更新"最后更新"日期来通知您任何更改。',
+            'contact-us-privacy': '联系我们',
+            'questions-concerns': '如果您对本隐私政策或我们的隐私做法有任何问题或疑虑，请通过我们的<a href="../contact">联系页面</a>联系我们。',
             
             // 服务条款页面
             'terms-title': '服务条款',
-            'terms-intro': '欢迎访问IPToRoute。通过访问或使用我们的网站，您同意受这些服务条款的约束。如果您不同意这些条款的任何部分，您可能不会访问该服务。',
-            'use-license': '使用许可',
-            'license-desc': '允许临时使用本网站仅供个人、非商业性的短暂浏览。这是一种许可授权，而非所有权转让，根据此许可，您不得：',
-            'no-modify': '修改或复制材料',
-            'no-commercial': '将材料用于任何商业目的或公开展示',
-            'no-reverse': '尝试对IPToRoute网站上包含的任何软件进行逆向工程',
-            'no-remove-notice': '从材料中删除任何版权或其他专有标记',
-            'no-transfer': '将材料转让给他人或在任何其他服务器上"镜像"材料',
-            'license-terminate': '如果您违反任何这些限制，此许可将自动终止，并可能随时被IPToRoute终止。',
+            'terms-heading': '服务条款',
+            'terms-intro': '在使用IPToRoute之前，请仔细阅读这些服务条款。通过访问或使用我们的服务，您同意受这些条款的约束。如果您不同意条款的任何部分，您可能不会访问该服务。',
+            'use-of-service': '服务使用',
+            'service-description': 'IPToRoute提供一个基于网络的IP地址转换和路由器配置生成工具。该服务免费提供，可用于个人和商业用途。',
+            'user-restrictions': '您同意不会使用我们的服务来：',
+            'restriction-1': '违反任何法律或法规',
+            'restriction-2': '侵犯他人权利',
+            'restriction-3': '尝试未经授权访问我们的系统或干扰服务',
+            'restriction-4': '传输任何病毒、恶意软件或其他有害代码',
+            'restriction-5': '在未经明确许可的情况下进行任何自动或系统数据收集',
+            'intellectual-property': '知识产权',
+            'ip-rights': '本服务及其原创内容、特性和功能归IPToRoute所有，并受国际版权、商标、专利、商业秘密和其他知识产权或专有权利法律的保护。',
             'disclaimer': '免责声明',
-            'disclaimer-desc': 'IPToRoute网站上的材料按"原样"提供。IPToRoute不作任何明示或暗示的保证，并在此免除和否认所有其他保证，包括但不限于对适销性、特定用途适用性或不侵犯知识产权或其他权利侵犯的暗示保证或条件。',
-            'disclaimer-further': '此外，IPToRoute不保证或作出任何关于其网站上材料的准确性、可能结果或可靠性的陈述，或其他与这些材料或链接到本网站的任何网站有关的陈述。',
-            'limitations': '限制',
-            'limitations-desc': '在任何情况下，IPToRoute或其供应商均不对任何损害（包括但不限于数据丢失或利润损失，或由于业务中断）承担责任，这些损害是由于使用或无法使用IPToRoute网站上的材料而产生的，即使IPToRoute或IPToRoute授权代表已口头或书面通知可能发生此类损害。',
-            'limitations-jurisdictions': '由于某些司法管辖区不允许对暗示保证的限制，或对间接或附带损害的责任限制，这些限制可能不适用于您。',
-            'accuracy': '材料的准确性',
-            'accuracy-desc': 'IPToRoute网站上出现的材料可能包括技术、排版或摄影错误。IPToRoute不保证其网站上的任何材料是准确、完整或最新的。IPToRoute可能随时更改其网站上包含的材料，恕不另行通知。但是，IPToRoute不承诺更新材料。',
-            'links': '链接',
-            'links-desc': 'IPToRoute尚未审核链接到其网站的所有网站，并且不对任何此类链接网站的内容负责。任何链接的包含并不意味着IPToRoute对该网站的认可。使用任何此类链接网站的风险由用户自行承担。',
-            'modifications': '修改',
-            'modifications-desc': 'IPToRoute可能随时修改其网站的服务条款，恕不另行通知。使用本网站即表示您同意受当时有效的服务条款版本的约束。',
-            'governing-law': '适用法律',
-            'governing-law-desc': '这些条款和条件受法律管辖并按照法律解释，您不可撤销地服从该地点法院的专属管辖权。',
+            'provided-as-is': '我们的服务按"现状"和"可用"的基础提供。IPToRoute及其关联公司不作任何明示或暗示的保证，并特此声明不作所有保证，包括但不限于适销性、特定用途的适用性、非侵权或性能过程的暗示保证。',
+            'no-guarantee': '我们不保证：',
+            'no-guarantee-1': '服务将在任何特定时间或地点不间断、安全或可用',
+            'no-guarantee-2': '任何错误或缺陷将被纠正',
+            'no-guarantee-3': '服务不含病毒或其他有害组件',
+            'no-guarantee-4': '使用服务的结果将满足您的要求',
+            'limitation-liability': '责任限制',
+            'liability-limit': '在任何情况下，IPToRoute及其董事、员工、合作伙伴、代理商、供应商或关联公司均不对任何间接、偶然、特殊、后果性或惩罚性损害负责，包括但不限于利润损失、数据损失、使用损失、商誉损失或其他无形损失，这些损失源于：',
+            'liability-1': '您访问或使用或无法访问或使用服务',
+            'liability-2': '服务上任何第三方的任何行为或内容',
+            'liability-3': '从服务获得的任何内容',
+            'liability-4': '未经授权访问、使用或更改您的传输或内容',
+            'termination': '终止',
+            'termination-info': '我们可能会立即终止或暂停您对我们服务的访问，恕不另行通知或承担责任，无论出于何种原因，包括但不限于您违反条款。',
+            'governing-law': '管辖法律',
+            'governing-law-info': '这些条款应受我国法律管辖并按其解释，不考虑其冲突法规定。',
+            'changes-terms': '条款变更',
+            'terms-updates': '我们保留自行决定随时修改或替换这些条款的权利。如果修订是重大的，我们将在任何新条款生效前至少提前30天通知。什么构成重大变更将由我们自行决定。',
+            'contact-terms': '联系我们',
+            'questions-terms': '如果您对这些条款有任何问题，请通过我们的<a href="../contact">联系页面</a>联系我们。',
             
             // Cookie政策页面
             'cookie-title': 'Cookie政策',
-            'cookie-intro': '本Cookie政策解释了IPToRoute如何使用cookies和类似技术在您访问我们的网站时识别您。它解释了这些技术是什么以及我们为什么使用它们，以及您控制我们使用它们的权利。',
-            'what-are-cookies': '什么是Cookies？',
-            'cookies-def-1': 'Cookies是在您访问网站时放置在您的计算机或移动设备上的小型数据文件。网站所有者广泛使用cookies使其网站工作，或更有效地工作，以及提供报告信息。',
-            'cookies-def-2': '由网站所有者（在本例中为IPToRoute）设置的cookies被称为"第一方cookies"。由网站所有者以外的parties设置的cookies被称为"第三方cookies"。第三方cookies使第三方功能或功能可以在网站上或通过网站提供（例如，广告、交互式内容和分析）。',
-            'why-use-cookies': '我们为什么使用Cookies？',
-            'cookie-reasons': '我们使用第一方和第三方cookies的原因有几个。一些cookies是出于技术原因需要的，以便我们的网站能够运行，我们将其称为"必要"或"绝对必要"的cookies。其他cookies使我们能够跟踪和针对用户的兴趣，以增强网站上的体验。例如，IPToRoute跟踪访问的页面和链接，以了解您如何使用和偏好我们的网站，并据此调整我们的服务。',
-            'cookie-third-party': '第三方通过我们的网站提供cookies，用于分析、个性化和广告目的。这在下面有更详细的描述。',
-            'types-of-cookies': '我们使用的Cookies类型',
-            'essential-cookies': '必要Cookies',
-            'essential-desc': '这些cookies对于通过我们的网站提供服务和使用其某些功能（如访问安全区域）是绝对必要的。由于这些cookies对于提供网站是绝对必要的，因此在不影响我们网站如何运作的情况下，您不能拒绝它们。',
-            'performance-cookies': '性能和功能Cookies',
-            'performance-desc': '这些cookies用于增强我们网站的性能和功能。它们帮助我们记住偏好，例如您选择的语言或您所在的region。它们可能由我们设置，也可能由我们添加到页面的第三方提供商设置。如果您不允许这些cookies，那么部分或全部服务可能无法正常运行。',
-            'analytics-cookies': '分析和定制Cookies',
-            'analytics-desc': '这些cookies收集的信息用于帮助我们了解我们的网站如何被使用或我们的营销活动如何有效，或帮助我们为您定制我们的网站。我们使用由Google Analytics提供的cookies直接从终端用户浏览器收集有限数据，以使我们能够更好地了解您对我们网站的使用。',
-            'control-cookies': '如何控制Cookies？',
-            'control-desc-1': '您有权决定是否接受或拒绝cookies。您可以设置或修改您的Web浏览器控制来接受或拒绝cookies。如果您选择拒绝cookies，您仍然可以使用我们的网站，但您对网站某些功能和区域的访问可能会受到限制。',
-            'control-desc-2': '大多数Web浏览器允许通过浏览器设置对大多数cookies进行某种程度的控制。要了解更多关于cookies的信息，包括如何查看设置了哪些cookies以及如何管理和删除它们，请访问<a href="https://www.allaboutcookies.org" target="_blank" rel="noopener">www.allaboutcookies.org</a>。',
-            'browser-settings': '有关如何在不同Web浏览器上管理cookies的更多信息，请访问浏览器开发商的网站。',
-            'specific-analytics': '我们使用的特定分析服务',
-            'google-analytics': 'Google Analytics',
-            'analytics-info-1': 'IPToRoute使用Google Analytics，这是由Google, Inc.提供的Web分析服务。Google Analytics使用cookies帮助网站分析用户如何使用网站。cookie生成的关于您使用网站的信息将传输到美国的Google服务器并存储在那里。',
-            'analytics-info-2': 'Google将代表IPToRoute使用这些信息，目的是评估您对网站的使用，编制关于网站活动的报告，并向IPToRoute提供与网站活动和互联网使用相关的其他服务。',
-            'analytics-optout': '您可以通过在浏览器上禁用cookies或使用<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics退出浏览器插件</a>来防止Google Analytics在您返回访问本网站时识别您。',
+            'cookie-heading': 'Cookie政策',
+            'cookie-intro': '本Cookie政策解释了IPToRoute如何使用cookie和类似技术在您访问我们的网站时识别您。它解释了这些技术是什么以及为什么我们使用它们，以及您控制我们使用它们的权利。',
+            'what-are-cookies': '什么是Cookie',
+            'cookies-definition': 'Cookie是当您访问网站时放置在您的计算机或移动设备上的小型数据文件。Cookie被网站所有者广泛用于使其网站运行，或更有效地运行，以及提供报告信息。',
+            'cookies-set-by': '由网站所有者（在本例中为IPToRoute）设置的cookie称为"第一方cookie"。由网站所有者以外的第三方设置的cookie称为"第三方cookie"。第三方cookie使第三方功能或功能可以在网站上或通过网站提供（例如，广告、交互内容和分析）。',
+            'why-we-use-cookies': '为什么我们使用Cookie',
+            'cookies-use-explanation': '我们使用第一方cookie有几个原因。一些cookie是出于技术原因需要的，以便我们的网站能够运行，我们将这些cookie称为"必要"或"严格必要"cookie。其他cookie使我们能够跟踪和定位用户的兴趣，以增强我们网站上的体验。以下是我们使用的cookie类型：',
+            'essential-cookies': '<strong>必要cookie:</strong> 这些cookie对于提供您通过我们网站获得的服务以及使用其某些功能（如访问安全区域）是绝对必要的。',
+            'preference-cookies': '<strong>偏好cookie:</strong> 这些cookie允许我们记住您使用我们网站时所做的选择，例如记住您的语言偏好或主题设置。',
+            'analytics-cookies': '<strong>分析cookie:</strong> 这些cookie帮助我们了解访问者如何与我们的网站互动，帮助我们改进我们的网站和服务。',
+            'cookies-we-use': '我们使用的Cookie',
+            'cookies-list-intro': '我们使用的特定cookie包括：',
+            'cookie-name': 'Cookie名称',
+            'cookie-purpose': '用途',
+            'cookie-duration': '持续时间',
+            'cookie-type': '类型',
+            'theme-cookie-purpose': '记住您的明/暗主题偏好',
+            'theme-cookie-duration': '1年',
+            'first-party': '第一方',
+            'language-cookie-purpose': '记住您的语言偏好',
+            'language-cookie-duration': '1年',
+            'operations-cookie-purpose': '存储您最近的转换操作',
+            'operations-cookie-duration': '30天',
+            'ga-cookie-purpose': 'Google Analytics cookie用于区分用户和限制请求率',
+            'ga-cookie-duration': '2年, 24小时, 1分钟',
+            'third-party': '第三方',
+            'control-cookies': '如何控制Cookie',
+            'control-cookies-explanation': '您可以通过多种方式控制和管理cookie。请记住，删除或阻止cookie可能会对您的用户体验产生负面影响，并且我们网站的某些部分可能不再完全可访问。',
+            'browser-controls': '大多数浏览器自动接受cookie，但您可以通过浏览器控件选择是否接受cookie，通常可以在浏览器的"工具"或"首选项"菜单中找到。有关如何修改浏览器设置或如何阻止、管理或过滤cookie的更多信息，您可以访问：',
+            'analytics-opt-out': 'Google Analytics退出',
+            'ga-opt-out': '要在所有网站上选择退出Google Analytics的跟踪，您可以访问<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics退出浏览器插件</a>并为您的浏览器安装该插件。',
             'policy-changes': '本Cookie政策的变更',
             'changes-desc': '我们可能会不时更新本Cookie政策，以反映我们使用的cookies变化或出于其他运营、法律或监管原因。因此，请定期重新访问本Cookie政策，以了解我们使用cookies和相关技术的情况。',
             'last-updated-info': '本Cookie政策顶部的日期表示其最后一次更新。',
-
-            // 页脚导航链接翻译
-            'home': '首页',
-            'router-configuration': '路由配置',
-            'ip-extraction': 'IP提取',
-            'cidr-converter': 'CIDR转换器',
-            'ip-to-cidr': 'IP到CIDR',
-            'sitemap': '网站地图',
-            'privacy-policy': '隐私政策',
-            'terms-of-service': '服务条款',
-            'cookie-policy': 'Cookie政策',
-            'contact-us': '联系我们',
-            'github': 'GitHub'
+            'contact-cookies': '联系我们',
+            'questions-cookies': '如果您对我们使用cookies或其他技术有任何问题，请通过我们的<a href="../contact">联系页面</a>联系我们。',
+            
+            // ... other translations
+            'processing': '处理中...',
+            'error-occurred': '转换过程中发生错误',
+            'enter-ip': '请输入IP地址。',
+            'no-valid-ip': '在输入中未找到有效的IP地址。',
+            'invalid-ip': '无效的IP地址格式',
         }
     };
 
@@ -687,189 +783,352 @@ document.addEventListener('DOMContentLoaded', function() {
     const recentOperations = document.getElementById('recentOperations');
     const MAX_RECENT_OPERATIONS = 20;
 
+    // 优化后的历史记录添加函数
     function addToRecentOperations(input) {
-        if (!recentOperations) return;
+        if (!recentOperations || !input || input.trim() === '') return;
 
-        // Create operation object with complete state
-        const operation = {
-            mode: currentMode,
-            input: input,
-            output: outputArea.value,
-            timestamp: new Date().toISOString(),
-            options: {}
-        };
-
-        // Save mode-specific options
-        if (currentMode === 'router-config') {
-            operation.options = {
-                routerType: document.getElementById('routerType').value,
-                sortOutput: sortOutput.checked
-            };
-            
-            // Save router-specific options
-            switch (operation.options.routerType) {
-                case 'routeros':
-                    operation.options.routerosType = document.querySelector('input[name="routeros-type"]:checked').value;
-                    if (operation.options.routerosType === 'route') {
-                        operation.options.routerosGateway = document.getElementById('routerosGateway').value;
-                    }
-                    operation.options.listName = document.getElementById('listName').value;
-                    break;
-                case 'cisco':
-                    operation.options.nextHopIp = document.getElementById('nextHopIp').value;
-                    operation.options.routeName = document.getElementById('routeName').value;
-                    break;
-                case 'huawei':
-                    operation.options.huaweiNextHop = document.getElementById('huaweiNextHop').value;
-                    break;
-                case 'juniper':
-                    operation.options.juniperNextHop = document.getElementById('juniperNextHop').value;
-                    break;
-                case 'fortinet':
-                    operation.options.fortinetType = document.querySelector('input[name="fortinet-type"]:checked').value;
-                    operation.options.addrGroupName = document.getElementById('addrGroupName').value;
-                    break;
-            }
-        } else if (currentMode === 'bulk-extract') {
-            operation.options = {
-                ipv4Only: document.getElementById('ipv4Only').checked,
-                removeDuplicates: document.getElementById('removeDuplicates').checked
-            };
-        }
-
-        const operationItem = document.createElement('li');
-        const timestamp = new Date(operation.timestamp).toLocaleString();
-        operationItem.innerHTML = `
-            <div class="operation-info">
-                <span class="operation-mode">${translations[currentLang][`tab-${operation.mode}`]}</span>
-                <span class="operation-time">${timestamp}</span>
-            </div>
-            <div class="operation-preview">${input.slice(0, 50)}${input.length > 50 ? '...' : ''}</div>
-        `;
-        
-        operationItem.addEventListener('click', () => {
-            restoreOperation(operation);
-        });
-
-        // Add to beginning of list
-        recentOperations.insertBefore(operationItem, recentOperations.firstChild);
-
-        // Remove oldest if exceeding max
-        while (recentOperations.children.length > MAX_RECENT_OPERATIONS) {
-            recentOperations.removeChild(recentOperations.lastChild);
-        }
-
-        // Save to localStorage
-        const savedOperations = JSON.parse(localStorage.getItem('recentOperations') || '[]');
-        savedOperations.unshift(operation);
-        while (savedOperations.length > MAX_RECENT_OPERATIONS) {
-            savedOperations.pop();
-        }
-        localStorage.setItem('recentOperations', JSON.stringify(savedOperations));
-    }
-
-    function restoreOperation(operation) {
-        // Switch to the correct tab if needed
-        if (currentMode !== operation.mode) {
-            const tabButton = document.querySelector(`[data-tab="${operation.mode}"]`);
-            if (tabButton) {
-                tabButton.click();
-            }
-        }
-
-        // Restore input and output
-        inputArea.value = operation.input;
-        outputArea.value = operation.output;
-
-        // Restore mode-specific options
-        if (operation.mode === 'router-config' && operation.options) {
-            // Set router type
-            const routerType = document.getElementById('routerType');
-            if (routerType) {
-                routerType.value = operation.options.routerType;
-                routerType.dispatchEvent(new Event('change'));
-            }
-
-            // Restore sort option
-            if (sortOutput) {
-                sortOutput.checked = operation.options.sortOutput;
-            }
-
-            // Restore router-specific options
-            switch (operation.options.routerType) {
-                case 'routeros':
-                    const routerosTypeRadio = document.querySelector(`input[name="routeros-type"][value="${operation.options.routerosType}"]`);
-                    if (routerosTypeRadio) {
-                        routerosTypeRadio.checked = true;
-                        routerosTypeRadio.dispatchEvent(new Event('change'));
-                    }
-                    if (operation.options.routerosType === 'route' && operation.options.routerosGateway) {
-                        document.getElementById('routerosGateway').value = operation.options.routerosGateway;
-                    }
-                    if (operation.options.listName) {
-                        document.getElementById('listName').value = operation.options.listName;
-                    }
-                    break;
-                case 'cisco':
-                    if (operation.options.nextHopIp) {
-                        document.getElementById('nextHopIp').value = operation.options.nextHopIp;
-                    }
-                    if (operation.options.routeName) {
-                        document.getElementById('routeName').value = operation.options.routeName;
-                    }
-                    break;
-                case 'huawei':
-                    if (operation.options.huaweiNextHop) {
-                        document.getElementById('huaweiNextHop').value = operation.options.huaweiNextHop;
-                    }
-                    break;
-                case 'juniper':
-                    if (operation.options.juniperNextHop) {
-                        document.getElementById('juniperNextHop').value = operation.options.juniperNextHop;
-                    }
-                    break;
-                case 'fortinet':
-                    const fortinetTypeRadio = document.querySelector(`input[name="fortinet-type"][value="${operation.options.fortinetType}"]`);
-                    if (fortinetTypeRadio) {
-                        fortinetTypeRadio.checked = true;
-                        fortinetTypeRadio.dispatchEvent(new Event('change'));
-                    }
-                    if (operation.options.addrGroupName) {
-                        document.getElementById('addrGroupName').value = operation.options.addrGroupName;
-                    }
-                    break;
-            }
-        } else if (operation.mode === 'bulk-extract' && operation.options) {
-            if (document.getElementById('ipv4Only')) {
-                document.getElementById('ipv4Only').checked = operation.options.ipv4Only;
-            }
-            if (document.getElementById('removeDuplicates')) {
-                document.getElementById('removeDuplicates').checked = operation.options.removeDuplicates;
-            }
-        }
-    }
-
-    // Load recent operations from localStorage
-    function loadRecentOperations() {
         try {
-            const savedOperations = JSON.parse(localStorage.getItem('recentOperations') || '[]');
-            savedOperations.forEach(operation => {
+            // 确保输入不为空
+            const trimmedInput = input.trim();
+            if (trimmedInput === '') return;
+            
+            // 获取当前操作的完整状态
+            const operation = {
+                mode: currentMode,
+                input: trimmedInput,
+                output: outputArea.value,
+                timestamp: new Date().toISOString(),
+                options: {},
+                appVersion: '1.1.0' // 添加版本号以支持未来兼容性
+            };
+
+            // 保存模式特定选项
+            if (currentMode === 'router-config') {
+                const routerType = document.getElementById('routerType')?.value || '';
+                operation.options = {
+                    routerType: routerType,
+                    sortOutput: document.getElementById('sortOutput')?.checked || false
+                };
+                
+                // 保存路由器特定选项
+                switch (routerType) {
+                    case 'routeros':
+                        const routerosType = document.querySelector('input[name="routeros-type"]:checked')?.value || 'route';
+                        operation.options.routerosType = routerosType;
+                        if (routerosType === 'route') {
+                            operation.options.routerosGateway = document.getElementById('routerosGateway')?.value || '';
+                        }
+                        operation.options.listName = document.getElementById('listName')?.value || 'CN';
+                        break;
+                    case 'cisco':
+                        operation.options.nextHopIp = document.getElementById('nextHopIp')?.value || '';
+                        operation.options.routeName = document.getElementById('routeName')?.value || 'CN';
+                        break;
+                    case 'huawei':
+                        operation.options.huaweiNextHop = document.getElementById('huaweiNextHop')?.value || '';
+                        break;
+                    case 'juniper':
+                        operation.options.juniperNextHop = document.getElementById('juniperNextHop')?.value || '';
+                        break;
+                    case 'fortinet':
+                        operation.options.fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value || 'address';
+                        operation.options.addrGroupName = document.getElementById('addrGroupName')?.value || 'IP_Group';
+                        break;
+                }
+            } else if (currentMode === 'bulk-extract') {
+                operation.options = {
+                    ipv4Only: document.getElementById('ipv4Only')?.checked || false,
+                    removeDuplicates: document.getElementById('removeDuplicates')?.checked || true
+                };
+            }
+            
+            // 从本地存储中获取现有操作
+            let savedOperations = [];
+            try {
+                savedOperations = JSON.parse(localStorage.getItem('recentOperations') || '[]');
+                // 验证数据结构
+                if (!Array.isArray(savedOperations)) {
+                    console.warn('Stored operations is not an array, resetting');
+                    savedOperations = [];
+                }
+            } catch (e) {
+                console.error('Failed to parse saved operations:', e);
+                savedOperations = [];
+            }
+            
+            // 防止重复记录同样的操作
+            const isDuplicate = savedOperations.some(op => 
+                op.mode === operation.mode && 
+                op.input === operation.input && 
+                Math.abs(new Date(op.timestamp) - new Date(operation.timestamp)) < 10000 // 10秒内的相同操作视为重复
+            );
+            
+            if (!isDuplicate) {
+                // 添加新操作到数组开头（最新的在前面）
+                savedOperations.unshift(operation);
+                
+                // 限制历史记录长度，保留最新的20条
+                const maxOperations = 20;
+                if (savedOperations.length > maxOperations) {
+                    savedOperations = savedOperations.slice(0, maxOperations);
+                }
+                
+                // 保存到本地存储
+                try {
+                    localStorage.setItem('recentOperations', JSON.stringify(savedOperations));
+                    refreshRecentOperations(savedOperations);
+                } catch (e) {
+                    // 处理本地存储限制或其他错误
+                    if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+                        // 存储空间不足时，移除一些较旧的记录
+                        savedOperations = savedOperations.slice(0, Math.max(5, Math.floor(savedOperations.length / 2)));
+                        localStorage.setItem('recentOperations', JSON.stringify(savedOperations));
+                        refreshRecentOperations(savedOperations);
+                        
+                        console.warn('Storage limit reached, reduced history length');
+                    } else {
+                        handleError(e, 'saving operations history');
+                    }
+                }
+            }
+        } catch (e) {
+            handleError(e, 'adding to recent operations');
+        }
+    }
+
+    // 刷新最近操作UI
+    function refreshRecentOperations(operations = null) {
+        if (!recentOperations) return;
+        
+        try {
+            // 清空当前列表
+            recentOperations.innerHTML = '';
+            
+            // 如果没有提供操作列表，从存储中获取
+            if (!operations) {
+                try {
+                    operations = JSON.parse(localStorage.getItem('recentOperations') || '[]');
+                } catch (e) {
+                    console.error('Failed to parse saved operations:', e);
+                    operations = [];
+                }
+            }
+            
+            // 验证操作是数组
+            if (!Array.isArray(operations)) {
+                console.warn('Operations is not an array:', operations);
+                operations = [];
+            }
+            
+            // 添加操作到UI
+            operations.forEach(operation => {
+                if (!operation || !operation.input) return;
+                
                 const operationItem = document.createElement('li');
                 const timestamp = new Date(operation.timestamp).toLocaleString();
+                
+                // 设置模式显示文本
+                let modeText = operation.mode || '';
+                if (translations[currentLang] && translations[currentLang][`tab-${modeText}`]) {
+                    modeText = translations[currentLang][`tab-${modeText}`];
+                }
+                
+                // 设置操作项的HTML
                 operationItem.innerHTML = `
                     <div class="operation-info">
+                        <span class="operation-mode">${modeText}</span>
                         <span class="operation-time">${timestamp}</span>
                     </div>
                     <div class="operation-preview">${operation.input.slice(0, 50)}${operation.input.length > 50 ? '...' : ''}</div>
                 `;
                 
+                // 添加点击事件还原操作
                 operationItem.addEventListener('click', () => {
                     restoreOperation(operation);
                 });
+                
+                // 添加到DOM
                 recentOperations.appendChild(operationItem);
             });
         } catch (e) {
-            console.error('Failed to load recent operations:', e);
+            handleError(e, 'refreshing recent operations');
+        }
+    }
+
+    // 优化的操作还原函数
+    function restoreOperation(operation) {
+        if (!operation) return;
+        
+        try {
+            // 切换到正确的模式
+            if (operation.mode && operation.mode !== currentMode) {
+                const tabButton = document.querySelector(`.tab-button[data-tab="${operation.mode}"]`);
+                if (tabButton) {
+                    // 触发点击事件以切换标签
+                    tabButton.click();
+                }
+            }
+            
+            // 延迟执行以确保UI已更新
+            setTimeout(() => {
+                try {
+                    // 填充输入区域
+                    if (operation.input && inputArea) {
+                        inputArea.value = operation.input;
+                    }
+                    
+                    // 应用保存的选项
+                    if (operation.options) {
+                        // 通用选项
+                        const sortOutput = document.getElementById('sortOutput');
+                        if (sortOutput && operation.options.sortOutput !== undefined) {
+                            sortOutput.checked = operation.options.sortOutput;
+                        }
+                        
+                        // 根据模式应用特定选项
+                        if (operation.mode === 'router-config') {
+                            // 设置路由器类型
+                            const routerTypeSelect = document.getElementById('routerType');
+                            if (routerTypeSelect && operation.options.routerType) {
+                                routerTypeSelect.value = operation.options.routerType;
+                                // 手动触发change事件
+                                const event = new Event('change');
+                                routerTypeSelect.dispatchEvent(event);
+                                
+                                // 延迟应用路由器特定选项，确保相关UI已经更新
+                                setTimeout(() => {
+                                    try {
+                                        applyRouterSpecificOptions(operation.options);
+                                    } catch (e) {
+                                        handleError(e, 'applying router specific options');
+                                    }
+                                }, 100);
+                            }
+                        } else if (operation.mode === 'bulk-extract') {
+                            // 设置批量提取选项
+                            const ipv4Only = document.getElementById('ipv4Only');
+                            if (ipv4Only && operation.options.ipv4Only !== undefined) {
+                                ipv4Only.checked = operation.options.ipv4Only;
+                            }
+                            
+                            const removeDuplicates = document.getElementById('removeDuplicates');
+                            if (removeDuplicates && operation.options.removeDuplicates !== undefined) {
+                                removeDuplicates.checked = operation.options.removeDuplicates;
+                            }
+                        }
+                    }
+                    
+                    // 显示通知
+                    const lang = localStorage.getItem('language') || 'en';
+                    const message = lang === 'en' 
+                        ? 'Operation restored successfully'
+                        : '操作已成功还原';
+                    showNotification(message, 'success');
+                    
+                } catch (e) {
+                    handleError(e, 'restoring operation details');
+                }
+            }, 100);
+        } catch (e) {
+            handleError(e, 'restoring operation');
+        }
+    }
+
+    // 辅助函数：应用路由器特定选项
+    function applyRouterSpecificOptions(options) {
+        if (!options || !options.routerType) return;
+        
+        switch (options.routerType) {
+            case 'routeros':
+                // 应用RouterOS选项
+                if (options.routerosType) {
+                    const routerosTypeRadio = document.querySelector(`input[name="routeros-type"][value="${options.routerosType}"]`);
+                    if (routerosTypeRadio) {
+                        routerosTypeRadio.checked = true;
+                        // 触发变化事件
+                        routerosTypeRadio.dispatchEvent(new Event('change'));
+                    }
+                }
+                
+                // 设置RouterOS网关
+                if (options.routerosGateway !== undefined) {
+                    const gateway = document.getElementById('routerosGateway');
+                    if (gateway) gateway.value = options.routerosGateway;
+                }
+                
+                // 设置列表名称
+                if (options.listName !== undefined) {
+                    const listName = document.getElementById('listName');
+                    if (listName) listName.value = options.listName;
+                }
+                break;
+                
+            case 'cisco':
+                // 应用Cisco选项
+                if (options.nextHopIp !== undefined) {
+                    const nextHop = document.getElementById('nextHopIp');
+                    if (nextHop) nextHop.value = options.nextHopIp;
+                }
+                
+                if (options.routeName !== undefined) {
+                    const routeName = document.getElementById('routeName');
+                    if (routeName) routeName.value = options.routeName;
+                }
+                break;
+                
+            case 'huawei':
+                // 应用华为选项
+                if (options.huaweiNextHop !== undefined) {
+                    const nextHop = document.getElementById('huaweiNextHop');
+                    if (nextHop) nextHop.value = options.huaweiNextHop;
+                }
+                break;
+                
+            case 'juniper':
+                // 应用Juniper选项
+                if (options.juniperNextHop !== undefined) {
+                    const nextHop = document.getElementById('juniperNextHop');
+                    if (nextHop) nextHop.value = options.juniperNextHop;
+                }
+                break;
+                
+            case 'fortinet':
+                // 应用Fortinet选项
+                if (options.fortinetType) {
+                    const fortinetTypeRadio = document.querySelector(`input[name="fortinet-type"][value="${options.fortinetType}"]`);
+                    if (fortinetTypeRadio) {
+                        fortinetTypeRadio.checked = true;
+                        // 触发变化事件
+                        fortinetTypeRadio.dispatchEvent(new Event('change'));
+                    }
+                }
+                
+                if (options.addrGroupName !== undefined) {
+                    const groupName = document.getElementById('addrGroupName');
+                    if (groupName) groupName.value = options.addrGroupName;
+                }
+                break;
+        }
+    }
+
+    // 优化的历史记录加载函数
+    function loadRecentOperations() {
+        try {
+            // 获取已保存的操作
+            let savedOperations;
+            try {
+                savedOperations = JSON.parse(localStorage.getItem('recentOperations') || '[]');
+            } catch (e) {
+                console.error('Failed to parse saved operations:', e);
+                savedOperations = [];
+                // 重置存储以避免将来出现相同错误
+                localStorage.setItem('recentOperations', '[]');
+            }
+            
+            // 刷新UI
+            refreshRecentOperations(savedOperations);
+        } catch (e) {
+            handleError(e, 'loading recent operations');
         }
     }
 
@@ -1427,30 +1686,90 @@ end`;
 
     // Helper functions
     function isValidIp(ip) {
-        const parts = ip.split('.');
-        if (parts.length !== 4) return false;
-
-        for (const part of parts) {
-            const num = parseInt(part);
-            if (isNaN(num) || num < 0 || num > 255) return false;
-        }
-
-        return true;
-    }
-
-    // Validate mask
-    function isValidMask(mask) {
-        // Check if it's a predefined mask
-        if (mask in maskToCidrMap) {
+        if (!ip || typeof ip !== 'string') return false;
+        
+        // 移除前后空白
+        ip = ip.trim();
+        
+        // 检查特殊情况：localhost
+        if (ip === 'localhost') return true;
+        
+        // 检查IPv4格式
+        if (ip.includes('.')) {
+            const parts = ip.split('.');
+            
+            // 必须是4段
+            if (parts.length !== 4) return false;
+            
+            // 检查每段是否是有效的数字
+            for (const part of parts) {
+                // 检查是否包含非数字字符
+                if (!/^\d+$/.test(part)) return false;
+                
+                // 检查范围
+                const num = parseInt(part, 10);
+                
+                // 检查前导零（除非是单独的零）
+                if (part.length > 1 && part.startsWith('0')) return false;
+                
+                // 检查范围
+                if (isNaN(num) || num < 0 || num > 255) return false;
+            }
+            
             return true;
         }
         
-        // If not a predefined mask, check if it's a valid IP format
+        // 简单验证IPv6格式
+        if (ip.includes(':')) {
+            // 检查最基本的IPv6格式要求
+            const segments = ip.split(':');
+            
+            // IPv6地址最多有8段（如果有双冒号::，则可能更少）
+            if (segments.length > 8) return false;
+            
+            // 检查双冒号（::）的数量，最多只能有一个
+            const doubleColonCount = (ip.match(/::/g) || []).length;
+            if (doubleColonCount > 1) return false;
+            
+            // 如果有双冒号并且段数已经是8，那就是无效的
+            if (doubleColonCount === 1 && segments.length === 8) return false;
+            
+            // 检查每段是否是有效的十六进制
+            for (let segment of segments) {
+                // 处理空段（可能出现在双冒号中）
+                if (segment === '') continue;
+                
+                // 每段最多4个十六进制字符
+                if (segment.length > 4) return false;
+                
+                // 检查是否是有效的十六进制
+                if (!/^[0-9A-Fa-f]+$/.test(segment)) return false;
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
+
+    // 增强的子网掩码验证函数
+    function isValidMask(mask) {
+        if (!mask || typeof mask !== 'string') return false;
+        
+        // 移除前后空白
+        mask = mask.trim();
+        
+        // 检查是否是预定义的掩码
+        if (maskToCidrMap && mask in maskToCidrMap) {
+            return true;
+        }
+        
+        // 检查是否是有效的IP格式
         if (!isValidIp(mask)) {
             return false;
         }
         
-        // Check if it's a valid subnet mask (continuous 1s followed by continuous 0s)
+        // 将IP格式转换为二进制字符串
         const parts = mask.split('.').map(part => parseInt(part, 10));
         let binary = '';
         
@@ -1458,6 +1777,9 @@ end`;
             binary += part.toString(2).padStart(8, '0');
         }
         
+        // 检查是否是连续的1后跟连续的0（有效的子网掩码模式）
+        // 有效掩码：11111111.11111111.11111111.00000000 (255.255.255.0)
+        // 无效掩码：11111111.11111111.11110111.00000000 (255.255.247.0)
         return /^1*0*$/.test(binary);
     }
 
@@ -1692,47 +2014,52 @@ end`;
         return mask in maskToCidrMap;
     }
 
-    // Make sure IP addresses are valid
+    // 增强的IP地址验证函数，用于验证CIDR格式的IP地址列表
     function validateIpAddresses(ipAddresses) {
         return ipAddresses.filter(ip => {
             try {
-                // Extract IP and CIDR parts
-                const parts = ip.split('/');
-                if (parts.length !== 2) return false;
+                if (!ip || typeof ip !== 'string') return false;
                 
-                const [ipPart, cidrPart] = parts;
-                const cidr = parseInt(cidrPart);
+                // 移除前后空白
+                ip = ip.trim();
                 
-                // 检查是否是常见的子网掩码值
-                if (ipPart in maskToCidrMap) return false;
-                
-                // Basic validation for IPv4
-                if (ip.includes('.')) {
-                    // Check CIDR range
-                    if (cidr < 0 || cidr > 32) return false;
+                // 检查是否是CIDR格式
+                if (ip.includes('/')) {
+                    // 提取IP和CIDR部分
+                    const [ipPart, cidrPart] = ip.split('/');
                     
-                    // Validate IP format
-                    const octets = ipPart.split('.');
-                    if (octets.length !== 4) return false;
+                    // 验证CIDR部分
+                    const cidr = parseInt(cidrPart, 10);
+                    if (isNaN(cidr)) return false;
                     
-                    // Check each octet is valid (0-255)
-                    for (const octet of octets) {
-                        const num = parseInt(octet);
-                        if (isNaN(num) || num < 0 || num > 255) return false;
+                    // 检查是否是常见的子网掩码值（避免把掩码当作IP）
+                    if (ipPart in maskToCidrMap) return false;
+                    
+                    // IPv4验证
+                    if (ip.includes('.')) {
+                        // 检查CIDR范围 (0-32)
+                        if (cidr < 0 || cidr > 32) return false;
+                        
+                        // 验证IP部分
+                        return isValidIp(ipPart);
+                    } 
+                    // IPv6验证
+                    else if (ip.includes(':')) {
+                        // 检查CIDR范围 (0-128)
+                        if (cidr < 0 || cidr > 128) return false;
+                        
+                        // 验证IPv6部分
+                        return isValidIp(ipPart);
                     }
-                    
-                    return true;
                 } 
-                // Basic validation for IPv6
-                else if (ip.includes(':')) {
-                    // Check CIDR range
-                    if (cidr < 0 || cidr > 128) return false;
-                    
-                    // Very basic IPv6 format check (full validation is complex)
-                    const segments = ipPart.split(':');
-                    if (segments.length < 2 || segments.length > 8) return false;
-                    
-                    return true;
+                // 非CIDR格式，可能是IP+掩码格式
+                else if (ip.includes(' ')) {
+                    const [ipPart, maskPart] = ip.split(/\s+/);
+                    return isValidIp(ipPart) && isValidMask(maskPart);
+                }
+                // 纯IP地址格式
+                else {
+                    return isValidIp(ip);
                 }
                 
                 return false;
@@ -2151,11 +2478,11 @@ end`;
             },
             zh: {
                 'contact-title': '联系我们',
-                'get-in-touch': '联系方式',
-                'contact-intro': '对我们的工具有疑问、反馈或需要帮助？我们很乐意听取您的意见。填写下面的表单，我们将尽快回复您。',
+                'get-in-touch': '与我们联系',
+                'contact-intro': '对我们的工具有疑问、反馈或需要帮助？我们很乐意听取您的意见。请填写下面的表单，我们会尽快回复您。',
                 'email-title': '📧 电子邮件',
                 'github-title': '💻 GitHub',
-                'general-inquiries': '一般查询：',
+                'general-inquiries': '一般咨询：',
                 'tech-support': '技术支持：',
                 'bug-reports': '如需报告错误或请求新功能，请访问我们的GitHub仓库。',
                 'contact-form-title': '联系表单',
@@ -2210,17 +2537,8 @@ end`;
             }
         });
 
-        // 翻译页面标题
-        const pageType = document.querySelector('h1')?.textContent || '';
-        if (pageType.includes('Privacy Policy') || pageType.includes('隐私政策')) {
-            document.title = lang === 'zh' ? '隐私政策 | IPToRoute - IP地址与路由器配置工具' : 'Privacy Policy | IPToRoute - IP Address & Router Configuration Tool';
-        } else if (pageType.includes('Terms of Service') || pageType.includes('服务条款')) {
-            document.title = lang === 'zh' ? '服务条款 | IPToRoute - IP地址与路由器配置工具' : 'Terms of Service | IPToRoute - IP Address & Router Configuration Tool';
-        } else if (pageType.includes('Cookie Policy') || pageType.includes('Cookie政策')) {
-            document.title = lang === 'zh' ? 'Cookie政策 | IPToRoute - IP地址与路由器配置工具' : 'Cookie Policy | IPToRoute - IP Address & Router Configuration Tool';
-        } else if (pageType.includes('Contact Us') || pageType.includes('联系我们')) {
-            document.title = lang === 'zh' ? '联系我们 | IPToRoute - IP地址与路由器配置工具' : 'Contact Us | IPToRoute - IP Address & Router Configuration Tool';
-        }
+        // 翻译页面标题（使用统一的标题生成函数）
+        updatePageTitle(lang);
 
         // 特殊处理：对于有data-lang属性的元素
         document.querySelectorAll('[data-lang]').forEach(element => {
@@ -2432,184 +2750,696 @@ end`;
     // 检查当前URL中的锚点...
     
     // ... rest of the code ...
-});
 
-// Resizer functionality
-function setupResizer() {
-    console.log('Setting up resizer...');
-    const resizer = document.getElementById('horizontalResizer');
-    const conversionPanel = document.querySelector('.conversion-panel');
-    const inputSection = document.querySelector('.input-section');
-    const outputSection = document.querySelector('.output-section');
+    // 错误处理工具函数
+    function handleError(error, context = '') {
+        console.error(`Error ${context ? 'in ' + context : ''}:`, error);
+        
+        // 根据错误类型提供友好的错误消息
+        let userMessage;
+        const lang = localStorage.getItem('language') || 'en';
+        
+        if (error instanceof SyntaxError) {
+            userMessage = lang === 'en' 
+                ? 'Syntax error: The input format is invalid. Please check your input.'
+                : '语法错误：输入格式无效。请检查您的输入。';
+        } else if (error instanceof RangeError) {
+            userMessage = lang === 'en'
+                ? 'Range error: One of the values is outside the acceptable range.'
+                : '范围错误：某个值超出了可接受的范围。';
+        } else if (error instanceof TypeError) {
+            userMessage = lang === 'en'
+                ? 'Type error: The operation could not be performed on this type of data.'
+                : '类型错误：无法对此类型的数据执行操作。';
+        } else if (error instanceof ReferenceError) {
+            userMessage = lang === 'en'
+                ? 'Reference error: An internal error occurred.'
+                : '引用错误：发生内部错误。';
+        } else {
+            userMessage = lang === 'en'
+                ? 'An unexpected error occurred. Please try again with different input.'
+                : '发生意外错误。请尝试使用不同的输入。';
+        }
+        
+        // 显示错误消息
+        showNotification(userMessage, 'error');
+        
+        // 记录错误
+        logErrorToAnalytics(error, context);
+        
+        return userMessage;
+    }
     
-    if (!resizer || !conversionPanel || !inputSection || !outputSection) {
-        console.error('Resizer elements not found:', {
-            resizer: !!resizer,
-            conversionPanel: !!conversionPanel,
-            inputSection: !!inputSection,
-            outputSection: !!outputSection
+    // 显示通知给用户
+    function showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        
+        if (!notification || !notificationMessage) return;
+        
+        // 设置消息和样式
+        notificationMessage.textContent = message;
+        notification.className = 'notification-container';
+        notification.classList.add(`notification-${type}`);
+        
+        // 显示通知
+        notification.style.display = 'block';
+        
+        // 自动隐藏通知
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 5000);
+    }
+    
+    // 记录错误到分析系统（如果有）
+    function logErrorToAnalytics(error, context) {
+        // 检查是否在生产环境并且分析工具已加载
+        if (window.location.hostname !== 'localhost' && 
+            !window.location.hostname.includes('127.0.0.1') && 
+            typeof gtag === 'function') {
+            
+            gtag('event', 'error', {
+                'event_category': 'JavaScript',
+                'event_label': context || 'Unknown context',
+                'value': error.message || 'No error message',
+                'non_interaction': true
+            });
+        }
+    }
+
+    // Web Worker支持 - 优化大数据集处理性能
+    let ipWorker;
+
+    // Web Worker初始化
+    function initWebWorker() {
+        if (window.Worker && !ipWorker) {
+            try {
+                // 创建IP处理Web Worker的Blob URL
+                const workerCode = `
+                    // IP处理Worker
+                    
+                    // CIDR转IP范围
+                    function cidrToRange(cidr) {
+                        const [ip, prefix] = cidr.split('/');
+                        const prefixSize = parseInt(prefix, 10);
+                        
+                        // 验证是否为IPv4
+                        if (ip.includes(':')) {
+                            return { start: ip, end: ip, prefixSize }; // IPv6不计算范围
+                        }
+                        
+                        // 将IP转换为数字
+                        const ipInt = ipToInt(ip);
+                        
+                        // 计算网络和广播地址
+                        const maskBits = -1 << (32 - prefixSize);
+                        const netStart = ipInt & maskBits;
+                        const netEnd = netStart | ~maskBits;
+                        
+                        return {
+                            start: intToIp(netStart),
+                            end: intToIp(netEnd),
+                            prefixSize
+                        };
+                    }
+                    
+                    // IP转整数
+                    function ipToInt(ip) {
+                        return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0) >>> 0;
+                    }
+                    
+                    // 整数转IP
+                    function intToIp(ipInt) {
+                        return [
+                            (ipInt >>> 24) & 255,
+                            (ipInt >>> 16) & 255,
+                            (ipInt >>> 8) & 255,
+                            ipInt & 255
+                        ].join('.');
+                    }
+                    
+                    // IP地址验证函数
+                    function validateIpAddress(ip) {
+                        // IPv4验证
+                        const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+                        
+                        // IPv6验证 (简化版)
+                        const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^([0-9a-fA-F]{1,4}:){1,7}:|^([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$|^([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}$|^([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}$|^([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}$|^([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}$|^[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})$|^:((:[0-9a-fA-F]{1,4}){1,7}|:)$/;
+                        
+                        return ipv4Regex.test(ip) ? 'ipv4' : (ipv6Regex.test(ip) ? 'ipv6' : null);
+                    }
+                    
+                    // CIDR验证
+                    function validateCidr(cidr) {
+                        if (!cidr.includes('/')) return null;
+                        
+                        const [ip, prefix] = cidr.split('/');
+                        const prefixNum = parseInt(prefix, 10);
+                        
+                        const ipType = validateIpAddress(ip);
+                        if (!ipType) return null;
+                        
+                        // 验证前缀长度
+                        if (isNaN(prefixNum)) return null;
+                        
+                        if (ipType === 'ipv4' && (prefixNum < 0 || prefixNum > 32)) return null;
+                        if (ipType === 'ipv6' && (prefixNum < 0 || prefixNum > 128)) return null;
+                        
+                        return ipType;
+                    }
+                    
+                    // 提取IP地址函数 - Worker版本
+                    function extractIpsWorker(text, ipv4Only = false) {
+                        if (!text) return [];
+                        
+                        // 移除注释、特殊字符等
+                        text = text.replace(/\\/\\*[\\s\\S]*?\\*\\//g, '') // 多行注释
+                                 .replace(/\\/\\/.*$/gm, '')    // 单行注释
+                                 .replace(/[""'']/g, '');      // 引号
+                        
+                        const results = new Set();
+                        
+                        // 匹配CIDR
+                        const cidrRegex = ipv4Only 
+                            ? /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\/([0-9]|[12][0-9]|3[0-2])/g
+                            : /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\/([0-9]|[12][0-9]|3[0-2])|([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])/g;
+                        
+                        let match;
+                        while ((match = cidrRegex.exec(text)) !== null) {
+                            results.add(match[0]);
+                        }
+                        
+                        // 匹配普通IP地址
+                        const ipRegex = ipv4Only
+                            ? /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g
+                            : /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g;
+                        
+                        while ((match = ipRegex.exec(text)) !== null) {
+                            // 排除已添加的CIDR
+                            if (!Array.from(results).some(cidr => cidr.startsWith(match[0] + '/'))) {
+                                results.add(match[0]);
+                            }
+                        }
+                        
+                        return Array.from(results);
+                    }
+                    
+                    // 批量验证IP地址
+                    function bulkValidateIps(ips) {
+                        if (!Array.isArray(ips)) return [];
+                        
+                        return ips.map(ip => {
+                            if (ip.includes('/')) {
+                                // CIDR格式
+                                return {
+                                    original: ip,
+                                    valid: validateCidr(ip) !== null,
+                                    type: validateCidr(ip)
+                                };
+                            } else {
+                                // 普通IP
+                                const type = validateIpAddress(ip);
+                                return {
+                                    original: ip,
+                                    valid: type !== null,
+                                    type: type
+                                };
+                            }
+                        });
+                    }
+                    
+                    // 处理Worker消息
+                    self.onmessage = function(e) {
+                        const { action, data } = e.data;
+                        
+                        switch (action) {
+                            case 'extractIps':
+                                const result = extractIpsWorker(data.text, data.ipv4Only);
+                                self.postMessage({ 
+                                    action: 'extractIpsResult', 
+                                    data: result
+                                });
+                                break;
+                            case 'validateIps':
+                                const validationResults = bulkValidateIps(data.ips);
+                                self.postMessage({ 
+                                    action: 'validateIpsResult', 
+                                    data: validationResults
+                                });
+                                break;
+                            case 'convertToCidr':
+                                try {
+                                    const { ips, netmasks } = data;
+                                    const results = [];
+                                    
+                                    for (let i = 0; i < ips.length; i++) {
+                                        const ip = ips[i];
+                                        const mask = netmasks[i] || '255.255.255.255';
+                                        
+                                        // 计算CIDR前缀
+                                        let prefix = 0;
+                                        const octets = mask.split('.');
+                                        for (let j = 0; j < octets.length; j++) {
+                                            const octet = parseInt(octets[j], 10);
+                                            for (let k = 7; k >= 0; k--) {
+                                                if (octet & (1 << k)) {
+                                                    prefix++;
+                                                } else {
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        
+                                        results.push(ip + '/' + prefix);
+                                    }
+                                    
+                                    self.postMessage({
+                                        action: 'convertToCidrResult',
+                                        data: results
+                                    });
+                                } catch (error) {
+                                    self.postMessage({
+                                        action: 'error',
+                                        data: error.message
+                                    });
+                                }
+                                break;
+                            default:
+                                self.postMessage({
+                                    action: 'error',
+                                    data: 'Unknown action: ' + action
+                                });
+                        }
+                    };
+                `;
+                
+                // 创建Blob对象
+                const blob = new Blob([workerCode], { type: 'application/javascript' });
+                const workerUrl = URL.createObjectURL(blob);
+                
+                // 创建Worker
+                ipWorker = new Worker(workerUrl);
+                
+                // 设置消息处理器
+                ipWorker.onmessage = function(e) {
+                    const { action, data } = e.data;
+                    
+                    switch (action) {
+                        case 'extractIpsResult':
+                            // 处理IP提取结果
+                            if (workerCallbacks.extractIps) {
+                                workerCallbacks.extractIps(data);
+                                delete workerCallbacks.extractIps;
+                            }
+                            break;
+                        case 'validateIpsResult':
+                            // 处理IP验证结果
+                            if (workerCallbacks.validateIps) {
+                                workerCallbacks.validateIps(data);
+                                delete workerCallbacks.validateIps;
+                            }
+                            break;
+                        case 'convertToCidrResult':
+                            // 处理CIDR转换结果
+                            if (workerCallbacks.convertToCidr) {
+                                workerCallbacks.convertToCidr(data);
+                                delete workerCallbacks.convertToCidr;
+                            }
+                            break;
+                        case 'error':
+                            console.error('Worker错误:', data);
+                            // 通知所有回调
+                            for (const key in workerCallbacks) {
+                                if (typeof workerCallbacks[key] === 'function') {
+                                    workerCallbacks[key]([]);
+                                    delete workerCallbacks[key];
+                                }
+                            }
+                            break;
+                    }
+                    
+                    // 隐藏加载指示器
+                    if (Object.keys(workerCallbacks).length === 0) {
+                        hideLoading();
+                    }
+                };
+                
+                // 处理Worker错误
+                ipWorker.onerror = function(error) {
+                    console.error('Worker错误:', error);
+                    handleError(error, 'IP处理Worker');
+                    
+                    // 通知所有回调
+                    for (const key in workerCallbacks) {
+                        if (typeof workerCallbacks[key] === 'function') {
+                            workerCallbacks[key]([]);
+                            delete workerCallbacks[key];
+                        }
+                    }
+                    
+                    hideLoading();
+                };
+                
+                return true;
+            } catch (e) {
+                console.error('初始化Worker失败:', e);
+                handleError(e, 'initializing worker');
+                return false;
+            }
+        }
+        return false;
+    }
+
+    // 销毁Worker
+    function terminateWorker() {
+        if (ipWorker) {
+            ipWorker.terminate();
+            ipWorker = null;
+        }
+    }
+
+    // Worker回调存储
+    const workerCallbacks = {};
+
+    // 使用Worker提取IP
+    function extractIpsWithWorker(text, ipv4Only = false) {
+        return new Promise((resolve) => {
+            if (!initWebWorker()) {
+                // 如果Worker初始化失败，使用主线程处理
+                const result = extractIps(text, ipv4Only);
+                resolve(result);
+                return;
+            }
+            
+            // 显示加载指示器
+            showLoading();
+            
+            // 存储回调
+            workerCallbacks.extractIps = resolve;
+            
+            // 发送消息给Worker
+            ipWorker.postMessage({
+                action: 'extractIps',
+                data: { text, ipv4Only }
+            });
         });
-        return;
     }
-    
-    console.log('Resizer elements found:', {
-        resizer: resizer,
-        conversionPanel: conversionPanel,
-        inputSection: inputSection,
-        outputSection: outputSection
-    });
-    
-    // Check initial styles
-    console.log('Initial styles:', {
-        resizerStyle: window.getComputedStyle(resizer),
-        inputSectionStyle: window.getComputedStyle(inputSection),
-        outputSectionStyle: window.getComputedStyle(outputSection)
-    });
-    
-    // Load saved width percentages from localStorage
-    const savedInputWidth = localStorage.getItem('inputSectionWidth');
-    const savedOutputWidth = localStorage.getItem('outputSectionWidth');
-    
-    if (savedInputWidth && savedOutputWidth && window.innerWidth >= 768) {
-        console.log('Applying saved widths:', savedInputWidth, savedOutputWidth);
-        inputSection.style.flex = `0 0 ${savedInputWidth}`;
-        outputSection.style.flex = `0 0 ${savedOutputWidth}`;
-    } else if (window.innerWidth >= 768) {
-        // Set default initial widths if no saved values
-        console.log('Setting default initial widths');
-        const defaultInputWidth = 50;
-        const defaultOutputWidth = 50 - (resizer.offsetWidth / conversionPanel.offsetWidth) * 100;
-        
-        inputSection.style.flex = `0 0 ${defaultInputWidth}%`;
-        outputSection.style.flex = `0 0 ${defaultOutputWidth}%`;
-        
-        localStorage.setItem('inputSectionWidth', `${defaultInputWidth}%`);
-        localStorage.setItem('outputSectionWidth', `${defaultOutputWidth}%`);
+
+    // 使用Worker批量验证IP
+    function validateIpsWithWorker(ips) {
+        return new Promise((resolve) => {
+            if (!Array.isArray(ips) || ips.length === 0) {
+                resolve([]);
+                return;
+            }
+            
+            if (!initWebWorker()) {
+                // 如果Worker初始化失败，使用同步验证
+                const results = ips.map(ip => ({
+                    original: ip,
+                    valid: isValidIpOrCidr(ip),
+                    type: ip.includes(':') ? 'ipv6' : 'ipv4'
+                }));
+                resolve(results);
+                return;
+            }
+            
+            // 显示加载指示器
+            showLoading();
+            
+            // 存储回调
+            workerCallbacks.validateIps = resolve;
+            
+            // 发送消息给Worker
+            ipWorker.postMessage({
+                action: 'validateIps',
+                data: { ips }
+            });
+        });
     }
-    
-    // Check styles after setting widths
-    console.log('Styles after setting widths:', {
-        resizerStyle: window.getComputedStyle(resizer),
-        inputSectionStyle: window.getComputedStyle(inputSection),
-        outputSectionStyle: window.getComputedStyle(outputSection)
+
+    // 更新bulkExtract函数使用Worker
+    async function bulkExtract() {
+        try {
+            const inputText = document.getElementById('bulkInput').value;
+            if (!inputText) {
+                showNotification(translations[currentLang]['no-input'], 'warning');
+                return;
+            }
+            
+            const ipv4Only = document.getElementById('ipv4Only').checked;
+            const removeDuplicates = document.getElementById('removeDuplicates').checked;
+            
+            // 使用Worker提取IP
+            showLoading();
+            let extractedIps = await extractIpsWithWorker(inputText, ipv4Only);
+            
+            // 去重
+            if (removeDuplicates && extractedIps.length > 0) {
+                extractedIps = [...new Set(extractedIps)];
+            }
+            
+            // 排序
+            if (extractedIps.length > 1) {
+                extractedIps.sort(sortIpAddresses);
+            }
+            
+            // 显示结果
+            const outputElement = document.getElementById('bulkOutput');
+            outputElement.value = extractedIps.join('\n');
+            
+            // 更新提取统计
+            const statsElement = document.getElementById('extractStats');
+            if (statsElement) {
+                const ipv4Count = extractedIps.filter(ip => !ip.includes(':')).length;
+                const ipv6Count = extractedIps.length - ipv4Count;
+                
+                statsElement.innerHTML = 
+                    `<div>${translations[currentLang]['extracted']}: <strong>${extractedIps.length}</strong> ${translations[currentLang]['addresses']}</div>
+                     <div>IPv4: <strong>${ipv4Count}</strong>, IPv6: <strong>${ipv6Count}</strong></div>`;
+                statsElement.style.display = 'block';
+            }
+            
+            hideLoading();
+            
+            // 添加到历史记录
+            addToRecentOperations(inputText);
+            
+        } catch (error) {
+            hideLoading();
+            handleError(error, 'bulk extracting IPs');
+        }
+    }
+
+    // 显示加载指示器
+    function showLoading() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.display = 'flex';
+        }
+    }
+
+    // 隐藏加载指示器
+    function hideLoading() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }
+
+    // 在文档加载完成时初始化Worker
+    document.addEventListener('DOMContentLoaded', function() {
+        // 仅为大屏幕设备初始化Worker
+        if (window.innerWidth >= 768) {
+            initWebWorker();
+        }
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768 && !ipWorker) {
+                initWebWorker();
+            } else if (window.innerWidth < 768 && ipWorker) {
+                terminateWorker();
+            }
+        });
     });
-    
-    let isResizing = false;
-    
-    // Mouse events for desktop
-    resizer.addEventListener('mousedown', function(e) {
-        console.log('Resizer mousedown');
-        if (window.innerWidth < 768) return; // Prevent on mobile
-        isResizing = true;
-        resizer.classList.add('active');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none'; // Prevent text selection during resize
+
+    // Resizer functionality
+    function setupResizer() {
+        console.log('Setting up resizer...');
+        const resizer = document.getElementById('horizontalResizer');
+        const conversionPanel = document.querySelector('.conversion-panel');
+        const inputSection = document.querySelector('.input-section');
+        const outputSection = document.querySelector('.output-section');
         
-        // Prevent default drag behavior
-        e.preventDefault();
-    });
-    
-    document.addEventListener('mousemove', function(e) {
-        if (!isResizing) return;
-        
-        console.log('Resizing in progress...');
-        
-        const containerRect = conversionPanel.getBoundingClientRect();
-        const containerWidth = containerRect.width;
-        const resizerWidth = resizer.offsetWidth;
-        
-        // Calculate position relative to container
-        const posX = e.clientX - containerRect.left;
-        console.log('Mouse position:', posX, 'Container width:', containerWidth);
-        
-        // Ensure minimum width for both sides
-        const minWidth = 200; // Minimum width in pixels
-        
-        if (posX < minWidth || posX > containerWidth - minWidth - resizerWidth) {
-            console.log('Position out of bounds, skipping');
+        if (!resizer || !conversionPanel || !inputSection || !outputSection) {
+            console.error('Resizer elements not found:', {
+                resizer: !!resizer,
+                conversionPanel: !!conversionPanel,
+                inputSection: !!inputSection,
+                outputSection: !!outputSection
+            });
             return;
         }
         
-        // Set percentage-based widths for both sections
-        const inputWidth = (posX / containerWidth) * 100;
-        const outputWidth = 100 - inputWidth - (resizerWidth / containerWidth) * 100;
+        console.log('Resizer elements found:', {
+            resizer: resizer,
+            conversionPanel: conversionPanel,
+            inputSection: inputSection,
+            outputSection: outputSection
+        });
         
-        console.log('Setting widths - input:', inputWidth + '%', 'output:', outputWidth + '%');
+        // Check initial styles
+        console.log('Initial styles:', {
+            resizerStyle: window.getComputedStyle(resizer),
+            inputSectionStyle: window.getComputedStyle(inputSection),
+            outputSectionStyle: window.getComputedStyle(outputSection)
+        });
         
-        inputSection.style.flex = `0 0 ${inputWidth}%`;
-        outputSection.style.flex = `0 0 ${outputWidth}%`;
+        // Load saved width percentages from localStorage
+        const savedInputWidth = localStorage.getItem('inputSectionWidth');
+        const savedOutputWidth = localStorage.getItem('outputSectionWidth');
         
-        // Save widths to localStorage
-        localStorage.setItem('inputSectionWidth', `${inputWidth}%`);
-        localStorage.setItem('outputSectionWidth', `${outputWidth}%`);
-    });
-    
-    document.addEventListener('mouseup', function() {
-        if (!isResizing) return;
-        
-        isResizing = false;
-        resizer.classList.remove('active');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-    });
-    
-    // Touch events for mobile/tablet
-    resizer.addEventListener('touchstart', function(e) {
-        if (window.innerWidth < 768) return;
-        isResizing = true;
-        resizer.classList.add('active');
-        document.body.style.userSelect = 'none';
-        e.preventDefault();
-    });
-    
-    document.addEventListener('touchmove', function(e) {
-        if (!isResizing) return;
-        
-        const touch = e.touches[0];
-        const containerRect = conversionPanel.getBoundingClientRect();
-        const containerWidth = containerRect.width;
-        const resizerWidth = resizer.offsetWidth;
-        
-        const posX = touch.clientX - containerRect.left;
-        const minWidth = 200;
-        
-        if (posX < minWidth || posX > containerWidth - minWidth - resizerWidth) return;
-        
-        const inputWidth = (posX / containerWidth) * 100;
-        const outputWidth = 100 - inputWidth - (resizerWidth / containerWidth) * 100;
-        
-        inputSection.style.flex = `0 0 ${inputWidth}%`;
-        outputSection.style.flex = `0 0 ${outputWidth}%`;
-        
-        localStorage.setItem('inputSectionWidth', `${inputWidth}%`);
-        localStorage.setItem('outputSectionWidth', `${outputWidth}%`);
-    });
-    
-    document.addEventListener('touchend', function() {
-        if (!isResizing) return;
-        
-        isResizing = false;
-        resizer.classList.remove('active');
-        document.body.style.userSelect = '';
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth < 768) {
-            // Reset styles on mobile
-            inputSection.style.flex = '';
-            outputSection.style.flex = '';
-        } else if (savedInputWidth && savedOutputWidth) {
-            // Restore saved widths on desktop
+        if (savedInputWidth && savedOutputWidth && window.innerWidth >= 768) {
+            console.log('Applying saved widths:', savedInputWidth, savedOutputWidth);
             inputSection.style.flex = `0 0 ${savedInputWidth}`;
             outputSection.style.flex = `0 0 ${savedOutputWidth}`;
+        } else if (window.innerWidth >= 768) {
+            // Set default initial widths if no saved values
+            console.log('Setting default initial widths');
+            const defaultInputWidth = 50;
+            const defaultOutputWidth = 50 - (resizer.offsetWidth / conversionPanel.offsetWidth) * 100;
+            
+            inputSection.style.flex = `0 0 ${defaultInputWidth}%`;
+            outputSection.style.flex = `0 0 ${defaultOutputWidth}%`;
+            
+            localStorage.setItem('inputSectionWidth', `${defaultInputWidth}%`);
+            localStorage.setItem('outputSectionWidth', `${defaultOutputWidth}%`);
         }
-    });
-}
+        
+        // Check styles after setting widths
+        console.log('Styles after setting widths:', {
+            resizerStyle: window.getComputedStyle(resizer),
+            inputSectionStyle: window.getComputedStyle(inputSection),
+            outputSectionStyle: window.getComputedStyle(outputSection)
+        });
+        
+        let isResizing = false;
+        
+        // Mouse events for desktop
+        resizer.addEventListener('mousedown', function(e) {
+            console.log('Resizer mousedown');
+            if (window.innerWidth < 768) return; // Prevent on mobile
+            isResizing = true;
+            resizer.classList.add('active');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none'; // Prevent text selection during resize
+            
+            // Prevent default drag behavior
+            e.preventDefault();
+        });
+        
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            
+            console.log('Resizing in progress...');
+            
+            const containerRect = conversionPanel.getBoundingClientRect();
+            const containerWidth = containerRect.width;
+            const resizerWidth = resizer.offsetWidth;
+            
+            // Calculate position relative to container
+            const posX = e.clientX - containerRect.left;
+            console.log('Mouse position:', posX, 'Container width:', containerWidth);
+            
+            // Ensure minimum width for both sides
+            const minWidth = 200; // Minimum width in pixels
+            
+            if (posX < minWidth || posX > containerWidth - minWidth - resizerWidth) {
+                console.log('Position out of bounds, skipping');
+                return;
+            }
+            
+            // Set percentage-based widths for both sections
+            const inputWidth = (posX / containerWidth) * 100;
+            const outputWidth = 100 - inputWidth - (resizerWidth / containerWidth) * 100;
+            
+            console.log('Setting widths - input:', inputWidth + '%', 'output:', outputWidth + '%');
+            
+            inputSection.style.flex = `0 0 ${inputWidth}%`;
+            outputSection.style.flex = `0 0 ${outputWidth}%`;
+            
+            // Save widths to localStorage
+            localStorage.setItem('inputSectionWidth', `${inputWidth}%`);
+            localStorage.setItem('outputSectionWidth', `${outputWidth}%`);
+        });
+        
+        document.addEventListener('mouseup', function() {
+            if (!isResizing) return;
+            
+            isResizing = false;
+            resizer.classList.remove('active');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        });
+        
+        // Touch events for mobile/tablet
+        resizer.addEventListener('touchstart', function(e) {
+            if (window.innerWidth < 768) return;
+            isResizing = true;
+            resizer.classList.add('active');
+            document.body.style.userSelect = 'none';
+            e.preventDefault();
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (!isResizing) return;
+            
+            const touch = e.touches[0];
+            const containerRect = conversionPanel.getBoundingClientRect();
+            const containerWidth = containerRect.width;
+            const resizerWidth = resizer.offsetWidth;
+            
+            const posX = touch.clientX - containerRect.left;
+            const minWidth = 200;
+            
+            if (posX < minWidth || posX > containerWidth - minWidth - resizerWidth) return;
+            
+            const inputWidth = (posX / containerWidth) * 100;
+            const outputWidth = 100 - inputWidth - (resizerWidth / containerWidth) * 100;
+            
+            inputSection.style.flex = `0 0 ${inputWidth}%`;
+            outputSection.style.flex = `0 0 ${outputWidth}%`;
+            
+            localStorage.setItem('inputSectionWidth', `${inputWidth}%`);
+            localStorage.setItem('outputSectionWidth', `${outputWidth}%`);
+        });
+        
+        document.addEventListener('touchend', function() {
+            if (!isResizing) return;
+            
+            isResizing = false;
+            resizer.classList.remove('active');
+            document.body.style.userSelect = '';
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth < 768) {
+                // Reset styles on mobile
+                inputSection.style.flex = '';
+                outputSection.style.flex = '';
+            } else if (savedInputWidth && savedOutputWidth) {
+                // Restore saved widths on desktop
+                inputSection.style.flex = `0 0 ${savedInputWidth}`;
+                outputSection.style.flex = `0 0 ${savedOutputWidth}`;
+            }
+        });
+    }
 
-function convertFqdnToFortinet(fqdn) {
-    const objectName = fqdn.replace(/\./g, '_');
-    return `config firewall address
+    function convertFqdnToFortinet(fqdn) {
+        const objectName = fqdn.replace(/\./g, '_');
+        return `config firewall address
     edit "${fqdn}"
         set type fqdn
         set fqdn "${fqdn}"
@@ -2621,33 +3451,67 @@ config firewall addrgrp
         set member "${fqdn}"
     next
 end`;
-}
+    }
 
-// 更新输出占位符文本
-document.getElementById('output-placeholder-fortinet').innerHTML = `# Fortinet 配置示例
-config firewall address
-    edit "192.168.1.0_24"
-        set subnet 192.168.1.0 255.255.255.0
-    next
-end
+    /**
+     * Generate a consistent page title based on page type and language
+     * @param {string} pageType - Type of the page (e.g., 'Privacy Policy')
+     * @param {string} lang - Current language ('en' or 'zh')
+     * @return {string} - Formatted page title
+     */
+    function generatePageTitle(pageType, lang) {
+        // Define the standard suffix for titles
+        const enSuffix = 'IP Address Conversion & Router Configuration Generator';
+        const zhSuffix = 'IP地址与路由器配置工具';
+        
+        // Define all possible page titles
+        const titles = {
+            'privacy': {
+                'en': `Privacy Policy | IPToRoute - ${enSuffix}`,
+                'zh': `隐私政策 | IPToRoute - ${zhSuffix}`
+            },
+            'terms': {
+                'en': `Terms of Service | IPToRoute - ${enSuffix}`,
+                'zh': `服务条款 | IPToRoute - ${zhSuffix}`
+            },
+            'cookie': {
+                'en': `Cookie Policy | IPToRoute - ${enSuffix}`,
+                'zh': `Cookie政策 | IPToRoute - ${zhSuffix}`
+            },
+            'contact': {
+                'en': `Contact Us | IPToRoute - ${enSuffix}`,
+                'zh': `联系我们 | IPToRoute - ${zhSuffix}`
+            },
+            'home': {
+                'en': `IPToRoute | IP Address & Router Configuration Tool - CIDR Converter`,
+                'zh': `IPToRoute | IP地址与路由器配置工具 - CIDR转换器`
+            }
+        };
+        
+        // Return the appropriate title based on page type and language
+        let titleKey = 'home'; // Default to home
+        
+        if (pageType.includes('Privacy') || pageType.includes('隐私')) {
+            titleKey = 'privacy';
+        } else if (pageType.includes('Terms') || pageType.includes('服务条款')) {
+            titleKey = 'terms';
+        } else if (pageType.includes('Cookie')) {
+            titleKey = 'cookie';
+        } else if (pageType.includes('Contact') || pageType.includes('联系')) {
+            titleKey = 'contact';
+        }
+        
+        return titles[titleKey][lang];
+    }
 
-config firewall addrgrp
-    edit "group_192.168.1.0_24"
-        set member "192.168.1.0_24"
-    next
-end
+    // Update page title translation
+    function updatePageTitle(lang) {
+        const pageType = document.querySelector('h1')?.textContent || '';
+        document.title = generatePageTitle(pageType, lang);
+    }
 
-# FQDN 示例
-config firewall address
-    edit "example.com"
-        set type fqdn
-        set fqdn "example.com"
-    next
-end
+    // 翻译页面标题
+    updatePageTitle(lang);
 
-config firewall addrgrp
-    edit "group_example_com"
-        set member "example.com"
-    next
-end`;
+});
 
