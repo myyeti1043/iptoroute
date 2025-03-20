@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'remove-duplicates': 'Remove duplicate IP addresses',
             'bulk-info': '',
             'router-type': 'Router Type:',
-            'router-routeros': 'MikroTik',
-            'router-cisco': 'Cisco',
-            'router-huawei': 'Huawei',
-            'router-juniper': 'Juniper',
-            'router-fortinet': 'Fortinet',
+            'router-routeros': 'MikroTik RouterOS',
+            'router-cisco': 'Cisco IOS',
+            'router-huawei': 'Huawei VRP',
+            'router-juniper': 'Juniper JunOS',
+            'router-fortinet': 'Fortinet FortiOS',
             'next-hop': 'Next Hop IP:',
             'route-name': 'Route Name:',
             'list-name': 'List Name:',
@@ -212,11 +212,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'remove-duplicates': '删除重复的IP地址',
             'bulk-info': '',
             'router-type': '路由器类型:',
-            'router-routeros': 'MikroTik',
-            'router-cisco': 'Cisco',
-            'router-huawei': 'Huawei',
-            'router-juniper': 'Juniper',
-            'router-fortinet': 'Fortinet',
+            'router-routeros': 'MikroTik RouterOS',
+            'router-cisco': 'Cisco IOS',
+            'router-huawei': 'Huawei VRP',
+            'router-juniper': 'Juniper JunOS',
+            'router-fortinet': 'Fortinet FortiOS',
             'next-hop': '路由下一跳IP:',
             'route-name': '路由名称:',
             'list-name': '列表名称:',
@@ -936,8 +936,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 设置操作项的HTML
                 operationItem.innerHTML = `
                     <div class="operation-info">
-                        <span class="operation-mode">${modeText}</span>
-                        <span class="operation-time">${timestamp}</span>
+                        <div class="operation-mode">${modeText}</div>
+                        <div class="operation-time">${timestamp}</div>
                     </div>
                     <div class="operation-preview">${operation.input.slice(0, 50)}${operation.input.length > 50 ? '...' : ''}</div>
                 `;

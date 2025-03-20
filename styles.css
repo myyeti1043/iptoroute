@@ -289,8 +289,7 @@ body.dark-theme .light-icon {
 
 .operation-info {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    flex-direction: column;
     margin-bottom: 0.25rem;
 }
 
@@ -301,7 +300,7 @@ body.dark-theme .light-icon {
 
 .operation-time {
     font-size: 0.8rem;
-    color: var(--primary-color);
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
@@ -1403,4 +1402,16 @@ button:focus, a:focus, input:focus, select:focus, textarea:focus {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* 联系页面保护邮箱样式 */
+.protected-email {
+    color: var(--primary-color);
+    border-bottom: 1px dashed var(--primary-color);
+    padding-bottom: 1px;
+    transition: color 0.2s ease;
+}
+
+.protected-email:hover {
+    color: var(--secondary-color);
 }
