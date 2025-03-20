@@ -38,7 +38,7 @@
         <main class="contact-page">
             <section class="contact-info">
                 <h2 data-lang="get-in-touch">Get in Touch</h2>
-                <p data-lang="contact-intro">Have questions, feedback, or need assistance with our tools? We'd love to hear from you. Fill out the form below, and we'll get back to you as soon as possible.</p>
+                <p data-lang="contact-intro">Have questions, feedback, or need assistance with our tools? We'd love to hear from you. Please use one of the contact methods below to reach us.</p>
                 
                 <div class="contact-methods">
                     <div class="contact-method">
@@ -49,59 +49,13 @@
                     
                     <div class="contact-method">
                         <h3 data-lang="github-title">💻 GitHub</h3>
-                        <p data-lang="bug-reports">For bug reports or feature requests, visit our <a href="https://github.com/myyeti1043/iptoroute" target="_blank" rel="noopener">GitHub repository</a>.</p>
+                        <p>
+                            <span data-lang="bug-reports">For bug reports or feature requests, visit our</span> 
+                            <a href="https://github.com/myyeti1043/iptoroute/issues" target="_blank" rel="noopener">GitHub Issues</a> 
+                            <span data-lang="bug-reports-page">page</span>.
+                        </p>
                     </div>
                 </div>
-            </section>
-            
-            <section class="contact-form-container">
-                <h2 data-lang="contact-form-title">Contact Form</h2>
-                <form id="contactForm" class="contact-form">
-                    <div class="form-group">
-                        <label for="name" data-lang="name-label">Name</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email" data-lang="email-label">Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="subject" data-lang="subject-label">Subject</label>
-                        <select id="subject" name="subject">
-                            <option value="general" data-lang="general-inquiry">General Inquiry</option>
-                            <option value="support" data-lang="tech-support-option">Technical Support</option>
-                            <option value="feedback" data-lang="feedback">Feedback</option>
-                            <option value="feature" data-lang="feature-request">Feature Request</option>
-                            <option value="bug" data-lang="bug-report">Bug Report</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message" data-lang="message-label">Message</label>
-                        <textarea id="message" name="message" rows="6" required></textarea>
-                    </div>
-                    
-                    <div id="github-fields" class="form-group" style="display: none;">
-                        <div class="info-text">
-                            <p data-lang="github-info">For bug reports and feature requests, the form will create a GitHub issue. Please include the following information:</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="github-username" data-lang="github-username">GitHub Username (optional):</label>
-                            <input type="text" id="github-username" name="github-username" placeholder="Your GitHub username if you have one">
-                        </div>
-                        <div class="form-group">
-                            <label for="browser-info" data-lang="browser-info">Browser & OS:</label>
-                            <input type="text" id="browser-info" name="browser-info" readonly>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button type="submit" class="btn-primary" data-lang="send-message">Send Message</button>
-                        <div id="formStatus" class="form-status"></div>
-                    </div>
-                </form>
             </section>
             
             <section class="faq">
@@ -124,7 +78,11 @@
                 
                 <div class="faq-item">
                     <h3 data-lang="faq-bug">How do I report a bug?</h3>
-                    <p data-lang="faq-bug-answer">You can report bugs through our <a href="https://github.com/myyeti1043/iptoroute/issues" target="_blank" rel="noopener">GitHub Issues</a> page or by using the contact form on this page.</p>
+                    <p>
+                        <span data-lang="faq-bug-answer">You can report bugs through our</span> 
+                        <a href="https://github.com/myyeti1043/iptoroute/issues" target="_blank" rel="noopener">GitHub Issues</a> 
+                        <span data-lang="faq-bug-answer-page">page</span>.
+                    </p>
                 </div>
             </section>
         </main>
@@ -173,104 +131,7 @@
     
     <script src="../script.js"></script>
     <script>
-        // Form submission handling
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formStatus = document.getElementById('formStatus');
-            const sendingMessage = document.querySelector('[data-lang="sending-message"]')?.textContent || 'Sending message...';
-            const thankYouMessage = document.querySelector('[data-lang="thank-you-message"]')?.textContent || 'Thank you for your message. We will get back to you soon!';
-            
-            formStatus.textContent = sendingMessage;
-            formStatus.className = 'form-status sending';
-            
-            const subject = document.getElementById('subject').value;
-            
-            // If it's a bug report or feature request, create a GitHub issue
-            if (subject === 'bug' || subject === 'feature') {
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const message = document.getElementById('message').value;
-                const githubUsername = document.getElementById('github-username').value;
-                const browserInfo = document.getElementById('browser-info').value;
-                
-                // Create GitHub issue
-                createGitHubIssue(subject, name, email, message, githubUsername, browserInfo)
-                    .then(response => {
-                        if (response.html_url) {
-                            formStatus.innerHTML = `${thankYouMessage}<br><a href="${response.html_url}" target="_blank" rel="noopener">View your issue on GitHub</a>`;
-                            formStatus.className = 'form-status success';
-                            document.getElementById('contactForm').reset();
-                        } else {
-                            throw new Error('Failed to create GitHub issue');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error creating GitHub issue:', error);
-                        formStatus.textContent = 'There was an error submitting your form. Please try again or contact us directly via email.';
-                        formStatus.className = 'form-status error';
-                    });
-            } else {
-                // Regular email submission for other subjects (simulate form handling)
-                setTimeout(() => {
-                    formStatus.textContent = thankYouMessage;
-                    formStatus.className = 'form-status success';
-                    document.getElementById('contactForm').reset();
-                }, 1500);
-            }
-        });
-        
-        // Show GitHub fields for bug reports and feature requests
-        document.getElementById('subject').addEventListener('change', function() {
-            const githubFields = document.getElementById('github-fields');
-            if (this.value === 'bug' || this.value === 'feature') {
-                githubFields.style.display = 'block';
-                // Automatically populate browser info
-                document.getElementById('browser-info').value = `${navigator.userAgent}`;
-            } else {
-                githubFields.style.display = 'none';
-            }
-        });
-        
-        // Function to create a GitHub issue using GitHub API
-        async function createGitHubIssue(type, name, email, message, githubUsername, browserInfo) {
-            // Note: In a production environment, you would need to use a server-side proxy
-            // to securely handle GitHub authentication. This is a simplified example.
-            
-            // For demonstration purposes, we'll just simulate a successful response
-            // Replace this with actual GitHub API integration in production
-            
-            // Simulated successful response
-            return {
-                html_url: `https://github.com/myyeti1043/iptoroute/issues/new`,
-                number: Math.floor(Math.random() * 1000)
-            };
-            
-            /* Actual implementation would be something like:
-            const response = await fetch('YOUR_SERVER_ENDPOINT_FOR_GITHUB_INTEGRATION', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    type: type,
-                    name: name,
-                    email: email,
-                    message: message,
-                    githubUsername: githubUsername,
-                    browserInfo: browserInfo
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to create issue');
-            }
-            
-            return await response.json();
-            */
-        }
-        
-        // Convert protected emails to clickable links on user interaction
+        // Initialize protected emails
         document.querySelectorAll('.protected-email').forEach(element => {
             element.addEventListener('click', function() {
                 const emailText = this.textContent;

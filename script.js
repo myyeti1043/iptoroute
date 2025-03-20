@@ -115,7 +115,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'github-title': '💻 GitHub',
             'general-inquiries': 'For general inquiries:',
             'tech-support': 'For technical support:',
-            'bug-reports': 'For bug reports or feature requests, visit our GitHub repository.',
+            'bug-reports': 'For bug reports or feature requests, visit our',
+            'bug-reports-page': 'page',
             'contact-form-title': 'Contact Form',
             'name-label': 'Name',
             'email-label': 'Email',
@@ -132,7 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'faq-offline': 'Can I use IPToRoute offline?',
             'faq-offline-answer': 'Currently, IPToRoute requires an internet connection to load. However, once loaded, the core tools will function without further internet access.',
             'faq-bug': 'How do I report a bug?',
-            'faq-bug-answer': 'You can report bugs through our GitHub Issues page or by using the contact form on this page.',
+            'faq-bug-answer': 'You can report bugs through our',
+            'faq-bug-answer-page': 'page',
             
             // Privacy Policy Page
             'privacy-title': 'Privacy Policy',
@@ -308,7 +310,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'github-title': '💻 GitHub',
             'general-inquiries': '一般咨询：',
             'tech-support': '技术支持：',
-            'bug-reports': '如需报告错误或请求新功能，请访问我们的GitHub仓库。',
+            'bug-reports': '如需报告错误或请求新功能，请访问我们的',
+            'bug-reports-page': '页面',
             'contact-form-title': '联系表单',
             'name-label': '姓名',
             'email-label': '电子邮件',
@@ -325,7 +328,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'faq-offline': '我可以离线使用IPToRoute吗？',
             'faq-offline-answer': '目前，IPToRoute需要互联网连接才能加载。但是，一旦加载完成，核心工具无需进一步的互联网访问即可运行。',
             'faq-bug': '如何报告错误？',
-            'faq-bug-answer': '您可以通过我们的GitHub Issues页面或使用本页面的联系表单报告错误。',
+            'faq-bug-answer': '您可以通过我们的',
+            'faq-bug-answer-page': '页面报告错误',
             
             // 联系表单选项
             'general-inquiry': '一般咨询',
@@ -2463,7 +2467,8 @@ end`;
                 'faq-offline': 'Can I use IPToRoute offline?',
                 'faq-offline-answer': 'Currently, IPToRoute requires an internet connection to load. However, once loaded, the core tools will function without further internet access.',
                 'faq-bug': 'How do I report a bug?',
-                'faq-bug-answer': 'You can report bugs through our GitHub Issues page or by using the contact form on this page.',
+                'faq-bug-answer': 'You can report bugs through our',
+                'faq-bug-answer-page': 'page',
                 
                 // Privacy Policy Page
                 'privacy-title': 'Privacy Policy',
@@ -2501,7 +2506,8 @@ end`;
                 'faq-offline': '我可以离线使用IPToRoute吗？',
                 'faq-offline-answer': '目前，IPToRoute需要互联网连接才能加载。但是，一旦加载完成，核心工具无需进一步的互联网访问即可运行。',
                 'faq-bug': '如何报告错误？',
-                'faq-bug-answer': '您可以通过我们的GitHub Issues页面或使用本页面的联系表单报告错误。',
+                'faq-bug-answer': '您可以通过我们的',
+                'faq-bug-answer-page': '页面报告错误',
                 
                 // Privacy Policy Page
                 'privacy-title': '隐私政策',
