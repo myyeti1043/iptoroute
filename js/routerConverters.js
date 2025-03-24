@@ -323,128 +323,152 @@ function convertCidrToJuniper(line) {
  */
 function convertCidrToFortinet(line) {
     let addrName, addrConfig;
-    
-    // 首先检查是否是Cisco路由命令
-    const ciscoRouteInfo = extractIpFromCiscoRoute(line);
+
+    // 0) 首先检查是否是 Cisco 路由命令
+    const ciscoRouteInfo = extractIpFromCiscoRoute(line); 
+    // extractIpFromCiscoRoute(line) 会返回 { ip, mask, gateway } 或 null
     if (ciscoRouteInfo) {
         const { ip, mask } = ciscoRouteInfo;
-        // 将IP和掩码转换为CIDR
+
+        // 验证 IP+MASK
+        if (!window.isValidIp(ip) || !window.isValidMask(mask)) {
+            return null;
+        }
+
+        // 生成地址名
         const cidr = window.maskToCidrMap[mask];
-        if (!cidr) return null;
-        
-        // 获取地址名称
         addrName = `${ip.replace(/\./g, '_')}_${cidr}`;
-        
-        addrConfig = `config firewall address
+
+        addrConfig = `
+config firewall address
     edit "${addrName}"
         set subnet ${ip} ${mask}
     next
-end`;
-        
+end`.trim();
+
         return addrConfig;
     }
-    
-    // 处理IP掩码格式（如192.168.1.0 255.255.255.0）
-    if (line.includes(' ') && !line.includes('/')) {
+
+    // 1) 判断空格分隔的场景(可能是 "ip mask" 或 "ip mask gateway")
+    if (line.includes(' ')) {
         const parts = line.trim().split(/\s+/);
+
+        // 1.1) IP + MASK
         if (parts.length === 2) {
-            const ip = parts[0];
-            const mask = parts[1];
-            
-            // 验证IP和掩码
-            if (!window.isValidIp(ip) || !window.isValidMask(mask)) return null;
-            
-            // 将掩码转换为CIDR
-            const cidr = window.maskToCidrMap[mask];
-            if (!cidr) return null;
-            
-            // 获取地址名称
+            const [ipPart, maskPart] = parts;
+            // 验证
+            if (!window.isValidIp(ipPart) || !window.isValidMask(maskPart)) {
+                return null;
+            }
+            const cidr = window.maskToCidrMap[maskPart];
+            addrName = `${ipPart.replace(/\./g, '_')}_${cidr}`;
+            addrConfig = `
+config firewall address
+    edit "${addrName}"
+        set subnet ${ipPart} ${maskPart}
+    next
+end`.trim();
+
+            return addrConfig;
+
+        // 1.2) IP + MASK + GATEWAY(或多余的东西) - Fortinet 不需要 GATEWAY，但可以容忍多余第三段
+        } else if (parts.length === 3) {
+            const [ipPart, maskPart] = parts; // 只取前两段
+            if (!window.isValidIp(ipPart) || !window.isValidMask(maskPart)) {
+                return null;
+            }
+            const cidr = window.maskToCidrMap[maskPart];
+            addrName = `${ipPart.replace(/\./g, '_')}_${cidr}`;
+            addrConfig = `
+config firewall address
+    edit "${addrName}"
+        set subnet ${ipPart} ${maskPart}
+    next
+end`.trim();
+
+            return addrConfig;
+        }
+        // 若分段数更多或更少(不在2~3之间)，则后续不处理，继续往下判断是否有CIDR/域名等
+    }
+
+    // 2) 如果包含斜杠，按 CIDR 解析
+    if (line.includes('/')) {
+        // 只匹配纯净的 "x.x.x.x/NN"
+        const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
+        if (match) {
+            const ip = match[1];
+            const cidr = parseInt(match[2], 10);
+
+            if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+
+            const mask = window.cidrToMaskMap[cidr];
+            if (!mask) return null;
+
             addrName = `${ip.replace(/\./g, '_')}_${cidr}`;
-            
-            addrConfig = `config firewall address
+            addrConfig = `
+config firewall address
     edit "${addrName}"
         set subnet ${ip} ${mask}
     next
-end`;
-            
+end`.trim();
+
             return addrConfig;
         }
     }
-    
-    // 处理IP/CIDR
-    if (line.includes('/')) {
-        const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
-        if (!match) return null;
 
-        const ip = match[1];
-        const cidr = parseInt(match[2]);
+    // 3) 如果是单个 IP (不带 CIDR、不带空格)
+    //    例如: 8.8.8.8 => 当作 /32
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(line)) {
+        if (!window.isValidIp(line)) return null;
 
-        // 验证IP和CIDR
-        if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
-
-        // 获取地址名称 - 确保使用正确的CIDR值
-        addrName = `${ip.replace(/\./g, '_')}_${cidr}`;
-        
-        // 获取子网掩码
-        const mask = window.cidrToMaskMap[cidr];
-        if (!mask) return null;
-        
-        addrConfig = `config firewall address
+        addrName = `${line.replace(/\./g, '_')}_32`;
+        addrConfig = `
+config firewall address
     edit "${addrName}"
-        set subnet ${ip} ${mask}
+        set subnet ${line} 255.255.255.255
     next
-end`;
-    } else if (/^\d+\.\d+\.\d+\.\d+$/.test(line)) {
-        // 处理单个IP地址（无CIDR）
-        const ip = line;
-        
-        // 验证IP
-        if (!window.isValidIp(ip)) return null;
-        
-        // 获取地址名称
-        addrName = `${ip.replace(/\./g, '_')}_32`;
-        
-        addrConfig = `config firewall address
-    edit "${addrName}"
-        set subnet ${ip} 255.255.255.255
-    next
-end`;
-    } else {
-        // 处理FQDN
-        // 检查是否是有效的域名
-        if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+$/.test(line)) {
-            return null;
-        }
-        
-        // 获取地址名称
-        addrName = line.replace(/\./g, '_');
-        
-        addrConfig = `config firewall address
+end`.trim();
+
+        return addrConfig;
+    }
+
+    // 4) 其它情况，一律按 FQDN 处理 (域名或子域名)
+    //    如果既不是IP，也不符合域名正则，就返回 null
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+$/.test(line)) {
+        // 如果不满足域名规则，返回 null
+        return null;
+    }
+
+    // (4.1) 生成 FQDN 地址
+    addrName = line.replace(/\./g, '_');
+    addrConfig = `
+config firewall address
     edit "${addrName}"
         set type fqdn
         set fqdn "${line}"
     next
-end`;
-    }
-    
-    // 获取Fortinet类型（address或addrgrp）
+end`.trim();
+
+    // 5) 根据 fortinetType 决定是否要加到某个地址组
     const fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value || 'address';
     const addrGroupName = document.getElementById('addrGroupName')?.value.trim() || 'IP_Group';
-    
-    // 根据类型创建配置
+
     if (fortinetType === 'address') {
+        // 仅创建 address
         return addrConfig;
     } else if (fortinetType === 'addrgrp') {
-        return `${addrConfig}
-
+        // 创建 address 并加进 addrgrp
+        const groupConfig = `
 config firewall addrgrp
     edit "${addrGroupName}"
         append member "${addrName}"
     next
-end`;
+end`.trim();
+
+        return addrConfig + '\n\n' + groupConfig;
     }
-    
-    // 默认返回地址配置
+
+    // 如果没有选中任何类型，默认只返回地址配置
     return addrConfig;
 }
 
