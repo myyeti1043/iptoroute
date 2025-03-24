@@ -371,12 +371,15 @@ function logErrorToAnalytics(error, context) {
     console.error(`Error in ${context || 'Unknown context'}:`, error);
 }
 
-// Export functions for use in other modules
-export {
-    initSEO,
-    trackEvent,
-    trackPageView,
-    logErrorToAnalytics,
-    monitorPerformance,
-    loadGoogleAnalytics
-};
+// 将所有函数添加到window对象上
+window.initSEO = initSEO;
+window.trackEvent = trackEvent;
+window.trackPageView = trackPageView;
+window.logErrorToAnalytics = logErrorToAnalytics;
+window.monitorPerformance = monitorPerformance;
+window.loadGoogleAnalytics = loadGoogleAnalytics;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('analytics');
+}

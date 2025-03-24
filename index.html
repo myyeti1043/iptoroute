@@ -144,10 +144,10 @@
         
         <div class="main-content">
             <nav class="tabs-vertical" aria-label="Main navigation">
-                <button class="tab-button active" data-tab="router-config" data-lang="tab-router">Router Configuration Generator</button>
-                <button class="tab-button" data-tab="bulk-extract" data-lang="tab-bulk">IP Address Extraction Tool</button>
-                <button class="tab-button" data-tab="cidr-to-ip" data-lang="tab-cidr-ip">CIDR to IP+Netmask Converter</button>
-                <button class="tab-button" data-tab="ip-to-cidr" data-lang="tab-ip-cidr">IP+Netmask to CIDR Converter</button>
+                <button class="tab-button active" data-tab="router-config" data-lang="tab-router">Router Cfg</button>
+                <button class="tab-button" data-tab="bulk-extract" data-lang="tab-bulk">IPs Extract</button>
+                <button class="tab-button" data-tab="cidr-to-ip" data-lang="tab-cidr-ip">CIDR → IP</button>
+                <button class="tab-button" data-tab="ip-to-cidr" data-lang="tab-ip-cidr">IP → CIDR</button>
                 <section class="recent-operations">
                     <h3 data-lang="recent-operations">Recent Operations</h3>
                     <ul id="recentOperations" aria-label="List of recent operations">
@@ -172,7 +172,9 @@
                             <pre>{"prefixes": [{"ip_prefix": "192.168.1.0/24"}, {"ip_prefix": "10.0.0.0/16"}]}
 <span data-lang="input-example-basic"># Or plain text with IPs</span>
 192.168.1.0/24
-10.0.0.0/16</pre>
+10.0.0.0/16
+172.16.0.0/12
+2001:db8::/32</pre>
                         </div>
                         <div class="guidance-message">
                             <p data-lang="bulk-guidance">💡 Paste any text containing IP addresses and the tool will automatically find and extract them for you.</p>
@@ -189,10 +191,9 @@
                             <pre id="router-example-fortinet" style="display: none;">192.168.1.0/24
 10.0.0.0/16
 example.com
-www.example.com
 
-<span data-lang="input-example-fortinet-mixed"># 也可以粘贴包含IP和域名的混合文本：</span>
-"我们的服务器位于192.168.1.0/24和example.com"</pre>
+<span data-lang="input-example-fortinet-mixed"># You can also paste text with mixed IPs and domains:</span>
+"Our servers are at 192.168.1.0/24 and example.com"</pre>
                         </div>
                         <div class="guidance-message">
                             <p data-lang="router-guidance">💡 Select your router type and configure additional options before converting.</p>
@@ -243,7 +244,7 @@ www.example.com
                     </div>
                     
                     <div class="options-panel">
-                        <h3 data-lang="options-title" class="options-title">Options</h3>
+                        <h3 data-lang="options-title" class="options-title" id="optionsTitle">Options</h3>
                         
                         <!-- Bulk Extract options -->
                         <div class="option-group" id="optionsBulkExtract" style="display: none;">
@@ -393,7 +394,9 @@ www.example.com
                         <div class="loading-indicator">
                             <div class="spinner"></div>
                         </div>
-                        <textarea id="outputArea" rows="10" readonly placeholder="Output will appear here..." aria-label="Output text area"></textarea>
+                        <textarea id="outputArea" rows="10" readonly placeholder="Example output:
+/ip route add dst-address=192.168.1.0/24 gateway=192.168.1.1
+/ip route add dst-address=10.0.0.0/16 gateway=192.168.1.1" aria-label="Output text area"></textarea>
                     </div>
                     
                     <div class="action-buttons">
@@ -430,21 +433,21 @@ www.example.com
                 <div class="footer-section">
                     <h4 data-lang="legal">Legal</h4>
                     <ul>
-                        <li><a href="./privacy-policy" data-lang="privacy-policy">Privacy Policy</a></li>
-                        <li><a href="./terms-of-service" data-lang="terms-of-service">Terms of Service</a></li>
-                        <li><a href="./cookie-policy" data-lang="cookie-policy">Cookie Policy</a></li>
+                        <li><a href="./privacy-policy" data-lang="footer-privacy">Privacy Policy</a></li>
+                        <li><a href="./terms-of-service" data-lang="footer-terms">Terms of Service</a></li>
+                        <li><a href="./cookie-policy" data-lang="footer-cookies">Cookie Policy</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4 data-lang="contact">Contact</h4>
                     <ul>
-                        <li><a href="./contact" data-lang="contact-us">Contact Us</a></li>
+                        <li><a href="./contact" data-lang="footer-contact">Contact Us</a></li>
                         <li><a href="https://github.com/myyeti1043/iptoroute" target="_blank" rel="noopener" data-lang="github">GitHub</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>IPToRoute © <span id="current-year">2024</span> <span data-lang="all-rights-reserved">All rights reserved</span></p>
+                <p>IPToRoute &copy; <span id="current-year">2024</span> <span data-lang="all-rights-reserved">All rights reserved</span></p>
                 <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
             </div>
         </div>

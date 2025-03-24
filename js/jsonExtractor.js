@@ -3,8 +3,8 @@
  * Contains functions for extracting IP addresses from JSON data
  */
 
-import { isValidIp, isValidMask, convertIpMaskToCidr } from './ipConverters.js';
-import { maskToCidrMap } from './translations.js';
+// 不再使用import，因为ipConverters.js已经将这些函数添加到了window对象上
+// import { isValidIp, isValidMask, convertIpMaskToCidr, maskToCidrMap } from './ipConverters.js';
 
 /**
  * Extract IP prefixes from JSON content
@@ -125,7 +125,7 @@ function findAllIpAddresses(data, ipv4Only = false) {
             // Add /32 to standalone IPv4 addresses, but skip common subnet mask values
             ipv4WithoutCidr.forEach(ip => {
                 // 检查是否是常见的子网掩码值
-                if (!(ip in maskToCidrMap) && !ipAddresses.includes(ip + '/32')) {
+                if (!(ip in window.maskToCidrMap) && !ipAddresses.includes(ip + '/32')) {
                     ipAddresses.push(ip + '/32');
                 }
             });
@@ -196,9 +196,9 @@ function extractIpFromCiscoRoute(route) {
         const nextHop = routeMatch[3];
         
         // 验证IP和掩码
-        if (isValidIp(ip) && isValidMask(mask)) {
+        if (window.isValidIp(ip) && window.isValidMask(mask)) {
             // 转换为CIDR格式
-            const cidr = convertIpMaskToCidr(`${ip} ${mask}`);
+            const cidr = window.convertIpMaskToCidr(`${ip} ${mask}`);
             
             // 如果转换失败（可能是因为IP是子网掩码值），则返回null
             if (!cidr) return null;
@@ -224,7 +224,7 @@ function validateIpAddresses(ipAddresses) {
     const validAddresses = [];
     
     for (const address of ipAddresses) {
-        if (isValidIp(address)) {
+        if (window.isValidIp(address)) {
             validAddresses.push(address);
         }
     }
@@ -232,9 +232,13 @@ function validateIpAddresses(ipAddresses) {
     return validAddresses;
 }
 
-// Export functions for use in other modules
-export {
-    extractIpPrefixesFromJson,
-    findAllIpAddresses,
-    validateIpAddresses
-};
+// 将所有函数添加到window对象上
+window.extractIpPrefixesFromJson = extractIpPrefixesFromJson;
+window.findAllIpAddresses = findAllIpAddresses;
+window.extractIpFromCiscoRoute = extractIpFromCiscoRoute;
+window.validateIpAddresses = validateIpAddresses;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('jsonExtractor');
+}

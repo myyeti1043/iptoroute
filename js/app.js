@@ -1,79 +1,83 @@
+// 不再使用import，因为所有模块已经将函数添加到了window对象上
 // Import from ipConverters.js
-import { 
-    convertCidrToIpMask, 
-    convertIpMaskToCidr, 
-    isValidIp, 
-    isValidMask,
-    compareIPs,
-    extractIp
-} from './ipConverters.js';
+// import { 
+//     convertCidrToIpMask, 
+//     convertIpMaskToCidr, 
+//     isValidIp, 
+//     isValidMask,
+//     compareIPs,
+//     extractIp,
+//     convertIpMaskToCidrFormat,
+//     getNetworkAddress
+// } from './ipConverters.js';
 
-// Import from routerConverters.js
-import {
-    convertCidrToCisco,
-    convertCidrToRouterOs,
-    convertCidrToHuawei,
-    convertCidrToJuniper,
-    convertCidrToFortinet,
-    convertFqdnToFortinet,
-    extractIpFromCiscoRoute
-} from './routerConverters.js';
+// // Import from routerConverters.js
+// import {
+//     convertCidrToCisco,
+//     convertCidrToRouterOs,
+//     convertCidrToHuawei,
+//     convertCidrToJuniper,
+//     convertCidrToFortinet,
+//     extractIpFromCiscoRoute
+// } from './routerConverters.js';
 
-// Import from jsonExtractor.js
-import {
-    extractIpPrefixesFromJson,
-    findAllIpAddressesInJson,
-    findAllIpAddresses
-} from './jsonExtractor.js';
+// // Import from jsonExtractor.js
+// import {
+//     extractIpPrefixesFromJson,
+//     findAllIpAddresses
+// } from './jsonExtractor.js';
 
-// Import from uiHelpers.js
-import {
-    updateOutputPlaceholder,
-    applyRouterSpecificOptions,
-    showLoading,
-    hideLoading,
-    setupResizer,
-    showNotification,
-    handleError,
-    getCurrentMode,
-    getCurrentLang,
-    updatePageTitle
-} from './uiHelpers.js';
+// // Import from uiHelpers.js
+// import {
+//     updateOutputPlaceholder,
+//     applyRouterSpecificOptions,
+//     showLoading,
+//     hideLoading,
+//     setupResizer,
+//     showNotification,
+//     handleError,
+//     getCurrentMode,
+//     getCurrentLang,
+//     updatePageTitle
+// } from './uiHelpers.js';
 
-// Import from historyManager.js
-import {
-    addToRecentOperations,
-    loadRecentOperations,
-    refreshRecentOperations,
-    restoreOperation,
-    clearOperationHistory
-} from './historyManager.js';
+// // Import from historyManager.js
+// import {
+//     addToRecentOperations,
+//     loadRecentOperations,
+//     refreshRecentOperations,
+//     restoreOperation,
+//     clearOperationHistory,
+//     setupRecentOperations
+// } from './historyManager.js';
 
-// Import from webWorker.js
-import {
-    initWebWorker,
-    extractIpsWithWorker,
-    validateIpsWithWorker
-} from './webWorker.js';
+// // Import from webWorker.js
+// import {
+//     initWebWorker,
+//     extractIpsWithWorker,
+//     validateIpsWithWorker
+// } from './webWorker.js';
 
-// Import from analytics.js
-import {
-    initSEO,
-    trackEvent,
-    trackPageView
-} from './analytics.js';
+// // Import from analytics.js
+// import {
+//     initSEO,
+//     trackEvent,
+//     trackPageView
+// } from './analytics.js';
 
-// Import translations
-import translations from './translations.js';
+// // Import translations
+// import translations from './translations.js';
 
 // Main application initialization
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM content loaded in app.js');
     // Initialize common functionality across all pages
     setupThemeToggle();
     setupLanguageSelection();
     
     // Call original init function if on main app page
     if (document.getElementById('appTabs')) {
+        console.log('appTabs found, initializing app from DOMContentLoaded event');
         init();
     }
 
@@ -104,57 +108,187 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePageTitle(currentLang);
 });
 
+// Setup theme toggle functionality
+function setupThemeToggle() {
+    console.log('Setting up theme toggle...');
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        // Get saved theme from localStorage or use system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const defaultTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+        
+        // Apply the theme
+        document.documentElement.setAttribute('data-theme', defaultTheme);
+        themeToggle.checked = defaultTheme === 'dark';
+        
+        // Add event listener for theme toggle
+        themeToggle.addEventListener('change', function() {
+            const theme = this.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+    }
+}
+
+// Setup language selection functionality
+function setupLanguageSelection() {
+    console.log('Setting up language selection...');
+    // Get saved language preference from localStorage or use default
+    const savedLang = localStorage.getItem('preferredLanguage');
+    if (savedLang) {
+        currentLang = savedLang;
+    }
+    
+    // Update language buttons to reflect current language
+    const langEnBtn = document.getElementById('langEn');
+    const langZhBtn = document.getElementById('langZh');
+    if (langEnBtn) langEnBtn.classList.toggle('active', currentLang === 'en');
+    if (langZhBtn) langZhBtn.classList.toggle('active', currentLang === 'zh');
+    
+    // Apply initial translations
+    console.log('Applying initial translations for language:', currentLang);
+    updateLanguage(currentLang);
+}
+
 // Main initialization function for the application
 function init() {
+    console.log('Starting initialization...');
+    
     // Set up event listeners and initialize UI components
+    console.log('Setting up tab navigation...');
     setupTabNavigation();
+    
+    console.log('Setting up input handlers...');
     setupInputHandlers();
+    
+    console.log('Setting up convert button...');
     setupConvertButton();
+    
+    console.log('Setting up copy/download buttons...');
     setupCopyDownloadButtons();
+    
+    console.log('Setting up router type handlers...');
     setupRouterTypeHandlers();
+    
+    console.log('Setting up language buttons...');
     setupLanguageButtons();
+    
+    console.log('Setting up file upload...');
     setupFileUpload();
     
+    console.log('Setting up recent operations...');
+    setupRecentOperations();
+    
     // Load recent operations from localStorage
+    console.log('Loading recent operations...');
     loadRecentOperations();
     
     // Set up resizer functionality
+    console.log('Setting up resizer...');
     setupResizer();
     
     // Handle URL hash changes for tab navigation
+    console.log('Setting up hash change handler...');
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange(); // 页面加载时立即执行一次
+    
+    console.log('Initialization complete!');
+    
+    // Apply initial options visibility based on current mode
+    const optionsTitle = document.getElementById('optionsTitle');
+    const currentTab = getCurrentMode();
+    
+    // Hide options title for router-config and bulk-extract
+    if (optionsTitle) {
+        if (currentTab === 'router-config' || currentTab === 'bulk-extract') {
+            optionsTitle.style.display = 'none';
+        } else {
+            optionsTitle.style.display = 'block';
+        }
+    }
+    
+    // Hide option groups for cidr-to-ip and ip-to-cidr
+    const cidrToIpOptions = document.getElementById('optionsCidrToIp');
+    const ipToCidrOptions = document.getElementById('optionsIpToCidr');
+    
+    if (cidrToIpOptions) cidrToIpOptions.style.display = 'none';
+    if (ipToCidrOptions) ipToCidrOptions.style.display = 'none';
 }
 
 // Setup tab navigation
 function setupTabNavigation() {
     const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const tabDescriptions = document.querySelectorAll('.tab-description');
+    const optionsTitle = document.getElementById('optionsTitle');
+    const optionGroups = {
+        'router-config': document.getElementById('optionsRouter'),
+        'bulk-extract': document.getElementById('optionsBulkExtract'),
+        'cidr-to-ip': document.getElementById('optionsCidrToIp'),
+        'ip-to-cidr': document.getElementById('optionsIpToCidr')
+    };
+    
+    console.log('Setting up tab navigation, found buttons:', tabButtons.length);
+    console.log('Found tab descriptions:', tabDescriptions.length);
     
     tabButtons.forEach(button => {
+        console.log('Adding click listener to tab button:', button.getAttribute('data-tab'));
         button.addEventListener('click', () => {
+            console.log('Tab button clicked:', button.getAttribute('data-tab'));
             const tab = button.getAttribute('data-tab');
             
             // Update active tab
             tabButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             
-            // Show selected tab content
-            tabContents.forEach(content => {
-                if (content.getAttribute('data-tab') === tab) {
-                    content.classList.add('active');
-                    // Update current mode
-                    currentMode = tab;
-                    // Update output placeholder based on current mode
-                    updateOutputPlaceholder();
-                    // Apply router-specific options if in router-config mode
-                    if (tab === 'router-config') {
-                        applyRouterSpecificOptions();
-                    }
+            // Show selected tab description
+            tabDescriptions.forEach(description => {
+                const descriptionId = `${tab}-description`;
+                if (description.id === descriptionId) {
+                    description.style.display = 'block';
+                    console.log(`Showing tab description: ${descriptionId}`);
                 } else {
-                    content.classList.remove('active');
+                    description.style.display = 'none';
                 }
             });
+            
+            // Show/hide options title based on tab
+            if (optionsTitle) {
+                if (tab === 'router-config' || tab === 'bulk-extract') {
+                    optionsTitle.style.display = 'none';
+                } else {
+                    optionsTitle.style.display = 'block';
+                }
+            }
+            
+            // Show selected tab options
+            for (const [optionTab, optionGroup] of Object.entries(optionGroups)) {
+                if (optionGroup) {
+                    if (optionTab === tab) {
+                        // Hide options for cidr-to-ip and ip-to-cidr
+                        if (optionTab === 'cidr-to-ip' || optionTab === 'ip-to-cidr') {
+                            optionGroup.style.display = 'none';
+                        } else {
+                            optionGroup.style.display = 'block';
+                        }
+                        console.log(`Showing options for: ${optionTab}`);
+                    } else {
+                        optionGroup.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Update current mode
+            currentMode = tab;
+            console.log('Current mode updated to:', currentMode);
+            
+            // Update output placeholder based on current mode
+            updateOutputPlaceholder();
+            
+            // Apply router-specific options if in router-config mode
+            if (tab === 'router-config') {
+                applyRouterSpecificOptions();
+            }
             
             // Update URL hash
             window.location.hash = tab;
@@ -163,12 +297,28 @@ function setupTabNavigation() {
             sessionStorage.setItem('activeTab', tab);
         });
     });
+    
+    // Set initial tab based on URL hash or sessionStorage
+    const initialTab = window.location.hash.substring(1) || sessionStorage.getItem('activeTab') || 'router-config';
+    console.log('Initial tab:', initialTab);
+    
+    // Activate the initial tab
+    const initialTabButton = document.querySelector(`.tab-button[data-tab="${initialTab}"]`);
+    if (initialTabButton) {
+        initialTabButton.click();
+    } else {
+        // Fallback to first tab if the initial tab doesn't exist
+        const firstTabButton = document.querySelector('.tab-button');
+        if (firstTabButton) {
+            firstTabButton.click();
+        }
+    }
 }
 
 // Setup input handlers
 function setupInputHandlers() {
     // Clear input button
-    const clearInputBtn = document.getElementById('clearInputBtn');
+    const clearInputBtn = document.getElementById('clearBtn');
     if (clearInputBtn) {
         clearInputBtn.addEventListener('click', () => {
             inputArea.value = '';
@@ -276,59 +426,81 @@ async function processInput(input) {
     
     // Special handling for Fortinet with FQDN in router-config mode
     if (currentMode === 'router-config' && document.getElementById('routerType').value === 'fortinet') {
-        // 首先尝试自动提取IP地址和域名
-        let extractedItems = [];
-        
-        // 提取所有IP地址
-        const ipAddresses = await extractIpsWithWorker(input, document.getElementById('ipv4Only').checked);
-        
-        // 提取所有域名（简单的域名提取，可能需要更复杂的正则表达式）
-        const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/gi;
-        const domains = input.match(domainRegex) || [];
-        
-        // 过滤掉可能被错误识别为域名的IP地址
-        const filteredDomains = domains.filter(domain => !domain.match(/^\d+\.\d+\.\d+\.\d+$/));
-        
-        // 合并IP地址和域名
-        extractedItems = [...ipAddresses, ...filteredDomains];
-        
-        // 如果找到了IP地址或域名，处理它们
-        if (extractedItems.length > 0) {
-            for (const item of extractedItems) {
-                try {
-                    // 检查是IP还是域名
-                    if (isValidIp(item) || item.includes('/')) {
-                        // 这是一个IP地址或CIDR
-                        results.push(convertCidrToFortinet(item));
-                    } else {
-                        // 这是一个域名
-                        results.push(convertFqdnToFortinet(item));
-                    }
-                } catch (e) {
-                    console.error('Error processing item:', item, e);
-                    invalidLines++;
-                }
-            }
-        } else {
+        try {
             // 按行处理输入
-            const lines = input.split('\n').filter(line => line.trim() !== '');
+            const lines = input.split('\n').filter(line => {
+                const trimmedLine = line.trim();
+                // 忽略空行和以#开头的注释行
+                return trimmedLine !== '' && !trimmedLine.startsWith('#');
+            });
             
-            for (const line of lines) {
+            // 使用extractIpsWithWorker提取有效的IP地址
+            const extractedIPs = await extractIpsWithWorker(input, document.getElementById('ipv4Only').checked);
+            
+            // 验证提取的IP地址
+            const validationResults = await validateIpsWithWorker(extractedIPs);
+            
+            // 过滤出有效的IP地址
+            const validIps = extractedIPs.filter(ip => {
+                const result = validationResults.find(r => r.original === ip);
+                return result && result.valid;
+            });
+            
+            // 如果没有有效的IP地址，显示提示信息
+            if (validIps.length === 0) {
+                outputArea.value = currentLang === 'en' 
+                    ? 'No valid IP addresses found in the input.' 
+                    : '在输入中未找到有效的IP地址。';
+                return;
+            }
+            
+            // 处理每个有效的IP地址
+            for (const ip of validIps) {
                 try {
-                    if (isValidIp(line) || line.includes('/')) {
-                        // 这是一个IP地址或CIDR
-                        results.push(convertCidrToFortinet(line));
-                    } else if (line.match(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/)) {
-                        // 这是一个域名
-                        results.push(convertFqdnToFortinet(line));
-                    } else {
-                        invalidLines++;
+                    const result = convertCidrToFortinet(ip);
+                    if (result) {
+                        results.push(result);
                     }
                 } catch (e) {
-                    console.error('Error processing line:', line, e);
+                    console.error('Error processing IP:', ip, e);
                     invalidLines++;
                 }
             }
+            
+            // 提取所有域名（简单的域名提取，可能需要更复杂的正则表达式）
+            const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/gi;
+            const domains = input.match(domainRegex) || [];
+            
+            // 过滤掉可能被错误识别为域名的IP地址
+            const filteredDomains = domains.filter(domain => {
+                // 不是IP地址格式
+                if (domain.match(/^\d+\.\d+\.\d+\.\d+$/)) return false;
+                
+                // 检查是否是有效的域名
+                const parts = domain.split('.');
+                // 顶级域名不能是纯数字
+                const tld = parts[parts.length - 1];
+                if (/^\d+$/.test(tld)) return false;
+                
+                return true;
+            });
+            
+            // 处理每个域名
+            for (const domain of filteredDomains) {
+                try {
+                    const result = convertCidrToFortinet(domain);
+                    if (result) {
+                        results.push(result);
+                    }
+                } catch (e) {
+                    console.error('Error processing domain:', domain, e);
+                    invalidLines++;
+                }
+            }
+        } catch (error) {
+            console.error('Error in router config processing:', error);
+            outputArea.value = 'Error occurred during processing: ' + error.message;
+            return;
         }
     } else {
         // 对于其他模式，使用标准处理
@@ -359,24 +531,75 @@ async function processInput(input) {
             }
         } else {
             // 对于其他模式，按行处理输入
-            const lines = input.split('\n').filter(line => line.trim() !== '');
+            const lines = input.split('\n').filter(line => {
+                const trimmedLine = line.trim();
+                // 忽略空行和以#开头的注释行
+                return trimmedLine !== '' && !trimmedLine.startsWith('#');
+            });
             const extractedIPs = [];
             
-            // 首先尝试提取IP地址
+            // 处理每一行输入
             for (const line of lines) {
-                const extractedIP = extractIp(line);
-                if (extractedIP) {
-                    extractedIPs.push(extractedIP);
+                // 检查是否是Cisco格式的路由命令
+                if (line.trim().startsWith('ip route ')) {
+                    const routeInfo = extractIpFromCiscoRoute(line.trim());
+                    if (routeInfo) {
+                        // 将IP和掩码转换为CIDR格式
+                        try {
+                            const cidr = convertIpMaskToCidrFormat(routeInfo.ip, routeInfo.mask);
+                            extractedIPs.push(cidr);
+                        } catch (error) {
+                            console.warn('Error converting Cisco route to CIDR:', error);
+                        }
+                    }
+                } else if (line.includes('/')) {
+                    // 处理CIDR格式 (例如 192.168.1.0/24)
+                    const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
+                    if (match) {
+                        const ip = match[1];
+                        const cidr = parseInt(match[2]);
+                        
+                        // 验证IP和CIDR
+                        if (isValidIp(ip) && cidr >= 0 && cidr <= 32) {
+                            extractedIPs.push(line); // 保留完整的CIDR表示法
+                        }
+                    }
+                } else if (line.includes(' ')) {
+                    // 处理IP掩码格式（如192.168.1.0 255.255.255.0）
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length === 2 && isValidIp(parts[0]) && isValidMask(parts[1])) {
+                        extractedIPs.push(line); // 保留IP和掩码格式
+                    } else {
+                        // 使用正则表达式检查是否包含有效的IPv4地址
+                        const ipv4Pattern = /\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/;
+                        const match = line.match(ipv4Pattern);
+                        
+                        if (match) {
+                            const ip = match[1];
+                            if (isValidIp(ip)) {
+                                extractedIPs.push(ip);
+                            }
+                        }
+                    }
                 } else {
-                    extractedIPs.push(line);
+                    // 处理单个IP地址
+                    if (isValidIp(line)) {
+                        extractedIPs.push(line);
+                    }
                 }
             }
             
-            // 验证提取的IP地址
-            const validationResult = await validateIpsWithWorker(extractedIPs);
+            // 如果没有提取到任何IP地址，尝试使用extractIpsWithWorker
+            if (extractedIPs.length === 0) {
+                const autoExtractedIPs = await extractIpsWithWorker(input, document.getElementById('ipv4Only').checked);
+                extractedIPs.push(...autoExtractedIPs);
+            }
             
-            if (!validationResult.valid) {
-                outputArea.value = currentLang === 'en' ? 'Validation error: ' + validationResult.message : '验证错误：' + validationResult.message;
+            // 如果没有有效的IP地址，显示提示信息
+            if (extractedIPs.length === 0) {
+                outputArea.value = currentLang === 'en' 
+                    ? 'No valid IP addresses found in the input.' 
+                    : '在输入中未找到有效的IP地址。';
                 return;
             }
             
@@ -414,7 +637,20 @@ async function processInput(input) {
                             result = convertCidrToIpMask(ip);
                             break;
                         case 'ip-to-cidr':
-                            result = convertIpMaskToCidr(ip);
+                            // 检查输入是否已经是CIDR格式
+                            if (ip.includes('/')) {
+                                result = ip; // 已经是CIDR格式，无需转换
+                            } else {
+                                // 检查输入是否包含IP和子网掩码
+                                const parts = ip.trim().split(/\s+/);
+                                if (parts.length === 2) {
+                                    // 输入格式为 "IP 子网掩码"
+                                    result = convertIpMaskToCidr(ip);
+                                } else {
+                                    // 单个IP地址，默认使用/32
+                                    result = `${ip}/32`;
+                                }
+                            }
                             break;
                         default:
                             result = ip;
@@ -428,10 +664,20 @@ async function processInput(input) {
         }
     }
 
+    // 对于路由器配置模式，确保结果中没有重复项
+    if (currentMode === 'router-config') {
+        results = [...new Set(results)];
+    }
+
     // Sort results if option is checked and it exists
     const sortOutput = document.getElementById('sortOutput');
-    if (sortOutput && sortOutput.checked) {
-        results.sort(compareIPs);
+    if (sortOutput && sortOutput.checked && results.length > 0) {
+        try {
+            results.sort(compareIPs);
+        } catch (error) {
+            console.warn('Error during sorting:', error);
+            // 如果排序失败，继续处理不排序的结果
+        }
     }
     
     // Display results
@@ -490,13 +736,39 @@ function setupRouterTypeHandlers() {
     const routerType = document.getElementById('routerType');
     if (routerType) {
         routerType.addEventListener('change', () => {
+            // 隐藏所有路由器特定选项
+            const routerSpecificOptions = document.querySelectorAll('.router-specific-options');
+            routerSpecificOptions.forEach(option => {
+                option.style.display = 'none';
+            });
+            
+            // 显示当前选中的路由器选项
+            const selectedRouterType = routerType.value;
+            const selectedOptions = document.getElementById(`${selectedRouterType}Options`);
+            if (selectedOptions) {
+                selectedOptions.style.display = 'block';
+                console.log(`Showing options for router type: ${selectedRouterType}`);
+            }
+            
+            // 切换输入示例
+            const routerExampleBasic = document.getElementById('router-example-basic');
+            const routerExampleFortinet = document.getElementById('router-example-fortinet');
+            
+            if (selectedRouterType === 'fortinet') {
+                if (routerExampleBasic) routerExampleBasic.style.display = 'none';
+                if (routerExampleFortinet) routerExampleFortinet.style.display = 'block';
+            } else {
+                if (routerExampleBasic) routerExampleBasic.style.display = 'block';
+                if (routerExampleFortinet) routerExampleFortinet.style.display = 'none';
+            }
+            
             applyRouterSpecificOptions();
             updateOutputPlaceholder();
         });
     }
     
     // RouterOS type radio buttons
-    const routerosTypeRadios = document.querySelectorAll('input[name="routerosType"]');
+    const routerosTypeRadios = document.querySelectorAll('input[name="routeros-type"]');
     if (routerosTypeRadios && routerosTypeRadios.length > 0) {
         routerosTypeRadios.forEach(radio => {
             radio.addEventListener('change', function() {
@@ -517,16 +789,16 @@ function setupRouterTypeHandlers() {
     }
     
     // Fortinet type radio buttons
-    const fortinetTypeRadios = document.querySelectorAll('input[name="fortinetType"]');
+    const fortinetTypeRadios = document.querySelectorAll('input[name="fortinet-type"]');
     if (fortinetTypeRadios && fortinetTypeRadios.length > 0) {
         fortinetTypeRadios.forEach(radio => {
             radio.addEventListener('change', function() {
-                const fortinetAddressGroupOptions = document.getElementById('fortinetAddressGroupOptions');
+                const addrGroupNameContainer = document.getElementById('addrGroupNameContainer');
                 
-                if (this.value === 'address-group') {
-                    fortinetAddressGroupOptions.style.display = 'block';
+                if (this.value === 'addrgrp') {
+                    addrGroupNameContainer.style.display = 'block';
                 } else {
-                    fortinetAddressGroupOptions.style.display = 'none';
+                    addrGroupNameContainer.style.display = 'none';
                 }
                 
                 updateOutputPlaceholder();
@@ -540,17 +812,74 @@ function setupLanguageButtons() {
     const langEnBtn = document.getElementById('langEn');
     const langZhBtn = document.getElementById('langZh');
     
+    console.log('Setting up language buttons:', langEnBtn, langZhBtn);
+    
     if (langEnBtn) {
+        console.log('Adding click listener to English button');
         langEnBtn.addEventListener('click', () => {
+            console.log('English button clicked');
             updateLanguage('en');
         });
     }
     
     if (langZhBtn) {
+        console.log('Adding click listener to Chinese button');
         langZhBtn.addEventListener('click', () => {
+            console.log('Chinese button clicked');
             updateLanguage('zh');
         });
     }
+}
+
+// Update language function
+function updateLanguage(lang) {
+    currentLang = lang;
+    
+    // Save language preference to localStorage
+    localStorage.setItem('preferredLanguage', lang);
+    
+    // Update all elements with data-lang attribute
+    document.querySelectorAll('[data-lang]').forEach(element => {
+        const key = element.getAttribute('data-lang');
+        if (translations[lang][key]) {
+            if (element.tagName === 'INPUT' && element.getAttribute('type') === 'placeholder') {
+                element.placeholder = translations[lang][key];
+            } else {
+                // Always use textContent to ensure proper text replacement
+                element.textContent = translations[lang][key];
+            }
+        } else {
+            console.warn(`Translation missing for key: ${key} in language: ${lang}`);
+        }
+    });
+    
+    // Update placeholders
+    const inputArea = document.getElementById('inputArea');
+    if (inputArea) {
+        if (currentMode === 'bulk-extract') {
+            inputArea.placeholder = translations[lang]['input-placeholder-bulk'];
+        } else {
+            inputArea.placeholder = translations[lang]['input-placeholder-default'];
+        }
+    }
+    
+    // Update output placeholder based on current mode and router type
+    updateOutputPlaceholder();
+    
+    // Update language buttons
+    const langEnBtn = document.getElementById('langEn');
+    const langZhBtn = document.getElementById('langZh');
+    if (langEnBtn) langEnBtn.classList.toggle('active', lang === 'en');
+    if (langZhBtn) langZhBtn.classList.toggle('active', lang === 'zh');
+    
+    // Update page title translation
+    updatePageTitle(lang);
+    
+    // Add a small opacity transition to force redraw
+    document.body.style.opacity = '0.99';
+    setTimeout(() => {
+        document.body.style.opacity = '1';
+    }, 50);
 }
 
 // Setup file upload
@@ -655,3 +984,16 @@ let currentMode = 'bulk-extract'; // Default mode
 let currentLang = localStorage.getItem('language') || 'en'; // Default language
 const inputArea = document.getElementById('inputArea');
 const outputArea = document.getElementById('outputArea');
+
+// 将函数添加到window对象上
+window.init = init;
+window.processInput = processInput;
+window.getCurrentMode = getCurrentMode;
+window.updateLanguage = updateLanguage;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('app');
+    // 所有模块加载完成后，初始化应用程序
+    window.initApp = init;
+}

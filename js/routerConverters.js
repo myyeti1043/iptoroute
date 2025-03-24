@@ -3,114 +3,314 @@
  * Contains functions for converting IP addresses to router-specific configurations
  */
 
-// Import necessary functions from ipConverters
-import { cidrToMaskMap, isValidIp, isValidMask } from './ipConverters.js';
 
 /**
  * Convert CIDR notation to Cisco IOS format
- * @param {string} line - CIDR notation (e.g., 192.168.1.0/24)
+ * @param {string} line - CIDR notation (e.g., 192.168.1.0/24) or IP address
  * @returns {string|null} - Cisco IOS configuration or null if invalid
  */
 function convertCidrToCisco(line) {
-    // Match IP/CIDR pattern
-    const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
-    if (!match) return null;
+    let ip, mask, gateway, name, cidr;
 
-    const ip = match[1];
-    const cidr = parseInt(match[2]);
+    // 1) 如果是 Cisco 格式： ip route x.x.x.x y.y.y.y z.z.z.z [ name ABC ]
+    if (line.trim().startsWith('ip route ')) {
+        const routeMatch = line.match(/ip route (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+)(?:\s+name\s+(\w+))?/);
+        if (routeMatch) {
+            const [, routeIp, routeMask, routeGateway, routeName] = routeMatch;
 
-    // Validate IP and CIDR
-    if (!isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+            // 验证 IP、掩码和网关
+            if (!window.isValidIp(routeIp) || !window.isValidMask(routeMask) || !window.isValidIp(routeGateway)) {
+                return null;
+            }
 
-    const mask = cidrToMaskMap[cidr];
-    const nextHop = document.getElementById('nextHopIp').value.trim() || 'Null0';
-    const routeName = document.getElementById('routeName').value.trim() || 'CN';
+            ip = routeIp;
+            mask = routeMask;
+            gateway = routeGateway;
+            name = routeName;
+            cidr = window.maskToCidrMap[mask];
+        } else {
+            return null;
+        }
 
-    return `ip route ${ip} ${mask} ${nextHop} name ${routeName}`;
+    // 2) 如果包含斜杠： x.x.x.x/NN
+    } else if (line.includes('/')) {
+        const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
+        if (!match) return null;
+
+        ip = match[1];
+        cidr = parseInt(match[2], 10);
+
+        if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+
+        mask = window.cidrToMaskMap[cidr];
+        if (!mask) return null;
+
+        if (cidr < 32) {
+            ip = window.getNetworkAddress(ip, mask);
+        }
+
+    // 3) 如果是空格分隔（可能是 "ip mask" 或 "ip mask gateway"）
+    } else if (line.includes(' ')) {
+        const parts = line.trim().split(/\s+/);
+
+        if (parts.length === 2) {
+            // 3.1) IP + MASK
+            const [ipPart, maskPart] = parts;
+            if (!window.isValidIp(ipPart) || !window.isValidMask(maskPart)) return null;
+
+            ip = ipPart;
+            mask = maskPart;
+            cidr = window.maskToCidrMap[mask];
+
+            if (cidr < 32) {
+                ip = window.getNetworkAddress(ip, mask);
+            }
+
+            // 默认网关还需从页面获取或设一个缺省值
+            gateway = document.getElementById('ciscoGateway')?.value.trim()
+                       || document.getElementById('nextHopIp')?.value.trim()
+                       || '192.168.1.1';
+
+        } else if (parts.length === 3) {
+            // 3.2) IP + MASK + GATEWAY
+            const [ipPart, maskPart, gwPart] = parts;
+
+            if (!window.isValidIp(ipPart) || !window.isValidMask(maskPart) || !window.isValidIp(gwPart)) {
+                return null;
+            }
+
+            ip = ipPart;
+            mask = maskPart;
+            gateway = gwPart;
+            cidr = window.maskToCidrMap[mask];
+
+            if (cidr < 32) {
+                ip = window.getNetworkAddress(ip, mask);
+            }
+
+        } else {
+            // 其它分段数不支持
+            return null;
+        }
+
+    // 4) 否则当作单个 IP (/32)
+    } else {
+        ip = line;
+        mask = '255.255.255.255';
+        cidr = 32;
+
+        if (!window.isValidIp(ip)) return null;
+
+        // 默认网关同上
+        gateway = document.getElementById('ciscoGateway')?.value.trim()
+                   || document.getElementById('nextHopIp')?.value.trim()
+                   || '192.168.1.1';
+    }
+
+    // 最终生成 Cisco 配置
+    const routeName = name
+        || document.getElementById('routeName')?.value.trim()
+        || 'CN';
+
+    // gateway 如果之前没取到，最后再兜底一下
+    gateway = gateway
+        || document.getElementById('ciscoGateway')?.value.trim()
+        || document.getElementById('nextHopIp')?.value.trim()
+        || '192.168.1.1';
+
+    return `ip route ${ip} ${mask} ${gateway} name ${routeName}`;
 }
 
 /**
  * Convert CIDR notation to MikroTik RouterOS format
- * @param {string} line - CIDR notation (e.g., 192.168.1.0/24)
- * @returns {string|null} - RouterOS configuration or null if invalid
+ * @param {string} line - CIDR notation (e.g., 192.168.1.0/24) or IP address
+ * @returns {string|null} - MikroTik RouterOS configuration or null if invalid
  */
 function convertCidrToRouterOs(line) {
-    // Match IP/CIDR pattern
-    const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
-    if (!match) return null;
-
-    const ip = match[1];
-    const cidr = parseInt(match[2]);
-
-    // Validate IP and CIDR
-    if (!isValidIp(ip) || cidr < 0 || cidr > 32) return null;
-
-    // Get the list name from the input field
-    const listName = document.getElementById('listName').value || 'CN';
+    let ip, cidr, gateway;
     
-    // Get the gateway from the input field
-    const gateway = document.getElementById('routerosGateway').value || '192.168.1.1';
-    
-    // Check which type is selected
-    const routerosType = document.querySelector('input[name="routeros-type"]:checked').value;
-
-    if (routerosType === 'address-list') {
-        // Generate address-list command
-        return `/ip firewall address-list add address=${ip}/${cidr} list=${listName}`;
-    } else if (routerosType === 'route') {
-        // Generate route command
-        return `/ip route add dst-address=${ip}/${cidr} gateway=${gateway}`;
+    // 检查是否是Cisco格式的路由命令
+    if (line.trim().startsWith('ip route ')) {
+        const routeMatch = line.match(/ip route (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+)/);
+        if (routeMatch) {
+            const [, routeIp, mask, routeGateway] = routeMatch;
+            
+            // 验证IP、掩码和网关的有效性
+            if (!window.isValidIp(routeIp) || !window.isValidMask(mask) || !window.isValidIp(routeGateway)) {
+                return null;
+            }
+            
+            // 将IP和掩码转换为CIDR格式
+            try {
+                const cidrNotation = window.convertIpMaskToCidrFormat(routeIp, mask);
+                const [cidrIp, cidrPrefix] = cidrNotation.split('/');
+                ip = cidrIp;
+                cidr = parseInt(cidrPrefix);
+                gateway = routeGateway;
+            } catch (error) {
+                console.warn('Error converting Cisco route to CIDR:', error);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    } else if (line.includes('/')) {
+        // 处理CIDR格式
+        const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
+        if (!match) return null;
+        
+        ip = match[1];
+        cidr = parseInt(match[2]);
+        
+        // 验证IP和CIDR
+        if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+    } else {
+        // 处理单个IP地址
+        ip = line;
+        cidr = 32;
+        
+        // 验证IP
+        if (!window.isValidIp(ip)) return null;
     }
     
-    // Default to address-list if something goes wrong
-    return `/ip firewall address-list add address=${ip}/${cidr} list=${listName}`;
+    // 获取子网掩码
+    const mask = window.cidrToMaskMap[cidr];
+    if (!mask) return null;
+    
+    // 获取网络地址
+    const network = window.getNetworkAddress(ip, mask);
+    
+    // 获取RouterOS类型（address-list或route）
+    const routerType = document.querySelector('input[name="routeros-type"]:checked')?.value || 'route';
+    
+    // 获取网关地址
+    const routerosGateway = document.getElementById('routerosGateway')?.value.trim() || '';
+    gateway = gateway || routerosGateway;
+    
+    // 获取地址列表名称
+    const listName = document.getElementById('listName')?.value.trim() || 'IP_List';
+    
+    // 创建配置
+    if (routerType === 'address-list') {
+        return `/ip firewall address-list add list=${listName} address=${network}/${cidr}`;
+    } else if (routerType === 'route') {
+        if (gateway) {
+            return `/ip route add dst-address=${network}/${cidr} gateway=${gateway}`;
+        } else {
+            return `/ip route add dst-address=${network}/${cidr} gateway=<gateway>`;
+        }
+    }
+    
+    // 默认返回address-list配置
+    return `/ip firewall address-list add list=${listName} address=${network}/${cidr}`;
 }
 
 /**
  * Convert CIDR notation to Huawei VRP format
- * @param {string} line - CIDR notation (e.g., 192.168.1.0/24)
+ * @param {string} line - CIDR notation (e.g., 192.168.1.0/24) or IP address
  * @returns {string|null} - Huawei VRP configuration or null if invalid
  */
 function convertCidrToHuawei(line) {
-    // Match IP/CIDR pattern
-    const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
-    if (!match) return null;
+    let ip, cidr;
+    
+    // 检查是否是CIDR格式
+    if (line.includes('/')) {
+        // Match IP/CIDR pattern
+        const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
+        if (!match) return null;
 
-    const ip = match[1];
-    const cidr = parseInt(match[2]);
+        ip = match[1];
+        cidr = parseInt(match[2]);
+    } else {
+        // 处理单个IP地址，默认使用/32
+        ip = line;
+        cidr = 32;
+    }
 
     // Validate IP and CIDR
-    if (!isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+    if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
 
-    const nextHop = document.getElementById('huaweiNextHop').value.trim() || 'Null0';
-    if (!isValidIp(nextHop) && nextHop !== 'Null0') return null;
-
-    const mask = cidrToMaskMap[cidr];
-    return `ip route-static ${ip} ${mask} ${nextHop}`;
+    const mask = window.cidrToMaskMap[cidr];
+    const nextHop = document.getElementById('nextHopIp')?.value.trim() || 'NULL0';
+    const vrfName = document.getElementById('vrfName')?.value.trim();
+    
+    // Generate VRP configuration with or without VRF
+    if (vrfName) {
+        return `ip route-static vpn-instance ${vrfName} ${ip} ${mask} ${nextHop}`;
+    } else {
+        return `ip route-static ${ip} ${mask} ${nextHop}`;
+    }
 }
 
 /**
  * Convert CIDR notation to Juniper JunOS format
- * @param {string} line - CIDR notation (e.g., 192.168.1.0/24)
+ * @param {string} line - CIDR notation (e.g., 192.168.1.0/24) or IP address
  * @returns {string|null} - Juniper JunOS configuration or null if invalid
  */
 function convertCidrToJuniper(line) {
-    // Match IP/CIDR pattern
-    const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
-    if (!match) return null;
+    let ip, cidr;
+    
+    // 检查是否是Cisco路由命令
+    const ciscoRouteInfo = extractIpFromCiscoRoute(line);
+    if (ciscoRouteInfo) {
+        const { ip: routeIp, mask } = ciscoRouteInfo;
+        
+        // 将IP和掩码转换为CIDR
+        const cidrValue = window.maskToCidrMap[mask];
+        if (!cidrValue) return null;
+        
+        ip = routeIp;
+        cidr = cidrValue;
+    } else if (line.includes('/')) {
+        // Match IP/CIDR pattern
+        const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
+        if (!match) return null;
 
-    const ip = match[1];
-    const cidr = parseInt(match[2]);
+        ip = match[1];
+        cidr = parseInt(match[2]);
+    } else if (line.includes(' ')) {
+        // 处理IP掩码格式（如192.168.1.0 255.255.255.0）
+        const parts = line.trim().split(/\s+/);
+        if (parts.length === 2) {
+            const ipPart = parts[0];
+            const maskPart = parts[1];
+            
+            // 验证IP和掩码
+            if (!window.isValidIp(ipPart) || !window.isValidMask(maskPart)) return null;
+            
+            // 将掩码转换为CIDR
+            const cidrValue = window.maskToCidrMap[maskPart];
+            if (!cidrValue) return null;
+            
+            ip = ipPart;
+            cidr = cidrValue;
+        } else {
+            return null;
+        }
+    } else {
+        // 处理单个IP地址，默认使用/32
+        ip = line;
+        cidr = 32;
+    }
 
     // Validate IP and CIDR
-    if (!isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+    if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
 
-    const nextHop = document.getElementById('juniperNextHop').value.trim() || 'reject';
-    if (!isValidIp(nextHop) && nextHop !== 'reject') return null;
+    // 如果是IP段，保持原始CIDR值；如果是单个IP地址（如10.0.0.0），保持其CIDR值
+    // 获取网络地址，确保使用正确的网络前缀
+    if (cidr < 32) {
+        const mask = window.cidrToMaskMap[cidr];
+        if (mask) {
+            ip = window.getNetworkAddress(ip, mask);
+        }
+    }
 
-    // 为Juniper路由器使用不同的命令格式，取决于是否使用IP地址或reject作为下一跳
-    if (nextHop === 'reject') {
-        return `set routing-options static route ${ip}/${cidr} reject`;
+    const nextHop = document.getElementById('juniperNextHop')?.value.trim() || '192.168.5.1';
+    const routingInstance = document.getElementById('routingInstance')?.value.trim();
+    
+    // Generate JunOS configuration with or without routing-instance
+    if (routingInstance) {
+        return `set routing-instances ${routingInstance} routing-options static route ${ip}/${cidr} next-hop ${nextHop}`;
     } else {
         return `set routing-options static route ${ip}/${cidr} next-hop ${nextHop}`;
     }
@@ -118,82 +318,134 @@ function convertCidrToJuniper(line) {
 
 /**
  * Convert CIDR notation or FQDN to Fortinet FortiOS format
- * @param {string} line - CIDR notation (e.g., 192.168.1.0/24) or FQDN
+ * @param {string} line - CIDR notation (e.g., 192.168.1.0/24), IP address, or FQDN
  * @returns {string|null} - Fortinet FortiOS configuration or null if invalid
  */
 function convertCidrToFortinet(line) {
-    // 检查输入是否为域名 (FQDN)
-    // 使用更严格的域名正则表达式
-    const fqdnPattern = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/;
+    let addrName, addrConfig;
     
-    // 检查是否为有效域名
-    let isFqdn = false;
-    if (fqdnPattern.test(line) && !line.match(/^(\d+\.\d+\.\d+\.\d+)$/)) {
-        // 进一步验证域名的各个部分
-        const parts = line.split('.');
-        // 检查顶级域名
-        const tld = parts[parts.length - 1];
-        if (!/^\d+$/.test(tld) && !/\d+[a-z]+$/.test(tld)) {
-            // 检查域名的每一部分
-            let allPartsValid = true;
-            for (const part of parts) {
-                // 域名部分不能是纯数字
-                if (/^\d+$/.test(part)) {
-                    allPartsValid = false;
-                    break;
-                }
-            }
-            isFqdn = allPartsValid;
+    // 首先检查是否是Cisco路由命令
+    const ciscoRouteInfo = extractIpFromCiscoRoute(line);
+    if (ciscoRouteInfo) {
+        const { ip, mask } = ciscoRouteInfo;
+        // 将IP和掩码转换为CIDR
+        const cidr = window.maskToCidrMap[mask];
+        if (!cidr) return null;
+        
+        // 获取地址名称
+        addrName = `${ip.replace(/\./g, '_')}_${cidr}`;
+        
+        addrConfig = `config firewall address
+    edit "${addrName}"
+        set subnet ${ip} ${mask}
+    next
+end`;
+        
+        return addrConfig;
+    }
+    
+    // 处理IP掩码格式（如192.168.1.0 255.255.255.0）
+    if (line.includes(' ') && !line.includes('/')) {
+        const parts = line.trim().split(/\s+/);
+        if (parts.length === 2) {
+            const ip = parts[0];
+            const mask = parts[1];
+            
+            // 验证IP和掩码
+            if (!window.isValidIp(ip) || !window.isValidMask(mask)) return null;
+            
+            // 将掩码转换为CIDR
+            const cidr = window.maskToCidrMap[mask];
+            if (!cidr) return null;
+            
+            // 获取地址名称
+            addrName = `${ip.replace(/\./g, '_')}_${cidr}`;
+            
+            addrConfig = `config firewall address
+    edit "${addrName}"
+        set subnet ${ip} ${mask}
+    next
+end`;
+            
+            return addrConfig;
         }
     }
     
-    let addrName, addrConfig;
-    
-    if (isFqdn) {
-        // Handle FQDN
-        addrName = line.replace(/\./g, '_');
-        addrConfig = `config firewall address
-    edit "${line}"
-        set type fqdn
-        set fqdn "${line}"
-    next
-end`;
-    } else {
-        // Handle IP/CIDR
+    // 处理IP/CIDR
+    if (line.includes('/')) {
         const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
         if (!match) return null;
 
         const ip = match[1];
         const cidr = parseInt(match[2]);
 
-        // Validate IP and CIDR
-        if (!isValidIp(ip) || cidr < 0 || cidr > 32) return null;
+        // 验证IP和CIDR
+        if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
 
-        // Get the address name by replacing dots with underscores
+        // 获取地址名称 - 确保使用正确的CIDR值
         addrName = `${ip.replace(/\./g, '_')}_${cidr}`;
+        
+        // 获取子网掩码
+        const mask = window.cidrToMaskMap[cidr];
+        if (!mask) return null;
         
         addrConfig = `config firewall address
     edit "${addrName}"
-        set subnet ${ip} ${cidrToMaskMap[cidr]}
+        set subnet ${ip} ${mask}
+    next
+end`;
+    } else if (/^\d+\.\d+\.\d+\.\d+$/.test(line)) {
+        // 处理单个IP地址（无CIDR）
+        const ip = line;
+        
+        // 验证IP
+        if (!window.isValidIp(ip)) return null;
+        
+        // 获取地址名称
+        addrName = `${ip.replace(/\./g, '_')}_32`;
+        
+        addrConfig = `config firewall address
+    edit "${addrName}"
+        set subnet ${ip} 255.255.255.255
+    next
+end`;
+    } else {
+        // 处理FQDN
+        // 检查是否是有效的域名
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+$/.test(line)) {
+            return null;
+        }
+        
+        // 获取地址名称
+        addrName = line.replace(/\./g, '_');
+        
+        addrConfig = `config firewall address
+    edit "${addrName}"
+        set type fqdn
+        set fqdn "${line}"
     next
 end`;
     }
     
-    // Get the fortinet type (address or addrgrp)
-    const fortinetType = document.querySelector('input[name="fortinet-type"]:checked').value;
-    const addrGroupName = document.getElementById('addrGroupName').value.trim() || 'IP_Group';
+    // 获取Fortinet类型（address或addrgrp）
+    const fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value || 'address';
+    const addrGroupName = document.getElementById('addrGroupName')?.value.trim() || 'IP_Group';
     
-    // Create the configuration based on the type
+    // 根据类型创建配置
     if (fortinetType === 'address') {
         return addrConfig;
-    } else {
+    } else if (fortinetType === 'addrgrp') {
         return `${addrConfig}
+
 config firewall addrgrp
-    edit ${addrGroupName}
-        append member "${isFqdn ? line : addrName}"
+    edit "${addrGroupName}"
+        append member "${addrName}"
     next
 end`;
     }
+    
+    // 默认返回地址配置
+    return addrConfig;
 }
 
 /**
@@ -202,29 +454,34 @@ end`;
  * @returns {Object|null} - Extracted IP and mask, or null if invalid
  */
 function extractIpFromCiscoRoute(route) {
-    // Match pattern like: ip route 192.168.1.0 255.255.255.0 192.168.0.1 name CN
-    const match = route.match(/ip route (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+)/);
+    if (!route || !route.trim().startsWith('ip route ')) {
+        return null;
+    }
     
+    const match = route.match(/ip route (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+) (\d+\.\d+\.\d+\.\d+)/);
     if (!match) {
         return null;
     }
     
-    const [, ip, mask] = match;
+    const [, ip, mask, gateway] = match;
     
-    // Validate IP and mask
-    if (!isValidIp(ip) || !isValidMask(mask)) {
+    // 验证IP、掩码和网关的有效性
+    if (!window.isValidIp(ip) || !window.isValidMask(mask) || !window.isValidIp(gateway)) {
         return null;
     }
     
-    return { ip, mask };
+    return { ip, mask, gateway };
 }
 
-// Export functions for use in other modules
-export {
-    convertCidrToCisco,
-    convertCidrToRouterOs,
-    convertCidrToHuawei,
-    convertCidrToJuniper,
-    convertCidrToFortinet,
-    extractIpFromCiscoRoute
-};
+// 将所有函数添加到window对象上
+window.convertCidrToCisco = convertCidrToCisco;
+window.convertCidrToRouterOs = convertCidrToRouterOs;
+window.convertCidrToHuawei = convertCidrToHuawei;
+window.convertCidrToJuniper = convertCidrToJuniper;
+window.convertCidrToFortinet = convertCidrToFortinet;
+window.extractIpFromCiscoRoute = extractIpFromCiscoRoute;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('routerConverters');
+}

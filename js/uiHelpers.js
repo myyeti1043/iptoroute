@@ -3,8 +3,8 @@
  * Contains functions for UI manipulation and user experience
  */
 
-// Import translations
-import translations from './translations.js';
+// 不再使用import，因为translations.js将会把translations对象添加到window上
+// import translations from './translations.js';
 
 /**
  * Update output placeholder based on current mode and router type
@@ -17,7 +17,7 @@ function updateOutputPlaceholder() {
     const currentLang = getCurrentLang();
     
     if (currentMode === 'bulk-extract') {
-        outputArea.placeholder = translations[currentLang]['output-placeholder-bulk'];
+        outputArea.placeholder = window.translations[currentLang]['output-placeholder-bulk'];
     } else if (currentMode === 'router-config') {
         const routerType = document.getElementById('routerType')?.value;
         if (routerType) {
@@ -26,33 +26,33 @@ function updateOutputPlaceholder() {
                     // Check if address-list or route is selected
                     const routerosType = document.querySelector('input[name="routeros-type"]:checked')?.value;
                     if (routerosType === 'route') {
-                        outputArea.placeholder = translations[currentLang]['output-placeholder-routeros-route'];
+                        outputArea.placeholder = window.translations[currentLang]['output-placeholder-routeros-route'];
                     } else {
-                        outputArea.placeholder = translations[currentLang]['output-placeholder-routeros-addresslist'];
+                        outputArea.placeholder = window.translations[currentLang]['output-placeholder-routeros-addresslist'];
                     }
                     break;
                 case 'cisco':
-                    outputArea.placeholder = translations[currentLang]['output-placeholder-cisco'];
+                    outputArea.placeholder = window.translations[currentLang]['output-placeholder-cisco'];
                     break;
                 case 'huawei':
-                    outputArea.placeholder = translations[currentLang]['output-placeholder-huawei'];
+                    outputArea.placeholder = window.translations[currentLang]['output-placeholder-huawei'];
                     break;
                 case 'juniper':
-                    outputArea.placeholder = translations[currentLang]['output-placeholder-juniper'];
+                    outputArea.placeholder = window.translations[currentLang]['output-placeholder-juniper'];
                     break;
                 case 'fortinet':
-                    outputArea.placeholder = translations[currentLang]['output-placeholder-fortinet'];
+                    outputArea.placeholder = window.translations[currentLang]['output-placeholder-fortinet'];
                     break;
                 default:
-                    outputArea.placeholder = translations[currentLang]['output-placeholder-default'];
+                    outputArea.placeholder = window.translations[currentLang]['output-placeholder-default'];
             }
         }
     } else if (currentMode === 'cidr-to-ip') {
-        outputArea.placeholder = translations[currentLang]['output-placeholder-cidr-ip'];
+        outputArea.placeholder = window.translations[currentLang]['output-placeholder-cidr-ip'];
     } else if (currentMode === 'ip-to-cidr') {
-        outputArea.placeholder = translations[currentLang]['output-placeholder-ip-cidr'];
+        outputArea.placeholder = window.translations[currentLang]['output-placeholder-ip-cidr'];
     } else {
-        outputArea.placeholder = translations[currentLang]['output-placeholder-default'];
+        outputArea.placeholder = window.translations[currentLang]['output-placeholder-default'];
     }
 }
 
@@ -61,15 +61,64 @@ function updateOutputPlaceholder() {
  * @param {Object} options - Router-specific options to apply
  */
 function applyRouterSpecificOptions(options) {
-    if (!options || !options.routerType) return;
+    // 如果没有传入选项，则使用当前UI状态
+    if (!options) {
+        const routerType = document.getElementById('routerType')?.value;
+        if (!routerType) return;
+        
+        options = { routerType };
+        
+        // 根据路由器类型获取特定选项
+        switch (routerType) {
+            case 'routeros':
+                const routerosType = document.querySelector('input[name="routeros-type"]:checked')?.value;
+                const routerosGateway = document.getElementById('routerosGateway')?.value;
+                const listName = document.getElementById('listName')?.value;
+                
+                options.routerosType = routerosType;
+                options.routerosGateway = routerosGateway;
+                options.listName = listName;
+                break;
+                
+            case 'cisco':
+                const nextHopIp = document.getElementById('nextHopIp')?.value;
+                const routeName = document.getElementById('routeName')?.value;
+                
+                options.nextHopIp = nextHopIp;
+                options.routeName = routeName;
+                break;
+                
+            case 'huawei':
+                const huaweiNextHop = document.getElementById('huaweiNextHop')?.value;
+                
+                options.huaweiNextHop = huaweiNextHop;
+                break;
+                
+            case 'juniper':
+                const juniperNextHop = document.getElementById('juniperNextHop')?.value;
+                
+                options.juniperNextHop = juniperNextHop;
+                break;
+                
+            case 'fortinet':
+                const fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value;
+                const addrGroupName = document.getElementById('addrGroupName')?.value;
+                
+                options.fortinetType = fortinetType;
+                options.addrGroupName = addrGroupName;
+                break;
+        }
+    }
     
-    // First hide all router-specific option containers
+    if (!options.routerType) return;
+    
+    // 首先隐藏所有路由器特定选项容器
     const optionContainers = document.querySelectorAll('.router-specific-options');
     optionContainers.forEach(container => {
         container.style.display = 'none';
     });
     
-    // Show the appropriate container for the selected router type
+    // 显示选中路由器类型的选项容器
     const selectedContainer = document.getElementById(`${options.routerType}Options`);
     if (selectedContainer) {
         selectedContainer.style.display = 'block';
@@ -77,29 +126,29 @@ function applyRouterSpecificOptions(options) {
     
     switch (options.routerType) {
         case 'routeros':
-            // Apply RouterOS options
+            // 应用 RouterOS 选项
             if (options.routerosType) {
                 const routerosTypeRadio = document.querySelector(`input[name="routeros-type"][value="${options.routerosType}"]`);
                 if (routerosTypeRadio) {
                     routerosTypeRadio.checked = true;
-                    // Trigger change event
+                    // 触发 change 事件
                     routerosTypeRadio.dispatchEvent(new Event('change'));
                 }
             }
             
-            // Set RouterOS gateway
+            // 设置 RouterOS 网关
             if (options.routerosGateway !== undefined) {
                 const gateway = document.getElementById('routerosGateway');
                 if (gateway) gateway.value = options.routerosGateway;
             }
             
-            // Set list name
+            // 设置列表名称
             if (options.listName !== undefined) {
                 const listName = document.getElementById('listName');
                 if (listName) listName.value = options.listName;
             }
             
-            // Special handling for RouterOS
+            // RouterOS 特殊处理
             const routerosType = document.querySelector('input[name="routeros-type"]:checked')?.value;
             const routerosAddressListOptions = document.getElementById('routerosAddressListOptions');
             const routerosRouteOptions = document.getElementById('routerosRouteOptions');
@@ -114,7 +163,7 @@ function applyRouterSpecificOptions(options) {
             break;
             
         case 'cisco':
-            // Apply Cisco options
+            // 应用 Cisco 选项
             if (options.nextHopIp !== undefined) {
                 const nextHop = document.getElementById('nextHopIp');
                 if (nextHop) nextHop.value = options.nextHopIp;
@@ -127,7 +176,7 @@ function applyRouterSpecificOptions(options) {
             break;
             
         case 'huawei':
-            // Apply Huawei options
+            // 应用 Huawei 选项
             if (options.huaweiNextHop !== undefined) {
                 const nextHop = document.getElementById('huaweiNextHop');
                 if (nextHop) nextHop.value = options.huaweiNextHop;
@@ -135,7 +184,7 @@ function applyRouterSpecificOptions(options) {
             break;
             
         case 'juniper':
-            // Apply Juniper options
+            // 应用 Juniper 选项
             if (options.juniperNextHop !== undefined) {
                 const nextHop = document.getElementById('juniperNextHop');
                 if (nextHop) nextHop.value = options.juniperNextHop;
@@ -143,12 +192,12 @@ function applyRouterSpecificOptions(options) {
             break;
             
         case 'fortinet':
-            // Apply Fortinet options
+            // 应用 Fortinet 选项
             if (options.fortinetType) {
                 const fortinetTypeRadio = document.querySelector(`input[name="fortinet-type"][value="${options.fortinetType}"]`);
                 if (fortinetTypeRadio) {
                     fortinetTypeRadio.checked = true;
-                    // Trigger change event
+                    // 触发 change 事件
                     fortinetTypeRadio.dispatchEvent(new Event('change'));
                 }
             }
@@ -158,14 +207,14 @@ function applyRouterSpecificOptions(options) {
                 if (groupName) groupName.value = options.addrGroupName;
             }
             
-            // Special handling for Fortinet
+            // Fortinet 特殊处理
             const fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value;
-            const fortinetAddressGroupOptions = document.getElementById('fortinetAddressGroupOptions');
+            const addrGroupNameContainer = document.getElementById('addrGroupNameContainer');
             
-            if (fortinetType === 'address-group') {
-                if (fortinetAddressGroupOptions) fortinetAddressGroupOptions.style.display = 'block';
+            if (fortinetType === 'addrgrp') {
+                if (addrGroupNameContainer) addrGroupNameContainer.style.display = 'block';
             } else {
-                if (fortinetAddressGroupOptions) fortinetAddressGroupOptions.style.display = 'none';
+                if (addrGroupNameContainer) addrGroupNameContainer.style.display = 'none';
             }
             break;
     }
@@ -254,6 +303,62 @@ function getCurrentLang() {
 }
 
 /**
+ * Show loading indicator
+ */
+function showLoading() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'flex';
+    }
+}
+
+/**
+ * Hide loading indicator
+ */
+function hideLoading() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+    }
+}
+
+/**
+ * Setup textarea resizer functionality
+ */
+function setupResizer() {
+    const resizers = document.querySelectorAll('.resizer');
+    resizers.forEach(resizer => {
+        const parent = resizer.parentElement;
+        const textarea = parent.querySelector('textarea');
+        
+        if (!textarea) return;
+        
+        let y = 0;
+        let initialHeight = 0;
+        
+        const initResize = e => {
+            y = e.clientY;
+            initialHeight = parseInt(window.getComputedStyle(textarea).height, 10);
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+            e.preventDefault();
+        };
+        
+        const resize = e => {
+            const dy = e.clientY - y;
+            textarea.style.height = `${initialHeight + dy}px`;
+        };
+        
+        const stopResize = () => {
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+        };
+        
+        resizer.addEventListener('mousedown', initResize);
+    });
+}
+
+/**
  * Generate a consistent page title based on page type and language
  * @param {string} pageType - Type of the page (e.g., 'Privacy Policy')
  * @param {string} lang - Current language ('en' or 'zh')
@@ -293,7 +398,7 @@ function generatePageTitle(pageType, lang) {
  */
 function updatePageTitle(lang) {
     // Get the page title from translations
-    const pageTitle = translations[lang]['page-title'];
+    const pageTitle = window.translations[lang]['page-title'];
     
     // Set the document title
     document.title = pageTitle;
@@ -301,7 +406,7 @@ function updatePageTitle(lang) {
     // Update meta tags
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-        metaDescription.setAttribute('content', translations[lang]['page-description']);
+        metaDescription.setAttribute('content', window.translations[lang]['page-description']);
     }
     
     // Update Open Graph meta tags
@@ -312,7 +417,7 @@ function updatePageTitle(lang) {
     
     const ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogDescription) {
-        ogDescription.setAttribute('content', translations[lang]['page-description']);
+        ogDescription.setAttribute('content', window.translations[lang]['page-description']);
     }
     
     // Update Twitter meta tags
@@ -323,22 +428,25 @@ function updatePageTitle(lang) {
     
     const twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (twitterDescription) {
-        twitterDescription.setAttribute('content', translations[lang]['page-description']);
+        twitterDescription.setAttribute('content', window.translations[lang]['page-description']);
     }
 }
 
-// Export functions for use in other modules
-export {
-    updateOutputPlaceholder,
-    applyRouterSpecificOptions,
-    showLoading,
-    hideLoading,
-    setupResizer,
-    showNotification,
-    handleError,
-    logErrorToAnalytics,
-    getCurrentMode,
-    getCurrentLang,
-    generatePageTitle,
-    updatePageTitle
-};
+// 将所有函数添加到window对象上
+window.updateOutputPlaceholder = updateOutputPlaceholder;
+window.applyRouterSpecificOptions = applyRouterSpecificOptions;
+window.showNotification = showNotification;
+window.handleError = handleError;
+window.logErrorToAnalytics = logErrorToAnalytics;
+window.getCurrentMode = getCurrentMode;
+window.getCurrentLang = getCurrentLang;
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;
+window.setupResizer = setupResizer;
+window.generatePageTitle = generatePageTitle;
+window.updatePageTitle = updatePageTitle;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('uiHelpers');
+}

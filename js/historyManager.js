@@ -3,8 +3,6 @@
  * Handles saving, loading, and managing operation history
  */
 
-import { getCurrentMode, getCurrentLang } from './uiHelpers.js';
-
 // Maximum number of operations to store in history
 const MAX_HISTORY_ITEMS = 20;
 
@@ -23,7 +21,7 @@ function addToRecentOperations(input) {
         if (trimmedInput === '') return;
         
         // Get current mode and router type
-        const mode = getCurrentMode();
+        const mode = window.getCurrentMode();
         const routerType = document.getElementById('routerType')?.value || '';
         
         // Create operation object with app version
@@ -185,7 +183,7 @@ function refreshRecentOperations(operations = null) {
         if (operations.length === 0) {
             const emptyMessage = document.createElement('li');
             emptyMessage.className = 'empty-history';
-            emptyMessage.textContent = getCurrentLang() === 'en' ? 
+            emptyMessage.textContent = window.getCurrentLang() === 'en' ? 
                 'No recent operations' : 
                 '没有最近的操作';
             recentOperationsList.appendChild(emptyMessage);
@@ -202,7 +200,7 @@ function refreshRecentOperations(operations = null) {
             // 设置模式显示文本
             let modeText = operation.mode || '';
             const translations = window.translations || {};
-            const currentLang = getCurrentLang();
+            const currentLang = window.getCurrentLang();
             if (translations[currentLang] && translations[currentLang][`tab-${modeText}`]) {
                 modeText = translations[currentLang][`tab-${modeText}`];
             }
@@ -238,7 +236,7 @@ function restoreOperation(operation) {
     
     try {
         // 切换到正确的模式
-        if (operation.mode && operation.mode !== getCurrentMode()) {
+        if (operation.mode && operation.mode !== window.getCurrentMode()) {
             const tabButton = document.querySelector(`.tab-button[data-tab="${operation.mode}"]`);
             if (tabButton) {
                 // 触发点击事件以切换标签
@@ -303,7 +301,7 @@ function restoreOperation(operation) {
                 }
                 
                 // 显示通知
-                const currentLang = getCurrentLang();
+                const currentLang = window.getCurrentLang();
                 const message = currentLang === 'en' 
                     ? 'Operation restored successfully'
                     : '操作已成功还原';
@@ -414,7 +412,7 @@ function clearOperationHistory() {
         refreshRecentOperations([]);
         
         // Show confirmation
-        const currentLang = getCurrentLang();
+        const currentLang = window.getCurrentLang();
         const message = currentLang === 'en' 
             ? 'Operation history cleared successfully.' 
             : '操作历史已成功清除。';
@@ -428,12 +426,29 @@ function clearOperationHistory() {
     }
 }
 
-// Export functions for use in other modules
-export {
-    addToRecentOperations,
-    loadRecentOperations,
-    refreshRecentOperations,
-    restoreOperation,
-    clearOperationHistory,
-    applyRouterSpecificOptions
-};
+/**
+ * Setup Recent Operations UI and event handlers
+ */
+function setupRecentOperations() {
+    // Set up clear history button
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', () => {
+            clearOperationHistory();
+        });
+    }
+}
+
+// 将所有函数添加到window对象上
+window.addToRecentOperations = addToRecentOperations;
+window.loadRecentOperations = loadRecentOperations;
+window.refreshRecentOperations = refreshRecentOperations;
+window.restoreOperation = restoreOperation;
+window.applyRouterSpecificOptions = applyRouterSpecificOptions;
+window.clearOperationHistory = clearOperationHistory;
+window.setupRecentOperations = setupRecentOperations;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('historyManager');
+}

@@ -134,16 +134,34 @@ function convertIpMaskToCidr(line) {
  * @returns {string} - CIDR notation
  */
 function convertIpMaskToCidrFormat(ip, mask) {
+    // 验证IP地址和子网掩码的有效性
     if (!isValidIp(ip) || !isValidMask(mask)) {
-        throw new Error('Invalid IP or mask');
+        throw new Error('Invalid IP or mask format');
     }
     
+    // 尝试使用映射表快速查找
     const cidr = maskToCidrMap[mask];
-    if (cidr === undefined) {
-        throw new Error('Invalid netmask value');
+    if (cidr !== undefined) {
+        return `${ip}/${cidr}`;
     }
     
-    return `${ip}/${cidr}`;
+    // 如果映射表中没有，手动计算CIDR前缀
+    const maskParts = mask.split('.');
+    let cidrPrefix = 0;
+    
+    for (const part of maskParts) {
+        const num = parseInt(part, 10);
+        // 计算每个部分中的1的个数
+        for (let i = 7; i >= 0; i--) {
+            if (num & (1 << i)) {
+                cidrPrefix++;
+            } else {
+                break;
+            }
+        }
+    }
+    
+    return `${ip}/${cidrPrefix}`;
 }
 
 /**
@@ -152,6 +170,11 @@ function convertIpMaskToCidrFormat(ip, mask) {
  * @returns {string|null} - Extracted IP or null if not found
  */
 function extractIp(line) {
+    // 检查输入是否为有效字符串
+    if (!line || typeof line !== 'string') {
+        return null;
+    }
+    
     // Extract IP from various formats
     const ipMatch = line.match(/(\d+\.\d+\.\d+\.\d+)/);
     return ipMatch ? ipMatch[1] : null;
@@ -404,16 +427,41 @@ function validateIpAddresses(ipAddresses) {
     };
 }
 
-// Export functions for use in other modules
-export {
-    convertCidrToIpMask,
-    convertIpMaskToCidr,
-    convertIpMaskToCidrFormat,
-    extractIp,
-    isValidIp,
-    isValidMask,
-    compareIPs,
-    validateIpAddresses,
-    cidrToMaskMap,
-    maskToCidrMap
-};
+/**
+ * 计算网络地址
+ * @param {string} ip - IP地址
+ * @param {string} mask - 子网掩码
+ * @returns {string} - 网络地址
+ */
+function getNetworkAddress(ip, mask) {
+    // 将IP地址和子网掩码转换为整数
+    const ipParts = ip.split('.').map(part => parseInt(part, 10));
+    const maskParts = mask.split('.').map(part => parseInt(part, 10));
+    
+    // 计算网络地址
+    const networkParts = [];
+    for (let i = 0; i < 4; i++) {
+        networkParts.push(ipParts[i] & maskParts[i]);
+    }
+    
+    // 返回网络地址
+    return networkParts.join('.');
+}
+
+// 将所有函数添加到window对象上
+window.cidrToMaskMap = cidrToMaskMap;
+window.maskToCidrMap = maskToCidrMap;
+window.convertCidrToIpMask = convertCidrToIpMask;
+window.convertIpMaskToCidr = convertIpMaskToCidr;
+window.convertIpMaskToCidrFormat = convertIpMaskToCidrFormat;
+window.extractIp = extractIp;
+window.isValidIp = isValidIp;
+window.isValidMask = isValidMask;
+window.compareIPs = compareIPs;
+window.validateIpAddresses = validateIpAddresses;
+window.getNetworkAddress = getNetworkAddress;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('ipConverters');
+}

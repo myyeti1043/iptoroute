@@ -3,8 +3,8 @@
  * Handles background processing for IP address operations
  */
 
-// Import necessary functions from ipConverters.js
-import { isValidIp, isValidMask, convertIpMaskToCidrFormat } from './ipConverters.js';
+// 不再使用import，因为ipConverters.js已经将这些函数添加到了window对象上
+// import { isValidIp, isValidMask, convertIpMaskToCidrFormat } from './ipConverters.js';
 
 /**
  * Initialize web worker for background processing
@@ -414,49 +414,20 @@ function convertToCidrWithWorker(ips, netmasks) {
 }
 
 /**
- * Validate IP addresses
- * @param {string[]} ipAddresses - Array of IP addresses to validate
- * @returns {Object} - Validation result
+ * Helper function to check if an IP or CIDR is valid
  */
-function validateIpAddresses(ipAddresses) {
-    if (!Array.isArray(ipAddresses) || ipAddresses.length === 0) {
-        return { valid: false, message: 'No IP addresses provided' };
+function isValidIpOrCidr(input) {
+    if (!input || typeof input !== 'string') {
+        return false;
     }
     
-    const invalidIps = [];
-    
-    for (const ip of ipAddresses) {
-        // Check if it's a CIDR notation
-        if (ip.includes('/')) {
-            const [ipPart, cidrPart] = ip.split('/');
-            const cidr = parseInt(cidrPart, 10);
-            
-            if (!isValidIp(ipPart) || isNaN(cidr) || cidr < 0 || cidr > 32) {
-                invalidIps.push(ip);
-            }
-        }
-        // Check if it's an IP with netmask
-        else if (ip.includes(' ')) {
-            const [ipPart, maskPart] = ip.split(' ');
-            
-            if (!isValidIp(ipPart) || !isValidMask(maskPart)) {
-                invalidIps.push(ip);
-            }
-        }
-        // Check if it's just an IP
-        else if (!isValidIp(ip)) {
-            invalidIps.push(ip);
-        }
+    if (input.includes('/')) {
+        const [ip, cidr] = input.split('/');
+        const cidrNum = parseInt(cidr, 10);
+        return isValidIp(ip) && !isNaN(cidrNum) && cidrNum >= 0 && cidrNum <= (input.includes(':') ? 128 : 32);
+    } else {
+        return isValidIp(input);
     }
-    
-    if (invalidIps.length > 0) {
-        return {
-            valid: false,
-            message: 'Invalid IP addresses found: ' + invalidIps.join(', ')
-        };
-    }
-    
-    return { valid: true };
 }
 
 /**
@@ -533,114 +504,16 @@ function findAllIpAddresses(data, ipv4Only = false) {
     return results;
 }
 
-/**
- * Helper function to check if an IP or CIDR is valid
- */
-function isValidIpOrCidr(input) {
-    if (input.includes('/')) {
-        const [ip, cidr] = input.split('/');
-        const cidrNum = parseInt(cidr, 10);
-        return isValidIp(ip) && !isNaN(cidrNum) && cidrNum >= 0 && cidrNum <= (input.includes(':') ? 128 : 32);
-    } else {
-        return isValidIp(input);
-    }
+// 将所有函数添加到window对象上
+window.initWebWorker = initWebWorker;
+window.terminateWorker = terminateWorker;
+window.extractIpsWithWorker = extractIpsWithWorker;
+window.validateIpsWithWorker = validateIpsWithWorker;
+window.convertToCidrWithWorker = convertToCidrWithWorker;
+window.isValidIpOrCidr = isValidIpOrCidr;
+window.findAllIpAddresses = findAllIpAddresses;
+
+// 标记模块已加载
+if (window.markModuleAsLoaded) {
+    window.markModuleAsLoaded('webWorker');
 }
-
-/**
- * Check if an IP address is valid
- * @param {string} ip - IP address to check
- * @returns {boolean} - Whether the IP is valid
- */
-function isValidIp(ip) {
-    if (!ip || typeof ip !== 'string') {
-        return false;
-    }
-    
-    // Check if it's an IPv6 address
-    if (ip.includes(':')) {
-        // Simple IPv6 validation
-        const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,7}:$|^(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}$|^(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}$|^(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}$|^(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}$|^[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}$|^:((:[0-9a-fA-F]{1,4}){1,7}|:)$|^::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])$|^(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])$/;
-        return ipv6Regex.test(ip);
-    }
-    
-    // IPv4 validation
-    const octets = ip.split('.');
-    
-    if (octets.length !== 4) {
-        return false;
-    }
-    
-    for (const octet of octets) {
-        const num = parseInt(octet, 10);
-        
-        if (isNaN(num) || num < 0 || num > 255 || (octet.length > 1 && octet[0] === '0')) {
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-/**
- * Check if a netmask is valid
- * @param {string} mask - Netmask to check
- * @returns {boolean} - Whether the netmask is valid
- */
-function isValidMask(mask) {
-    if (!mask || typeof mask !== 'string') {
-        return false;
-    }
-    
-    const octets = mask.split('.');
-    
-    if (octets.length !== 4) {
-        return false;
-    }
-    
-    let binaryMask = '';
-    
-    for (const octet of octets) {
-        const num = parseInt(octet, 10);
-        
-        if (isNaN(num) || num < 0 || num > 255) {
-            return false;
-        }
-        
-        // Convert to binary and pad to 8 bits
-        let binary = num.toString(2);
-        binary = '0'.repeat(8 - binary.length) + binary;
-        binaryMask += binary;
-    }
-    
-    // Check if the mask is contiguous (all 1s followed by all 0s)
-    const oneCount = binaryMask.split('1').length - 1;
-    const zeroCount = binaryMask.split('0').length - 1;
-    
-    if (oneCount + zeroCount !== 32) {
-        return false;
-    }
-    
-    // Check if the 1s are contiguous
-    const firstZero = binaryMask.indexOf('0');
-    const lastOne = binaryMask.lastIndexOf('1');
-    
-    if (firstZero < lastOne) {
-        return false;
-    }
-    
-    return true;
-}
-
-// Import UI helper functions
-import { showLoading, hideLoading } from './uiHelpers.js';
-
-// Export functions for use in other modules
-export {
-    initWebWorker,
-    terminateWorker,
-    extractIpsWithWorker,
-    validateIpsWithWorker,
-    convertToCidrWithWorker,
-    validateIpAddresses,
-    findAllIpAddresses
-};
