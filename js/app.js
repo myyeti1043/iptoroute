@@ -201,12 +201,22 @@ function init() {
     const optionsTitle = document.getElementById('optionsTitle');
     const currentTab = getCurrentMode();
     
-    // Hide options title for router-config and bulk-extract
-    if (optionsTitle) {
-        if (currentTab === 'router-config' || currentTab === 'bulk-extract') {
-            optionsTitle.style.display = 'none';
+    // Hide entire options panel for cidr-to-ip and ip-to-cidr
+    const optionsPanel = document.getElementById('optionsPanel');
+    if (optionsPanel) {
+        if (currentTab === 'cidr-to-ip' || currentTab === 'ip-to-cidr') {
+            optionsPanel.style.display = 'none';
         } else {
-            optionsTitle.style.display = 'block';
+            optionsPanel.style.display = 'block';
+            
+            // Hide options title for router-config and bulk-extract within the visible panel
+            if (optionsTitle) {
+                if (currentTab === 'router-config' || currentTab === 'bulk-extract') {
+                    optionsTitle.style.display = 'none';
+                } else {
+                    optionsTitle.style.display = 'block';
+                }
+            }
         }
     }
     
@@ -254,12 +264,22 @@ function setupTabNavigation() {
                 }
             });
             
-            // Show/hide options title based on tab
-            if (optionsTitle) {
-                if (tab === 'router-config' || tab === 'bulk-extract') {
-                    optionsTitle.style.display = 'none';
+            // Hide entire options panel for cidr-to-ip and ip-to-cidr
+            const optionsPanel = document.getElementById('optionsPanel');
+            if (optionsPanel) {
+                if (tab === 'cidr-to-ip' || tab === 'ip-to-cidr') {
+                    optionsPanel.style.display = 'none';
                 } else {
-                    optionsTitle.style.display = 'block';
+                    optionsPanel.style.display = 'block';
+                    
+                    // Show/hide options title based on tab within the visible panel
+                    if (optionsTitle) {
+                        if (tab === 'router-config' || tab === 'bulk-extract') {
+                            optionsTitle.style.display = 'none';
+                        } else {
+                            optionsTitle.style.display = 'block';
+                        }
+                    }
                 }
             }
             
@@ -747,8 +767,8 @@ async function processInput(input) {
         }
     }
 
-    // 对于路由器配置模式，确保结果中没有重复项
-    if (currentMode === 'router-config') {
+    // 对于router-config、cidr-to-ip和ip-to-cidr模式，确保结果中没有重复项
+    if (currentMode === 'router-config' || currentMode === 'cidr-to-ip' || currentMode === 'ip-to-cidr') {
         results = [...new Set(results)];
     }
 
