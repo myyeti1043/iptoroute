@@ -72,8 +72,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM content loaded in app.js');
     // Initialize common functionality across all pages
-    setupThemeToggle();
-    setupLanguageSelection();
+    
+    // Use a small delay to ensure DOM is fully ready
+    setTimeout(() => {
+        setupLanguageSelection();
+    }, 100);
     
     // Call original init function if on main app page
     if (document.getElementById('appTabs')) {
@@ -112,23 +115,59 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupThemeToggle() {
     console.log('Setting up theme toggle...');
     const themeToggle = document.getElementById('themeToggle');
+    console.log('Found themeToggle element:', themeToggle);
+    
     if (themeToggle) {
         // Get saved theme from localStorage or use system preference
         const savedTheme = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const defaultTheme = savedTheme || (prefersDark ? 'dark' : 'light');
         
-        // Apply the theme
-        document.documentElement.setAttribute('data-theme', defaultTheme);
-        themeToggle.checked = defaultTheme === 'dark';
+        console.log('Default theme:', defaultTheme);
         
-        // Add event listener for theme toggle
-        themeToggle.addEventListener('change', function() {
-            const theme = this.checked ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
+        // Apply the theme
+        applyTheme(defaultTheme);
+        
+        // Add event listener for theme toggle - try multiple event types
+        const clickHandler = function(e) {
+            console.log('Theme toggle button clicked!', e);
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            console.log('Switching from', currentTheme, 'to', newTheme);
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        };
+        
+        // Try multiple ways to attach the event
+        themeToggle.addEventListener('click', clickHandler);
+        themeToggle.onclick = clickHandler;
+        
+        // Also try mousedown event
+        themeToggle.addEventListener('mousedown', function(e) {
+            console.log('Theme toggle mousedown detected');
         });
+        
+        console.log('Theme toggle event listener added successfully');
+    } else {
+        console.error('themeToggle element not found!');
     }
+}
+
+// Helper function to apply theme
+function applyTheme(theme) {
+    console.log('Applying theme:', theme);
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        console.log('Added dark-theme class to body');
+    } else {
+        document.body.classList.remove('dark-theme');
+        console.log('Removed dark-theme class from body');
+    }
+    console.log('Current body classes:', document.body.className);
 }
 
 // Setup language selection functionality
@@ -173,6 +212,9 @@ function init() {
     
     console.log('Setting up language buttons...');
     setupLanguageButtons();
+    
+    console.log('Setting up theme toggle...');
+    setupThemeToggle();
     
     console.log('Setting up file upload...');
     setupFileUpload();
