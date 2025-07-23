@@ -98,11 +98,18 @@
     }
     </script>
     
-    <!-- 提前处理hash参数以确保可以直接访问特定标签 -->
+    <!-- 提前处理hash参数和语言设置以确保正确的初始显示 -->
     <script>
         (function() {
             // 存储URL中的hash参数以供后续使用
             window.__initialHash = window.location.hash;
+            
+            // 检查用户的语言偏好
+            var preferredLang = localStorage.getItem('preferredLanguage') || 'en';
+            window.__initialLang = preferredLang;
+            
+            // 设置HTML语言属性
+            document.documentElement.lang = preferredLang;
             
             // 如果直接通过hash访问页面，预处理hash
             function handleInitialHash() {
@@ -125,7 +132,7 @@
         <header>
             <h1>
                 <a href="./" data-lang="title-main">IPToRoute</a>
-                <span class="subtitle" data-lang="title">IP地址转换与路由配置生成工具</span>
+                <span class="subtitle" data-lang="title">IP Address & Router Configuration Tool</span>
             </h1>
             <div class="header-controls">
                 <div class="theme-toggle">

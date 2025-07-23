@@ -180,9 +180,11 @@ function init() {
     console.log('Setting up recent operations...');
     setupRecentOperations();
     
-    // Load recent operations from localStorage
+    // Load recent operations from localStorage and refresh UI
     console.log('Loading recent operations...');
-    loadRecentOperations();
+    const operations = loadRecentOperations();
+    console.log('Refreshing recent operations UI...');
+    refreshRecentOperations(operations);
     
     // Set up resizer functionality
     console.log('Setting up resizer...');
@@ -981,7 +983,7 @@ function setupFooterNavigation() {
 
 // Global variables
 let currentMode = 'router-config'; // Default mode
-let currentLang = localStorage.getItem('preferredLanguage') || 'en'; // Default language
+let currentLang = window.__initialLang || localStorage.getItem('preferredLanguage') || 'en'; // Default language
 const inputArea = document.getElementById('inputArea');
 const outputArea = document.getElementById('outputArea');
 

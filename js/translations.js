@@ -139,8 +139,8 @@ const translations = {
         'tooltip-language': 'Switch language',
         
         // Additional translations
-        'title-main': 'IPToRoute - IP Address Tools for Network Engineers',
-        'title': 'IPToRoute',
+        'title-main': 'IPToRoute',
+        'title': 'IP Address & Router Configuration Tool',
         'theme-tooltip': 'Toggle Dark Mode',
         'recent-operations': 'Recent Operations',
         'clear-history': 'Clear History',
@@ -317,7 +317,7 @@ const translations = {
         
         // Additional translations
         'title-main': 'IPToRoute',
-        'title': 'IPToRoute - IP地址转换工具',
+        'title': 'IP地址转换与路由配置生成工具',
         'theme-tooltip': '切换明暗模式',
         'recent-operations': '最近操作',
         'clear-history': '清除历史',
