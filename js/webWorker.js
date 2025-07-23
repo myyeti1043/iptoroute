@@ -10,15 +10,26 @@
  * Initialize web worker for background processing
  */
 function initWebWorker() {
-    // Create a blob URL for the worker script
+    // Terminate existing worker if any
+    if (window.ipWorker) {
+        window.ipWorker.terminate();
+        window.ipWorker = null;
+    }
+    
+    // Create a blob URL for the worker script - Version 2.0 with netmask filtering
     const workerCode = `
-        // Worker script
+        // Worker script - Version 2.0 with netmask filtering
         self.onmessage = function(e) {
             const { action, data } = e.data;
             
             switch (action) {
                 case 'extractIps':
                     const { text, ipv4Only } = data;
+                    // Send debug info back to main thread
+                    self.postMessage({ 
+                        action: 'debug', 
+                        data: 'WebWorker: Starting IP extraction with v2.0 netmask filtering' 
+                    });
                     const extractedIps = extractIpsWorker(text, ipv4Only);
                     self.postMessage({ 
                         action: 'extractIpsResult', 
@@ -162,29 +173,148 @@ function initWebWorker() {
             
             const results = new Set();
             
-            // 匹配CIDR
+            // 匹配CIDR - 使用更严格的边界匹配
             const cidrRegex = ipv4Only 
-                ? /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\/([0-9]|[12][0-9]|3[0-2])/g
-                : /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\/([0-9]|[12][0-9]|3[0-2])|([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])/g;
+                ? /\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\/([0-9]|[12][0-9]|3[0-2])\\b/g
+                : /\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\/([0-9]|[12][0-9]|3[0-2])\\b|\\b([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8])\\b/g;
             
             let match;
             while ((match = cidrRegex.exec(text)) !== null) {
-                results.add(match[0]);
+                const cidr = match[0];
+                results.add(cidr);
+                // Send debug info
+                self.postMessage({ 
+                    action: 'debug', 
+                    data: 'WebWorker: Found CIDR: ' + cidr 
+                });
             }
             
-            // 匹配普通IP地址
+            // 匹配普通IP地址 - 使用更严格的边界匹配，避免匹配CIDR格式
             const ipRegex = ipv4Only
-                ? /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g
-                : /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}/g;
+                ? /\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b(?!\\/)/g
+                : /\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b(?!\\/)|\\b([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\b(?!\\/)/g;
             
             while ((match = ipRegex.exec(text)) !== null) {
+                const ip = match[0];
+                
+                // Send debug info for tracking
+                self.postMessage({ 
+                    action: 'debug', 
+                    data: 'WebWorker: Found IP candidate: ' + ip 
+                });
+                
                 // 排除已添加的CIDR
-                if (!Array.from(results).some(cidr => cidr.startsWith(match[0] + '/'))) {
-                    results.add(match[0]);
+                if (Array.from(results).some(cidr => cidr.startsWith(ip + '/'))) {
+                    self.postMessage({ 
+                        action: 'debug', 
+                        data: 'WebWorker: Skipping IP (already in CIDR): ' + ip 
+                    });
+                    continue;
+                }
+                
+                // 检查是否是子网掩码 - 使用与jsonExtractor.js相同的逻辑
+                if (isNetmaskLikeAddressWorker(ip)) {
+                    self.postMessage({ 
+                        action: 'debug', 
+                        data: 'WebWorker: Skipping IP (is netmask): ' + ip 
+                    });
+                    continue;
+                }
+                
+                // 添加/32后缀给单独的IPv4地址
+                if (ip.includes('.') && !ip.includes(':')) {
+                    const finalResult = ip + '/32';
+                    results.add(finalResult);
+                    self.postMessage({ 
+                        action: 'debug', 
+                        data: 'WebWorker: Added IP with /32: ' + finalResult 
+                    });
+                } else {
+                    results.add(ip);
+                    self.postMessage({ 
+                        action: 'debug', 
+                        data: 'WebWorker: Added IP: ' + ip 
+                    });
                 }
             }
             
             return Array.from(results);
+        }
+        
+        // Worker版本的子网掩码检查函数 - 修复版本
+        function isNetmaskLikeAddressWorker(ip) {
+            // Send debug info back to main thread for problematic IPs
+            if (ip.startsWith('255.')) {
+                self.postMessage({ 
+                    action: 'debug', 
+                    data: 'WebWorker: Checking if IP is netmask: ' + ip 
+                });
+            }
+            // 预定义的常见掩码映射
+            const maskToCidrMap = {
+                "255.255.255.255": 32, "255.255.255.254": 31, "255.255.255.252": 30, "255.255.255.248": 29,
+                "255.255.255.240": 28, "255.255.255.224": 27, "255.255.255.192": 26, "255.255.255.128": 25,
+                "255.255.255.0": 24, "255.255.254.0": 23, "255.255.252.0": 22, "255.255.248.0": 21,
+                "255.255.240.0": 20, "255.255.224.0": 19, "255.255.192.0": 18, "255.255.128.0": 17,
+                "255.255.0.0": 16, "255.254.0.0": 15, "255.252.0.0": 14, "255.248.0.0": 13,
+                "255.240.0.0": 12, "255.224.0.0": 11, "255.192.0.0": 10, "255.128.0.0": 9,
+                "255.0.0.0": 8, "254.0.0.0": 7, "252.0.0.0": 6, "248.0.0.0": 5,
+                "240.0.0.0": 4, "224.0.0.0": 3, "192.0.0.0": 2, "128.0.0.0": 1, "0.0.0.0": 0
+            };
+            
+            // 检查是否在预定义的掩码映射表中
+            if (ip in maskToCidrMap) {
+                return true;
+            }
+            
+            // 验证IP格式
+            if (!ip || !/^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$/.test(ip)) {
+                return false;
+            }
+            
+            // 将IP地址转换为32位二进制字符串
+            const parts = ip.split('.').map(part => parseInt(part, 10));
+            
+            // 检查每个部分是否在有效范围内
+            if (parts.some(part => part < 0 || part > 255)) {
+                return false;
+            }
+            
+            // 转换为二进制字符串
+            let binaryMask = '';
+            for (const part of parts) {
+                binaryMask += part.toString(2).padStart(8, '0');
+            }
+            
+            // 检查是否符合子网掩码的模式：连续的1后面跟连续的0
+            const maskPattern = /^1*0*$/;
+            const isValidMaskPattern = maskPattern.test(binaryMask);
+            
+            if (!isValidMaskPattern) {
+                return false;
+            }
+            
+            // 额外检查：如果二进制全是0或全是1，也认为是掩码
+            if (binaryMask === '00000000000000000000000000000000' || // 0.0.0.0
+                binaryMask === '11111111111111111111111111111111') { // 255.255.255.255
+                return true;
+            }
+            
+            // 检查是否至少有一个1（排除全0的情况，但0.0.0.0是特殊的有效掩码）
+            const hasOnes = binaryMask.includes('1');
+            
+            // 如果有1且符合掩码模式，就是有效掩码
+            const result = hasOnes || binaryMask === '00000000000000000000000000000000';
+            
+            // Send debug result back to main thread for problematic IPs
+            if (ip.startsWith('255.')) {
+                self.postMessage({ 
+                    action: 'debug', 
+                    data: 'WebWorker: IP ' + ip + ' is netmask: ' + result + ', binary: ' + binaryMask 
+                });
+            }
+            
+            return result;
         }
         
         // Batch validate IP addresses
@@ -245,6 +375,10 @@ function initWebWorker() {
                     window.convertToCidrResolve(data);
                     window.convertToCidrResolve = null;
                 }
+                break;
+                
+            case 'debug':
+                console.log('WebWorker Debug:', data);
                 break;
                 
             case 'error':

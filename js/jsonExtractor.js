@@ -103,6 +103,7 @@ function findAllIpAddresses(data, ipv4Only = false) {
     const ipv4RegexCidr = /\b(?:\d{1,3}\.){3}\d{1,3}\/\d{1,2}\b/g;
     
     // For standalone IP addresses (without CIDR notation)
+    // 修改正则表达式，避免匹配明显的子网掩码模式
     const ipv4RegexSimple = /\b(?:\d{1,3}\.){3}\d{1,3}\b(?!\/)/g;
     
     // Simplified IPv6 regex patterns to improve performance
@@ -124,8 +125,10 @@ function findAllIpAddresses(data, ipv4Only = false) {
             
             // Add /32 to standalone IPv4 addresses, but skip common subnet mask values
             ipv4WithoutCidr.forEach(ip => {
-                // 检查是否是常见的子网掩码值
-                if (!(ip in window.maskToCidrMap) && !ipAddresses.includes(ip + '/32')) {
+                // 更严格的子网掩码检查逻辑
+                const isSubnetMask = isNetmaskLikeAddress(ip);
+                
+                if (!isSubnetMask && !ipAddresses.includes(ip + '/32')) {
                     ipAddresses.push(ip + '/32');
                 }
             });
@@ -178,6 +181,61 @@ function findAllIpAddresses(data, ipv4Only = false) {
     }
     
     return ipAddresses;
+}
+
+/**
+ * 检查IP地址是否看起来像子网掩码
+ * @param {string} ip - IP地址字符串
+ * @returns {boolean} - 如果看起来像子网掩码则返回true
+ */
+function isNetmaskLikeAddress(ip) {
+    // 检查是否在预定义的掩码映射表中
+    if (ip in window.maskToCidrMap) {
+        return true;
+    }
+    
+    // 验证IP格式
+    if (!ip || !/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
+        return false;
+    }
+    
+    // 将IP地址转换为32位二进制字符串
+    const parts = ip.split('.').map(part => parseInt(part, 10));
+    
+    // 检查每个部分是否在有效范围内
+    if (parts.some(part => part < 0 || part > 255)) {
+        return false;
+    }
+    
+    // 转换为二进制字符串
+    let binaryMask = '';
+    for (const part of parts) {
+        binaryMask += part.toString(2).padStart(8, '0');
+    }
+    
+    // 检查是否符合子网掩码的模式：连续的1后面跟连续的0
+    // 有效的掩码例如：11111111111111111111111100000000 (/24)
+    //                11111111111111110000000000000000 (/16)  
+    //                11110000000000000000000000000000 (/4)
+    const maskPattern = /^1*0*$/;
+    const isValidMaskPattern = maskPattern.test(binaryMask);
+    
+    if (!isValidMaskPattern) {
+        return false;
+    }
+    
+    // 额外检查：如果二进制全是0或全是1，也认为是掩码
+    if (binaryMask === '00000000000000000000000000000000' || // 0.0.0.0
+        binaryMask === '11111111111111111111111111111111') { // 255.255.255.255
+        return true;
+    }
+    
+    // 检查是否至少有一个1（排除全0的情况，但0.0.0.0是特殊的有效掩码）
+    const hasOnes = binaryMask.includes('1');
+    const hasZeros = binaryMask.includes('0');
+    
+    // 如果只有1或只有0，且符合掩码模式，就是有效掩码
+    return hasOnes || binaryMask === '00000000000000000000000000000000';
 }
 
 /**
@@ -235,6 +293,7 @@ function validateIpAddresses(ipAddresses) {
 // 将所有函数添加到window对象上
 window.extractIpPrefixesFromJson = extractIpPrefixesFromJson;
 window.findAllIpAddresses = findAllIpAddresses;
+window.isNetmaskLikeAddress = isNetmaskLikeAddress;
 window.extractIpFromCiscoRoute = extractIpFromCiscoRoute;
 window.validateIpAddresses = validateIpAddresses;
 

@@ -22,3 +22,5 @@ npm-debug.log*
 
 # Optional eslint cache
 .eslintcache 
+.claude/settings.local.json
+.gitignore
