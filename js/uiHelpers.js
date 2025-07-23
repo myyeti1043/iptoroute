@@ -323,10 +323,17 @@ function hideLoading() {
 }
 
 /**
- * Setup textarea resizer functionality
+ * Setup resizer functionality for both vertical and horizontal resizers
  */
 function setupResizer() {
-    const resizers = document.querySelectorAll('.resizer');
+    // Setup horizontal resizer
+    const horizontalResizer = document.getElementById('horizontalResizer');
+    if (horizontalResizer) {
+        setupHorizontalResizer(horizontalResizer);
+    }
+    
+    // Setup vertical resizers for textareas (existing functionality)
+    const resizers = document.querySelectorAll('.resizer:not(#horizontalResizer)');
     resizers.forEach(resizer => {
         const parent = resizer.parentElement;
         const textarea = parent.querySelector('textarea');
@@ -356,6 +363,70 @@ function setupResizer() {
         
         resizer.addEventListener('mousedown', initResize);
     });
+}
+
+/**
+ * Setup horizontal resizer functionality
+ */
+function setupHorizontalResizer(resizer) {
+    const mainContent = document.querySelector('.main-content');
+    const inputSection = document.querySelector('.input-section');
+    const outputSection = document.querySelector('.output-section');
+    
+    if (!mainContent || !inputSection || !outputSection) {
+        console.warn('Required elements not found for horizontal resizer');
+        return;
+    }
+    
+    let x = 0;
+    let inputSectionWidth = 0;
+    let outputSectionWidth = 0;
+    let totalWidth = 0;
+    
+    const initResize = e => {
+        x = e.clientX;
+        const mainContentRect = mainContent.getBoundingClientRect();
+        const inputSectionRect = inputSection.getBoundingClientRect();
+        const outputSectionRect = outputSection.getBoundingClientRect();
+        
+        inputSectionWidth = inputSectionRect.width;
+        outputSectionWidth = outputSectionRect.width;
+        totalWidth = mainContentRect.width - resizer.offsetWidth;
+        
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', stopResize);
+        resizer.classList.add('active');
+        e.preventDefault();
+    };
+    
+    const resize = e => {
+        const dx = e.clientX - x;
+        const newInputWidth = inputSectionWidth + dx;
+        const newOutputWidth = outputSectionWidth - dx;
+        
+        // 设置最小和最大宽度限制（30% - 70%）
+        const minWidth = totalWidth * 0.3;
+        const maxWidth = totalWidth * 0.7;
+        
+        if (newInputWidth >= minWidth && newInputWidth <= maxWidth) {
+            // 使用flex-basis而不是完整的flex属性，保持原有的padding和其他样式
+            inputSection.style.flexBasis = `${newInputWidth}px`;
+            inputSection.style.flexGrow = '0';
+            inputSection.style.flexShrink = '0';
+            
+            outputSection.style.flexBasis = `${newOutputWidth}px`;
+            outputSection.style.flexGrow = '0';
+            outputSection.style.flexShrink = '0';
+        }
+    };
+    
+    const stopResize = () => {
+        document.removeEventListener('mousemove', resize);
+        document.removeEventListener('mouseup', stopResize);
+        resizer.classList.remove('active');
+    };
+    
+    resizer.addEventListener('mousedown', initResize);
 }
 
 /**
@@ -443,6 +514,7 @@ window.getCurrentLang = getCurrentLang;
 window.showLoading = showLoading;
 window.hideLoading = hideLoading;
 window.setupResizer = setupResizer;
+window.setupHorizontalResizer = setupHorizontalResizer;
 window.generatePageTitle = generatePageTitle;
 window.updatePageTitle = updatePageTitle;
 
