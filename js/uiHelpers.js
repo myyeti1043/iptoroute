@@ -299,7 +299,7 @@ function getCurrentMode() {
  * @returns {string} - Current language code ('en' or 'zh')
  */
 function getCurrentLang() {
-    return localStorage.getItem('language') || 'en';
+    return localStorage.getItem('preferredLanguage') || 'en';
 }
 
 /**

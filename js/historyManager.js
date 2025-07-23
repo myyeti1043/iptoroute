@@ -161,7 +161,7 @@ function loadRecentOperations() {
  * @param {Array} operations - Array of operation objects (optional)
  */
 function refreshRecentOperations(operations = null) {
-    const recentOperationsList = document.getElementById('recentOperationsList');
+    const recentOperationsList = document.getElementById('recentOperations');
     if (!recentOperationsList) return;
     
     try {

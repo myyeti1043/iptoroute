@@ -980,8 +980,8 @@ function setupFooterNavigation() {
 }
 
 // Global variables
-let currentMode = 'bulk-extract'; // Default mode
-let currentLang = localStorage.getItem('language') || 'en'; // Default language
+let currentMode = 'router-config'; // Default mode
+let currentLang = localStorage.getItem('preferredLanguage') || 'en'; // Default language
 const inputArea = document.getElementById('inputArea');
 const outputArea = document.getElementById('outputArea');
 
