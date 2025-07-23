@@ -1,0 +1,93 @@
+# IPToRoute 测试用例
+
+## 1. 标准IP地址和CIDR测试
+192.168.1.0/24
+10.0.0.0/16
+172.16.0.0/12
+8.8.8.8/32
+0.0.0.0/0
+
+## 2. 有效域名测试
+example.com
+www.example.com
+sub.domain.example.co.uk
+test-domain.org
+xn--80akhbyknj4f.xn--p1ai
+domain-with-hyphens.com
+very-long-subdomain.another-subdomain.example.com
+
+## 3. 无效域名测试（应被过滤）
+1.018
+0.517
+104.66ms
+192.168.1
+300.400.500.600
+example
+.com
+example..com
+-example.com
+example-.com
+example.123
+example.c
+example.
+
+## 4. 混合内容测试
+我们的服务器位于192.168.1.0/24和example.com
+IP地址10.0.0.0/16和域名www.example.org需要添加到防火墙
+Please add 172.16.0.0/12 and test-domain.net to the firewall
+Response time: 104.66ms, server: api.example.com, IP: 8.8.8.8
+
+## 5. JSON格式测试
+{
+  "servers": [
+    {
+      "name": "Production",
+      "ip": "192.168.1.0/24",
+      "domain": "example.com"
+    },
+    {
+      "name": "Testing",
+      "ip": "10.0.0.0/16",
+      "domain": "test.example.org"
+    }
+  ],
+  "metrics": {
+    "response_time": "104.66ms",
+    "version": "1.018"
+  }
+}
+
+## 6. 特殊格式测试
+192.168.1.0 255.255.255.0
+10.0.0.0 255.255.0.0
+IP: 172.16.0.0/12, Domain: example.com
+8.8.8.8;example.org
+0.0.0.0/0 # Default route
+example.com # Main domain
+
+## 7. 大量混合数据测试
+192.168.1.0/24
+example.com
+100.0.0.0/16
+www.example.org
+172.16.0.0/12
+test-domain.net
+8.8.8.8/32
+sub.domain.example.co.uk
+0.0.0.0/0
+10.0.0.0/8
+domain-with-hyphens.com
+1.018
+0.517
+104.66ms
+example.123
+192.168.1
+example.c
+Response time: 104.66ms, server: api.example.com, IP: 8.8.8.8
+我们的服务器位于192.168.1.0/24和example.com
+IP地址10.0.0.0/16和域名www.example.org需要添加到防火墙 
+
+
+<textarea id="outputArea" rows="10" readonly="" placeholder="Example output:
+ip route 192.168.1.0 255.255.255.0 192.168.1.1
+ip route 10.0.0.0 255.255.0.0 192.168.1.1" aria-label="Output text area"></textarea>
