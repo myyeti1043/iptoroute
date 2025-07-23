@@ -504,6 +504,87 @@ async function processInput(input) {
             outputArea.value = 'Error occurred during processing: ' + error.message;
             return;
         }
+    } 
+    // Special handling for RouterOS address-list mode with mixed IP/domain support
+    else if (currentMode === 'router-config' && 
+             document.getElementById('routerType').value === 'routeros' &&
+             document.querySelector('input[name="routeros-type"]:checked')?.value === 'address-list') {
+        try {
+            // 按行处理输入
+            const lines = input.split('\n').filter(line => {
+                const trimmedLine = line.trim();
+                // 忽略空行和以#开头的注释行
+                return trimmedLine !== '' && !trimmedLine.startsWith('#');
+            });
+            
+            // 使用extractIpsWithWorker提取有效的IP地址
+            const extractedIPs = await extractIpsWithWorker(input, document.getElementById('ipv4Only').checked);
+            
+            // 验证提取的IP地址
+            const validationResults = await validateIpsWithWorker(extractedIPs);
+            
+            // 过滤出有效的IP地址
+            const validIps = extractedIPs.filter(ip => {
+                const result = validationResults.find(r => r.original === ip);
+                return result && result.valid;
+            });
+            
+            // 处理每个有效的IP地址
+            for (const ip of validIps) {
+                try {
+                    const result = convertCidrToRouterOs(ip);
+                    if (result) {
+                        results.push(result);
+                    }
+                } catch (e) {
+                    console.error('Error processing IP:', ip, e);
+                    invalidLines++;
+                }
+            }
+            
+            // 提取所有域名（使用与Fortinet相同的域名提取逻辑）
+            const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/gi;
+            const domains = input.match(domainRegex) || [];
+            
+            // 过滤掉可能被错误识别为域名的IP地址
+            const filteredDomains = domains.filter(domain => {
+                // 不是IP地址格式
+                if (domain.match(/^\d+\.\d+\.\d+\.\d+$/)) return false;
+                
+                // 检查是否是有效的域名
+                const parts = domain.split('.');
+                // 顶级域名不能是纯数字
+                const tld = parts[parts.length - 1];
+                if (/^\d+$/.test(tld)) return false;
+                
+                return true;
+            });
+            
+            // 处理每个域名
+            for (const domain of filteredDomains) {
+                try {
+                    const result = convertCidrToRouterOs(domain);
+                    if (result) {
+                        results.push(result);
+                    }
+                } catch (e) {
+                    console.error('Error processing domain:', domain, e);
+                    invalidLines++;
+                }
+            }
+            
+            // 如果没有有效的IP地址或域名，显示提示信息
+            if (results.length === 0) {
+                outputArea.value = currentLang === 'en' 
+                    ? 'No valid IP addresses or domain names found in the input.' 
+                    : '在输入中未找到有效的IP地址或域名。';
+                return;
+            }
+        } catch (error) {
+            console.error('Error in RouterOS address-list processing:', error);
+            outputArea.value = 'Error occurred during processing: ' + error.message;
+            return;
+        }
     } else {
         // 对于其他模式，使用标准处理
         

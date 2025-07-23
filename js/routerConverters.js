@@ -164,13 +164,31 @@ function convertCidrToRouterOs(line) {
         
         // 验证IP和CIDR
         if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
-    } else {
+    } else if (/^\d+\.\d+\.\d+\.\d+$/.test(line)) {
         // 处理单个IP地址
         ip = line;
         cidr = 32;
         
         // 验证IP
         if (!window.isValidIp(ip)) return null;
+    } else {
+        // 获取RouterOS类型（address-list或route）
+        const routerType = document.querySelector('input[name="routeros-type"]:checked')?.value || 'route';
+        
+        // 如果是address-list模式，检查是否为域名
+        if (routerType === 'address-list') {
+            // 验证域名格式 (与Fortinet相同的正则表达式)
+            if (/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+$/.test(line)) {
+                // 获取地址列表名称
+                const listName = document.getElementById('listName')?.value.trim() || 'IP_List';
+                
+                // 生成域名配置
+                return `/ip firewall address-list add list=${listName} address=${line}`;
+            }
+        }
+        
+        // 如果不是有效的域名或不是address-list模式，返回null
+        return null;
     }
     
     // 获取子网掩码
@@ -231,7 +249,7 @@ function convertCidrToHuawei(line) {
     if (!window.isValidIp(ip) || cidr < 0 || cidr > 32) return null;
 
     const mask = window.cidrToMaskMap[cidr];
-    const nextHop = document.getElementById('nextHopIp')?.value.trim() || 'NULL0';
+    const nextHop = document.getElementById('huaweiNextHop')?.value.trim() || 'NULL0';
     const vrfName = document.getElementById('vrfName')?.value.trim();
     
     // Generate VRP configuration with or without VRF
