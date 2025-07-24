@@ -233,11 +233,6 @@ example.com
                         </div>
                     </article>
                     
-                    <div class="input-method">
-                        <label>
-                            <input type="radio" name="input-method" value="paste" checked> <span data-lang="input-paste">Paste Text</span>
-                        </label>
-                    </div>
                     
                     <textarea id="inputArea" rows="10" placeholder="Enter your IP addresses or domain names here (one per line)..." aria-label="Input text area"></textarea>
                     
@@ -293,14 +288,16 @@ example.com
                         
                         <!-- Router Config options -->
                         <div class="option-group" id="optionsRouter">
-                            <label for="routerType" data-lang="router-type">Router Type:</label>
-                            <select id="routerType">
-                                <option value="routeros" data-lang="router-routeros">MikroTik RouterOS</option>
-                                <option value="cisco" data-lang="router-cisco">Cisco IOS</option>
-                                <option value="huawei" data-lang="router-huawei">Huawei VRP</option>
-                                <option value="juniper" data-lang="router-juniper">Juniper JunOS</option>
-                                <option value="fortinet" data-lang="router-fortinet">Fortinet FortiOS</option>
-                            </select>
+                            <div class="input-row">
+                                <label for="routerType" data-lang="router-type">Router Type:</label>
+                                <select id="routerType">
+                                    <option value="routeros" data-lang="router-routeros">MikroTik RouterOS</option>
+                                    <option value="cisco" data-lang="router-cisco">Cisco IOS</option>
+                                    <option value="huawei" data-lang="router-huawei">Huawei VRP</option>
+                                    <option value="juniper" data-lang="router-juniper">Juniper JunOS</option>
+                                    <option value="fortinet" data-lang="router-fortinet">Fortinet FortiOS</option>
+                                </select>
+                            </div>
                             
                             <!-- Cisco Options -->
                             <div id="ciscoOptions" class="router-specific-options" style="display: none;">

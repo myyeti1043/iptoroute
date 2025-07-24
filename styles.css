@@ -544,6 +544,24 @@ textarea:focus {
     border-left: 3px solid var(--primary-color);
 }
 
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.input-row label {
+    margin-bottom: 0;
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+.input-row select {
+    flex: 1;
+    max-width: 200px;
+}
+
 label {
     display: block;
     margin-bottom: 0.35rem;
