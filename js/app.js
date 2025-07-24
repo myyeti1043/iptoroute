@@ -173,10 +173,15 @@ function applyTheme(theme) {
 // Setup language selection functionality
 function setupLanguageSelection() {
     console.log('Setting up language selection...');
+    console.log('Current currentLang before setup:', currentLang);
+    console.log('window.__initialLang:', window.__initialLang);
+    console.log('localStorage preferredLanguage:', localStorage.getItem('preferredLanguage'));
+    
     // Get saved language preference from localStorage or use default
     const savedLang = localStorage.getItem('preferredLanguage');
     if (savedLang) {
         currentLang = savedLang;
+        console.log('Updated currentLang to savedLang:', currentLang);
     }
     
     // Update language buttons to reflect current language
@@ -190,9 +195,43 @@ function setupLanguageSelection() {
     updateLanguage(currentLang);
 }
 
+// Ensure correct language is set during initialization
+function ensureCorrectLanguage() {
+    console.log('ensureCorrectLanguage called');
+    console.log('Current currentLang:', currentLang);
+    console.log('window.__initialLang:', window.__initialLang);
+    console.log('localStorage preferredLanguage:', localStorage.getItem('preferredLanguage'));
+    console.log('translations available:', !!window.translations);
+    
+    // Re-read from localStorage to ensure we have the latest value
+    const savedLang = localStorage.getItem('preferredLanguage') || window.__initialLang || 'en';
+    currentLang = savedLang;
+    console.log('Setting currentLang to:', currentLang);
+    
+    // Update language buttons to reflect current language
+    const langEnBtn = document.getElementById('langEn');
+    const langZhBtn = document.getElementById('langZh');
+    if (langEnBtn) langEnBtn.classList.toggle('active', currentLang === 'en');
+    if (langZhBtn) langZhBtn.classList.toggle('active', currentLang === 'zh');
+    
+    // Only apply translations if they are available
+    if (window.translations) {
+        console.log('Translations available, applying language:', currentLang);
+        updateLanguage(currentLang);
+    } else {
+        console.log('Translations not available yet, will be applied when translations load');
+        // Save language preference for when translations become available
+        localStorage.setItem('preferredLanguage', currentLang);
+    }
+}
+
 // Main initialization function for the application
 function init() {
     console.log('Starting initialization...');
+    
+    // Ensure language is set correctly first
+    console.log('Ensuring correct language setup...');
+    ensureCorrectLanguage();
     
     // Set up event listeners and initialize UI components
     console.log('Setting up tab navigation...');
@@ -985,10 +1024,20 @@ function setupLanguageButtons() {
 
 // Update language function
 function updateLanguage(lang) {
+    console.log('updateLanguage called with:', lang);
+    console.log('translations object available:', !!window.translations);
+    console.log('translations keys:', window.translations ? Object.keys(window.translations) : 'undefined');
+    
     currentLang = lang;
     
     // Save language preference to localStorage
     localStorage.setItem('preferredLanguage', lang);
+    
+    // Check if translations are available
+    if (!window.translations) {
+        console.warn('Translations not available yet, language update deferred');
+        return;
+    }
     
     // Update all elements with data-lang attribute
     document.querySelectorAll('[data-lang]').forEach(element => {
@@ -1145,6 +1194,17 @@ function setupFooterNavigation() {
 // Global variables
 let currentMode = 'router-config'; // Default mode
 let currentLang = window.__initialLang || localStorage.getItem('preferredLanguage') || 'en'; // Default language
+
+// Set up callback for when translations are loaded
+window.onTranslationsLoaded = function() {
+    console.log('onTranslationsLoaded callback triggered');
+    const savedLang = localStorage.getItem('preferredLanguage') || window.__initialLang || 'en';
+    if (savedLang && window.updateLanguage) {
+        console.log('Applying language after translations loaded:', savedLang);
+        currentLang = savedLang;
+        window.updateLanguage(savedLang);
+    }
+};
 const inputArea = document.getElementById('inputArea');
 const outputArea = document.getElementById('outputArea');
 

@@ -364,6 +364,12 @@ const translations = {
 // 将translations对象添加到window对象上
 window.translations = translations;
 
+// 触发翻译加载完成事件
+console.log('Translations loaded, checking for pending language updates');
+if (window.onTranslationsLoaded) {
+    window.onTranslationsLoaded();
+}
+
 // 标记模块已加载
 if (window.markModuleAsLoaded) {
     window.markModuleAsLoaded('translations');
