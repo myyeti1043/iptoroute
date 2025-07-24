@@ -40,8 +40,9 @@ function extractIpPrefixesFromJson(jsonData) {
     // Get configuration options
     const ipv4Only = document.getElementById('ipv4Only') ? document.getElementById('ipv4Only').checked : false;
     const removeDuplicates = document.getElementById('removeDuplicates') ? document.getElementById('removeDuplicates').checked : true;
+    const aggregateSubnets = document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false;
     
-    console.log('Options - ipv4Only:', ipv4Only, 'removeDuplicates:', removeDuplicates);
+    console.log('Options - ipv4Only:', ipv4Only, 'removeDuplicates:', removeDuplicates, 'aggregateSubnets:', aggregateSubnets);
     
     try {
         // Recursively scan the text for IP addresses/CIDR blocks
@@ -57,7 +58,9 @@ function extractIpPrefixesFromJson(jsonData) {
             const directIps = findAllIpAddresses(stringifiedData, ipv4Only);
             console.log('Direct string search found:', directIps.length, 'IPs');
             if (directIps.length > 0) {
-                return removeDuplicates ? [...new Set(directIps)] : directIps;
+                const results = removeDuplicates ? [...new Set(directIps)] : directIps;
+                updateResultsStats(results.length);
+                return results;
             }
         }
         
@@ -68,8 +71,24 @@ function extractIpPrefixesFromJson(jsonData) {
         console.log('Valid IP addresses:', validatedAddresses.length);
         
         // Remove duplicates if option is selected
-        const results = removeDuplicates ? [...new Set(validatedAddresses)] : validatedAddresses;
+        let results = removeDuplicates ? [...new Set(validatedAddresses)] : validatedAddresses;
+        
+        // Aggregate subnets if option is selected
+        if (aggregateSubnets && results.length > 0) {
+            console.log('Aggregation enabled - starting aggregation process');
+            console.time('Aggregating subnets');
+            const originalCount = results.length;
+            results = aggregateIpRanges(results);
+            console.timeEnd('Aggregating subnets');
+            console.log('Aggregated results: original =', originalCount, ', aggregated =', results.length);
+        } else {
+            console.log('Aggregation skipped - aggregateSubnets:', aggregateSubnets, ', results.length:', results.length);
+        }
+        
         console.log('Final results count:', results.length);
+        
+        // Update statistics display
+        updateResultsStats(results.length);
         
         return results;
     } catch (e) {
@@ -78,8 +97,10 @@ function extractIpPrefixesFromJson(jsonData) {
         const directSearch = findAllIpAddresses(typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData), ipv4Only);
         if (directSearch.length > 0) {
             console.log('Found IPs through direct search after error:', directSearch.length);
+            updateResultsStats(directSearch.length);
             return directSearch;
         }
+        updateResultsStats(0);
         return [];
     }
 }
@@ -290,12 +311,213 @@ function validateIpAddresses(ipAddresses) {
     return validAddresses;
 }
 
+/**
+ * Aggregate overlapping or adjacent IP ranges
+ * @param {string[]} ipRanges - Array of IP ranges in CIDR notation
+ * @returns {string[]} - Array of aggregated IP ranges
+ */
+function aggregateIpRanges(ipRanges) {
+    console.log('Starting aggregation for', ipRanges.length, 'IP ranges');
+    
+    if (!ipRanges || ipRanges.length === 0) {
+        return [];
+    }
+    
+    // Separate IPv4 and IPv6 addresses
+    const ipv4Ranges = [];
+    const ipv6Ranges = [];
+    
+    for (const range of ipRanges) {
+        if (range.includes(':')) {
+            ipv6Ranges.push(range);
+        } else {
+            ipv4Ranges.push(range);
+        }
+    }
+    
+    // Aggregate IPv4 ranges
+    const aggregatedIpv4 = aggregateIpv4Ranges(ipv4Ranges);
+    
+    // For IPv6, just remove duplicates for now (complex aggregation would require more sophisticated algorithm)
+    const aggregatedIpv6 = [...new Set(ipv6Ranges)];
+    
+    const result = [...aggregatedIpv4, ...aggregatedIpv6];
+    console.log('Aggregation completed:', ipRanges.length, '->', result.length);
+    
+    return result;
+}
+
+/**
+ * Aggregate IPv4 ranges specifically
+ * @param {string[]} ipv4Ranges - Array of IPv4 ranges in CIDR notation
+ * @returns {string[]} - Array of aggregated IPv4 ranges
+ */
+function aggregateIpv4Ranges(ipv4Ranges) {
+    if (!ipv4Ranges || ipv4Ranges.length === 0) {
+        return [];
+    }
+    
+    // Parse and sort IP ranges
+    const parsedRanges = ipv4Ranges.map(range => {
+        const [ip, cidr] = range.split('/');
+        const cidrNum = parseInt(cidr, 10);
+        const ipNum = ipToNumber(ip);
+        const networkSize = Math.pow(2, 32 - cidrNum);
+        const networkStart = ipNum & (0xFFFFFFFF << (32 - cidrNum));
+        const networkEnd = networkStart + networkSize - 1;
+        
+        return {
+            original: range,
+            ip: ip,
+            cidr: cidrNum,
+            ipNum: ipNum,
+            networkStart: networkStart,
+            networkEnd: networkEnd,
+            networkSize: networkSize
+        };
+    }).filter(range => range.ipNum !== null);
+    
+    // Sort by network start address
+    parsedRanges.sort((a, b) => a.networkStart - b.networkStart);
+    
+    const aggregated = [];
+    
+    for (let i = 0; i < parsedRanges.length; i++) {
+        let current = parsedRanges[i];
+        
+        // Look for ranges that can be merged with current
+        for (let j = i + 1; j < parsedRanges.length; j++) {
+            const next = parsedRanges[j];
+            
+            // Check if ranges overlap or are adjacent
+            if (next.networkStart <= current.networkEnd + 1) {
+                // Merge ranges by expanding current to include next
+                current.networkEnd = Math.max(current.networkEnd, next.networkEnd);
+                
+                // Try to find the optimal CIDR that covers the merged range
+                const mergedRange = findOptimalCidr(current.networkStart, current.networkEnd);
+                if (mergedRange) {
+                    current = mergedRange;
+                }
+                
+                // Remove the merged range
+                parsedRanges.splice(j, 1);
+                j--; // Adjust index since we removed an element
+            } else {
+                break; // No more overlapping ranges (since array is sorted)
+            }
+        }
+        
+        aggregated.push(current);
+    }
+    
+    // Convert back to CIDR notation
+    return aggregated.map(range => {
+        const ip = numberToIp(range.networkStart);
+        return `${ip}/${range.cidr}`;
+    });
+}
+
+/**
+ * Find optimal CIDR notation for a range of IP addresses
+ * @param {number} startIp - Start IP address as number
+ * @param {number} endIp - End IP address as number
+ * @returns {Object|null} - Object with optimal CIDR info or null
+ */
+function findOptimalCidr(startIp, endIp) {
+    const rangeSize = endIp - startIp + 1;
+    
+    // Find the largest power of 2 that fits in the range
+    let cidrBits = 32;
+    let networkSize = 1;
+    
+    while (networkSize < rangeSize && cidrBits > 0) {
+        cidrBits--;
+        networkSize *= 2;
+    }
+    
+    // Make sure the network start is aligned to the network size
+    const mask = 0xFFFFFFFF << (32 - cidrBits);
+    const alignedStart = startIp & mask;
+    
+    // Check if the aligned network covers the entire range
+    if (alignedStart <= startIp && (alignedStart + networkSize - 1) >= endIp) {
+        return {
+            networkStart: alignedStart,
+            networkEnd: alignedStart + networkSize - 1,
+            cidr: cidrBits,
+            networkSize: networkSize
+        };
+    }
+    
+    // If perfect alignment isn't possible, return the original range with appropriate CIDR
+    cidrBits = 32 - Math.floor(Math.log2(rangeSize));
+    return {
+        networkStart: startIp,
+        networkEnd: endIp,
+        cidr: Math.max(0, cidrBits),
+        networkSize: Math.pow(2, 32 - Math.max(0, cidrBits))
+    };
+}
+
+/**
+ * Convert IP address string to number
+ * @param {string} ip - IP address string
+ * @returns {number|null} - IP address as number or null if invalid
+ */
+function ipToNumber(ip) {
+    const parts = ip.split('.');
+    if (parts.length !== 4) return null;
+    
+    let result = 0;
+    for (let i = 0; i < 4; i++) {
+        const part = parseInt(parts[i], 10);
+        if (isNaN(part) || part < 0 || part > 255) return null;
+        result = (result << 8) + part;
+    }
+    return result >>> 0; // Convert to unsigned 32-bit integer
+}
+
+/**
+ * Convert number to IP address string
+ * @param {number} num - IP address as number
+ * @returns {string} - IP address string
+ */
+function numberToIp(num) {
+    return [
+        (num >>> 24) & 0xFF,
+        (num >>> 16) & 0xFF,
+        (num >>> 8) & 0xFF,
+        num & 0xFF
+    ].join('.');
+}
+
+/**
+ * Update the results statistics display
+ * @param {number} count - Number of processed entries
+ */
+function updateResultsStats(count) {
+    const statsElement = document.getElementById('resultsStats');
+    const statsCountElement = document.getElementById('statsCount');
+    
+    if (statsElement && statsCountElement) {
+        statsCountElement.textContent = count;
+        statsElement.style.display = count > 0 ? 'block' : 'none';
+    }
+}
+
 // 将所有函数添加到window对象上
 window.extractIpPrefixesFromJson = extractIpPrefixesFromJson;
 window.findAllIpAddresses = findAllIpAddresses;
 window.isNetmaskLikeAddress = isNetmaskLikeAddress;
 window.extractIpFromCiscoRoute = extractIpFromCiscoRoute;
 window.validateIpAddresses = validateIpAddresses;
+window.aggregateIpRanges = aggregateIpRanges;
+window.aggregateIpv4Ranges = aggregateIpv4Ranges;
+window.findOptimalCidr = findOptimalCidr;
+window.ipToNumber = ipToNumber;
+window.numberToIp = numberToIp;
+window.updateResultsStats = updateResultsStats;
 
 // 标记模块已加载
 if (window.markModuleAsLoaded) {

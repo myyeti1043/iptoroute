@@ -346,6 +346,16 @@ function setupTabNavigation() {
             currentMode = tab;
             console.log('Current mode updated to:', currentMode);
             
+            // Hide/show results statistics based on tab
+            const resultsStats = document.getElementById('resultsStats');
+            if (resultsStats) {
+                if (tab === 'bulk-extract') {
+                    // Keep current display state for bulk-extract
+                } else {
+                    resultsStats.style.display = 'none';
+                }
+            }
+            
             // Update output placeholder based on current mode
             updateOutputPlaceholder();
             
@@ -669,11 +679,8 @@ async function processInput(input) {
                 results = await extractIpsWithWorker(input, document.getElementById('ipv4Only').checked);
             }
             
-            // 如果选择了移除重复项
-            const removeDuplicates = document.getElementById('removeDuplicates');
-            if (removeDuplicates && removeDuplicates.checked) {
-                results = [...new Set(results)];
-            }
+            // Note: Post-processing (removeDuplicates, aggregateSubnets) is already handled 
+            // in extractIpPrefixesFromJson and extractIpsWithWorker functions
         } else {
             // 对于其他模式，按行处理输入
             const lines = input.split('\n').filter(line => {
@@ -997,6 +1004,17 @@ function updateLanguage(lang) {
             console.warn(`Translation missing for key: ${key} in language: ${lang}`);
         }
     });
+    
+    // Update statistics display if visible
+    const resultsStats = document.getElementById('resultsStats');
+    if (resultsStats && resultsStats.style.display !== 'none') {
+        // Refresh the statistics display to apply new language
+        const statsCount = document.getElementById('statsCount');
+        if (statsCount && window.updateResultsStats) {
+            const currentCount = parseInt(statsCount.textContent) || 0;
+            window.updateResultsStats(currentCount);
+        }
+    }
     
     // Update placeholders
     const inputArea = document.getElementById('inputArea');

@@ -256,15 +256,28 @@ example.com
                         <!-- Bulk Extract options -->
                         <div class="option-group" id="optionsBulkExtract" style="display: none;">
                             <div class="filter-options">
-                                <label for="ipv4Only" class="checkbox-label">
-                                    <input type="checkbox" id="ipv4Only" checked> 
-                                    <span data-lang="ipv4-only">Extract IPv4 only (skip IPv6)</span>
-                                </label>
+                                <div class="option-row">
+                                    <label for="ipv4Only" class="checkbox-label">
+                                        <input type="checkbox" id="ipv4Only" checked> 
+                                        <span data-lang="ipv4-only">Extract IPv4 only (skip IPv6)</span>
+                                    </label>
+                                    
+                                    <label for="removeDuplicates" class="checkbox-label">
+                                        <input type="checkbox" id="removeDuplicates" checked> 
+                                        <span data-lang="remove-duplicates">Remove duplicate IP addresses</span>
+                                    </label>
+                                </div>
                                 
-                                <label for="removeDuplicates" class="checkbox-label">
-                                    <input type="checkbox" id="removeDuplicates" checked> 
-                                    <span data-lang="remove-duplicates">Remove duplicate IP addresses</span>
-                                </label>
+                                <div class="option-row">
+                                    <label for="aggregateSubnets" class="checkbox-label">
+                                        <input type="checkbox" id="aggregateSubnets"> 
+                                        <span data-lang="aggregate-subnets">Aggregate IP address ranges</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="results-stats" id="resultsStats" style="display: none;">
+                                    <span data-lang="processing-stats">Processed:</span> <span id="statsCount">0</span> <span data-lang="processing-stats-entries">entries</span>
+                                </div>
                             </div>
                         </div>
                         

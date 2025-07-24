@@ -354,9 +354,33 @@ function initWebWorker() {
         
         switch (action) {
             case 'extractIpsResult':
-                // Resolve the pending promise with the result
+                // Apply post-processing options before resolving
                 if (window.extractIpsResolve) {
-                    window.extractIpsResolve(data);
+                    let result = data;
+                    
+                    // Get current options
+                    const removeDuplicates = document.getElementById('removeDuplicates') ? document.getElementById('removeDuplicates').checked : true;
+                    const aggregateSubnets = document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false;
+                    
+                    // Apply post-processing options
+                    if (removeDuplicates) {
+                        result = [...new Set(result)];
+                    }
+                    
+                    if (aggregateSubnets && result.length > 0) {
+                        console.log('WebWorker fallback: Aggregation enabled, original count:', result.length);
+                        result = window.aggregateIpRanges(result);
+                        console.log('WebWorker fallback: Aggregated count:', result.length);
+                    } else {
+                        console.log('WebWorker fallback: Aggregation skipped - aggregateSubnets:', aggregateSubnets, ', length:', result.length);
+                    }
+                    
+                    // Update statistics
+                    if (window.updateResultsStats) {
+                        window.updateResultsStats(result.length);
+                    }
+                    
+                    window.extractIpsResolve(result);
                     window.extractIpsResolve = null;
                 }
                 break;
@@ -436,8 +460,26 @@ function terminateWorker() {
 function extractIpsWithWorker(text, ipv4Only = false) {
     return new Promise((resolve) => {
         if (!initWebWorker()) {
-            // If worker initialization fails, use main thread processing
-            const result = findAllIpAddresses(text, ipv4Only);
+            // If worker initialization fails, use main thread processing with full options
+            const removeDuplicates = document.getElementById('removeDuplicates') ? document.getElementById('removeDuplicates').checked : true;
+            const aggregateSubnets = document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false;
+            
+            let result = findAllIpAddresses(text, ipv4Only);
+            
+            // Apply post-processing options
+            if (removeDuplicates) {
+                result = [...new Set(result)];
+            }
+            
+            if (aggregateSubnets && result.length > 0) {
+                result = window.aggregateIpRanges(result);
+            }
+            
+            // Update statistics
+            if (window.updateResultsStats) {
+                window.updateResultsStats(result.length);
+            }
+            
             resolve(result);
             return;
         }
