@@ -1,5 +1,8 @@
 const translations = {
     'en': {
+        // Page title
+        'page-title': 'IPToRoute | IP Address & Router Configuration Tool - CIDR Converter',
+        
         // Tab names
         'tab-router-config': 'Router Configuration Generator',
         'tab-bulk-extract': 'IP Address Extraction Tool',
@@ -181,6 +184,9 @@ const translations = {
     
     // Chinese translations
     'zh': {
+        // Page title
+        'page-title': 'IPToRoute | IP地址和路由器配置工具 - CIDR转换器',
+        
         // Tab names
         'tab-router-config': '路由器配置生成器',
         'tab-bulk-extract': 'IP地址提取工具',
