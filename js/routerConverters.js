@@ -363,12 +363,11 @@ config firewall address
         set subnet ${ip} ${mask}
     next
 end`.trim();
-
-        return addrConfig;
+        // 不在这里 return，统一在函数末尾根据是否为地址组决定是否追加分组配置
     }
 
     // 1) 判断空格分隔的场景(可能是 "ip mask" 或 "ip mask gateway")
-    if (line.includes(' ')) {
+    if (!addrConfig && line.includes(' ')) {
         const parts = line.trim().split(/\s+/);
 
         // 1.1) IP + MASK
@@ -387,7 +386,7 @@ config firewall address
     next
 end`.trim();
 
-            return addrConfig;
+            // 不在这里 return，统一在函数末尾根据是否为地址组决定是否追加分组配置
 
         // 1.2) IP + MASK + GATEWAY(或多余的东西) - Fortinet 不需要 GATEWAY，但可以容忍多余第三段
         } else if (parts.length === 3) {
@@ -403,14 +402,13 @@ config firewall address
         set subnet ${ipPart} ${maskPart}
     next
 end`.trim();
-
-            return addrConfig;
+            // 不在这里 return，统一在函数末尾根据是否为地址组决定是否追加分组配置
         }
         // 若分段数更多或更少(不在2~3之间)，则后续不处理，继续往下判断是否有CIDR/域名等
     }
 
     // 2) 如果包含斜杠，按 CIDR 解析
-    if (line.includes('/')) {
+    if (!addrConfig && line.includes('/')) {
         // 只匹配纯净的 "x.x.x.x/NN"
         const match = line.match(/^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/);
         if (match) {
@@ -429,14 +427,13 @@ config firewall address
         set subnet ${ip} ${mask}
     next
 end`.trim();
-
-            return addrConfig;
+            // 不在这里 return，统一在函数末尾根据是否为地址组决定是否追加分组配置
         }
     }
 
     // 3) 如果是单个 IP (不带 CIDR、不带空格)
     //    例如: 8.8.8.8 => 当作 /32
-    if (/^\d+\.\d+\.\d+\.\d+$/.test(line)) {
+    if (!addrConfig && /^\d+\.\d+\.\d+\.\d+$/.test(line)) {
         if (!window.isValidIp(line)) return null;
 
         addrName = `${line.replace(/\./g, '_')}_32`;
@@ -446,48 +443,49 @@ config firewall address
         set subnet ${line} 255.255.255.255
     next
 end`.trim();
-
-        return addrConfig;
+        // 不在这里 return，统一在函数末尾根据是否为地址组决定是否追加分组配置
     }
 
     // 4) 其它情况，一律按 FQDN 处理 (域名或子域名)
     //    如果既不是IP，也不符合域名正则，就返回 null
-    if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+$/.test(line)) {
-        // 如果不满足域名规则，返回 null
-        return null;
-    }
+    if (!addrConfig) {
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])+$/.test(line)) {
+            // 如果不满足域名规则，返回 null
+            return null;
+        }
 
-    // (4.1) 生成 FQDN 地址
-    addrName = line.replace(/\./g, '_');
-    addrConfig = `
+        // (4.1) 生成 FQDN 地址
+        addrName = line.replace(/\./g, '_');
+        addrConfig = `
 config firewall address
     edit "${addrName}"
         set type fqdn
         set fqdn "${line}"
     next
 end`.trim();
+    }
 
     // 5) 根据 fortinetType 决定是否要加到某个地址组
     const fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value || 'address';
     const addrGroupName = document.getElementById('addrGroupName')?.value.trim() || 'IP_Group';
 
-    if (fortinetType === 'address') {
-        // 仅创建 address
-        return addrConfig;
-    } else if (fortinetType === 'addrgrp') {
-        // 创建 address 并加进 addrgrp
-        const groupConfig = `
+    // 如果地址配置已生成，则根据选择决定是否追加地址组配置
+    if (addrConfig && addrName) {
+        if (fortinetType === 'addrgrp') {
+            const groupConfig = `
 config firewall addrgrp
     edit "${addrGroupName}"
         append member "${addrName}"
     next
 end`.trim();
-
-        return addrConfig + '\n\n' + groupConfig;
+            return addrConfig + '\n\n' + groupConfig;
+        }
+        // 默认仅返回地址配置
+        return addrConfig;
     }
 
-    // 如果没有选中任何类型，默认只返回地址配置
-    return addrConfig;
+    // 理论上不会到这里，如果没有生成任何配置则返回 null
+    return null;
 }
 
 /**
