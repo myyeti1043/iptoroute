@@ -537,77 +537,136 @@ async function processInput(input) {
     
     console.log('Current mode:', currentMode);
     
-    // Special handling for Fortinet with FQDN in router-config mode
+    // Special handling for Fortinet (supports both IPs and FQDN)
     if (currentMode === 'router-config' && document.getElementById('routerType').value === 'fortinet') {
         try {
-            // 按行处理输入
+            // Fortinet 类型（仅地址 / 地址组）
+            const fortinetType = document.querySelector('input[name="fortinet-type"]:checked')?.value || 'address';
+            const addrGroupName = document.getElementById('addrGroupName')?.value.trim() || 'IP_Group';
+
+            // 按行处理输入（用于完整的 CIDR/IP 掩码/Cisco 路由 或 纯域名 行）
             const lines = input.split('\n').filter(line => {
                 const trimmedLine = line.trim();
-                // 忽略空行和以#开头的注释行
                 return trimmedLine !== '' && !trimmedLine.startsWith('#');
             });
-            
-            // 使用extractIpsWithWorker提取有效的IP地址
+
+            // 提取所有 IPv4（用于混合文本中的散落 IP）
             const extractedIPs = await extractIpsWithWorker(input, document.getElementById('ipv4Only').checked);
-            
-            // 验证提取的IP地址
             const validationResults = await validateIpsWithWorker(extractedIPs);
-            
-            // 过滤出有效的IP地址
             const validIps = extractedIPs.filter(ip => {
                 const result = validationResults.find(r => r.original === ip);
                 return result && result.valid;
             });
-            
-            // 如果没有有效的IP地址，显示提示信息
-            if (validIps.length === 0) {
-                outputArea.value = currentLang === 'en' 
-                    ? 'No valid IP addresses found in the input.' 
-                    : '在输入中未找到有效的IP地址。';
-                return;
-            }
-            
-            // 处理每个有效的IP地址
-            for (const ip of validIps) {
-                try {
-                    const result = convertCidrToFortinet(ip);
-                    if (result) {
-                        results.push(result);
-                    }
-                } catch (e) {
-                    console.error('Error processing IP:', ip, e);
-                    invalidLines++;
-                }
-            }
-            
-            // 提取所有域名（简单的域名提取，可能需要更复杂的正则表达式）
+
+            // 提取所有域名（用于混合文本中的散落 FQDN）
             const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/gi;
             const domains = input.match(domainRegex) || [];
-            
-            // 过滤掉可能被错误识别为域名的IP地址
             const filteredDomains = domains.filter(domain => {
-                // 不是IP地址格式
-                if (domain.match(/^\d+\.\d+\.\d+\.\d+$/)) return false;
-                
-                // 检查是否是有效的域名
-                const parts = domain.split('.');
+                // 排除 IPv4
+                if (/^\d+\.\d+\.\d+\.\d+$/.test(domain)) return false;
                 // 顶级域名不能是纯数字
+                const parts = domain.split('.');
                 const tld = parts[parts.length - 1];
                 if (/^\d+$/.test(tld)) return false;
-                
                 return true;
             });
-            
-            // 处理每个域名
-            for (const domain of filteredDomains) {
-                try {
-                    const result = convertCidrToFortinet(domain);
-                    if (result) {
-                        results.push(result);
+
+            if (fortinetType === 'addrgrp') {
+                // 聚合地址对象 + 单一地址组
+                const addrMap = new Map(); // name -> address config block (address-only)
+
+                // 收集候选条目：逐行 + 提取的IP + 提取的域名
+                const candidates = [];
+                candidates.push(...lines);
+                candidates.push(...validIps);
+                candidates.push(...filteredDomains);
+
+                for (const item of candidates) {
+                    try {
+                        const result = convertCidrToFortinet(item);
+                        if (!result) continue;
+                        // 仅提取地址对象部分（忽略函数可能附带的地址组片段）
+                        const addrBlockMatch = result.match(/config firewall address[\s\S]*?end/);
+                        if (!addrBlockMatch) continue;
+                        const addrBlock = addrBlockMatch[0];
+                        const nameMatch = addrBlock.match(/\bedit\s+"([^"]+)"/);
+                        if (!nameMatch) continue;
+                        const addrName = nameMatch[1];
+                        if (!addrMap.has(addrName)) {
+                            addrMap.set(addrName, addrBlock);
+                        }
+                    } catch (e) {
+                        console.error('Error processing Fortinet item:', item, e);
+                        invalidLines++;
                     }
-                } catch (e) {
-                    console.error('Error processing domain:', domain, e);
-                    invalidLines++;
+                }
+
+                // 如果没有任何可用的地址或域名，给出提示
+                if (addrMap.size === 0) {
+                    outputArea.value = currentLang === 'en'
+                        ? 'No valid IP addresses or domain names found in the input.'
+                        : '在输入中未找到有效的IP地址或域名。';
+                    return;
+                }
+
+                // 组合地址对象配置：将多个 edit 块合并到单一的 address 配置段
+                const editBlocks = [];
+                for (const block of addrMap.values()) {
+                    const editMatch = block.match(/\bedit\s+\"[^\"]+\"[\s\S]*?\bnext/);
+                    if (editMatch) {
+                        editBlocks.push(editMatch[0]);
+                    }
+                }
+                const combinedAddressBlock = [
+                    'config firewall address',
+                    ...editBlocks.map(b => b),
+                    'end'
+                ].join('\n');
+
+                // 生成地址组配置，使用 set member 一次性加入所有成员
+                const memberNames = Array.from(addrMap.keys()).sort((a, b) => a.localeCompare(b));
+                const membersJoined = memberNames.map(n => `"${n}"`).join(' ');
+                const groupBlock = [
+                    'config firewall addrgrp',
+                    `    edit "${addrGroupName}"`,
+                    memberNames.length > 0 ? `        set member ${membersJoined}` : '',
+                    '    next',
+                    'end'
+                ].filter(Boolean).join('\n');
+
+                const finalOutput = combinedAddressBlock + '\n\n' + groupBlock;
+                results = [finalOutput];
+            } else {
+                // 非地址组：逐条生成（保持原逻辑，支持 IP 与域名）
+                // 先处理提取到的 IP
+                for (const ip of validIps) {
+                    try {
+                        const result = convertCidrToFortinet(ip);
+                        if (result) results.push(result);
+                    } catch (e) {
+                        console.error('Error processing IP:', ip, e);
+                        invalidLines++;
+                    }
+                }
+                // 再逐行处理（支持 CIDR、IP 掩码、Cisco 路由、纯域名行）
+                for (const line of lines) {
+                    try {
+                        const result = convertCidrToFortinet(line.trim());
+                        if (result) results.push(result);
+                    } catch (e) {
+                        console.error('Error processing line:', line, e);
+                        invalidLines++;
+                    }
+                }
+                // 再处理提取到的域名
+                for (const domain of filteredDomains) {
+                    try {
+                        const result = convertCidrToFortinet(domain);
+                        if (result) results.push(result);
+                    } catch (e) {
+                        console.error('Error processing domain:', domain, e);
+                        invalidLines++;
+                    }
                 }
             }
         } catch (error) {
@@ -615,7 +674,7 @@ async function processInput(input) {
             outputArea.value = 'Error occurred during processing: ' + error.message;
             return;
         }
-    } 
+    }
     // Special handling for RouterOS address-list mode with mixed IP/domain support
     else if (currentMode === 'router-config' && 
              document.getElementById('routerType').value === 'routeros' &&
