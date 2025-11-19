@@ -360,7 +360,9 @@ function initWebWorker() {
                     
                     // Get current options
                     const removeDuplicates = document.getElementById('removeDuplicates') ? document.getElementById('removeDuplicates').checked : true;
-                    const aggregateSubnets = document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false;
+                    const aggregateSubnets = typeof window.isAggregateSubnetsEnabled === 'function'
+                        ? window.isAggregateSubnetsEnabled()
+                        : (document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false);
                     
                     // Apply post-processing options
                     if (removeDuplicates) {
@@ -462,7 +464,9 @@ function extractIpsWithWorker(text, ipv4Only = false) {
         if (!initWebWorker()) {
             // If worker initialization fails, use main thread processing with full options
             const removeDuplicates = document.getElementById('removeDuplicates') ? document.getElementById('removeDuplicates').checked : true;
-            const aggregateSubnets = document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false;
+            const aggregateSubnets = typeof window.isAggregateSubnetsEnabled === 'function'
+                ? window.isAggregateSubnetsEnabled()
+                : (document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false);
             
             let result = findAllIpAddresses(text, ipv4Only);
             

@@ -303,6 +303,24 @@ function getCurrentLang() {
 }
 
 /**
+ * Determine whether IP range aggregation is enabled based on current mode
+ * @returns {boolean}
+ */
+function isAggregateSubnetsEnabled() {
+    const routerCheckbox = document.getElementById('aggregateRouterSubnets');
+    const bulkCheckbox = document.getElementById('aggregateSubnets');
+    
+    // 优先使用当前模式，如果不可用则回退到DOM状态
+    const mode = typeof currentMode !== 'undefined' ? currentMode : getCurrentMode();
+    
+    if (mode === 'router-config' && routerCheckbox) {
+        return routerCheckbox.checked;
+    }
+    
+    return bulkCheckbox ? bulkCheckbox.checked : false;
+}
+
+/**
  * Show loading indicator
  */
 function showLoading() {
@@ -511,6 +529,7 @@ window.handleError = handleError;
 window.logErrorToAnalytics = logErrorToAnalytics;
 window.getCurrentMode = getCurrentMode;
 window.getCurrentLang = getCurrentLang;
+window.isAggregateSubnetsEnabled = isAggregateSubnetsEnabled;
 window.showLoading = showLoading;
 window.hideLoading = hideLoading;
 window.setupResizer = setupResizer;

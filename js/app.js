@@ -534,6 +534,8 @@ function setupConvertButton() {
 async function processInput(input) {
     let results = [];
     let invalidLines = 0;
+    const aggregateRouterCheckbox = document.getElementById('aggregateRouterSubnets');
+    const routerAggregationEnabled = currentMode === 'router-config' && aggregateRouterCheckbox ? aggregateRouterCheckbox.checked : false;
     
     console.log('Current mode:', currentMode);
     
@@ -576,10 +578,13 @@ async function processInput(input) {
                 const addrMap = new Map(); // name -> address config block (address-only)
 
                 // 收集候选条目：逐行 + 提取的IP + 提取的域名
-                const candidates = [];
+                let candidates = [];
                 candidates.push(...lines);
                 candidates.push(...validIps);
                 candidates.push(...filteredDomains);
+                if (routerAggregationEnabled) {
+                    candidates = aggregateEntriesForRouterConfig(candidates, routerAggregationEnabled);
+                }
 
                 for (const item of candidates) {
                     try {
@@ -639,7 +644,8 @@ async function processInput(input) {
             } else {
                 // 非地址组：逐条生成（保持原逻辑，支持 IP 与域名）
                 // 先处理提取到的 IP
-                for (const ip of validIps) {
+                const processedValidIps = aggregateEntriesForRouterConfig(validIps, routerAggregationEnabled);
+                for (const ip of processedValidIps) {
                     try {
                         const result = convertCidrToFortinet(ip);
                         if (result) results.push(result);
@@ -649,7 +655,8 @@ async function processInput(input) {
                     }
                 }
                 // 再逐行处理（支持 CIDR、IP 掩码、Cisco 路由、纯域名行）
-                for (const line of lines) {
+                const processedLines = aggregateEntriesForRouterConfig(lines, routerAggregationEnabled);
+                for (const line of processedLines) {
                     try {
                         const result = convertCidrToFortinet(line.trim());
                         if (result) results.push(result);
@@ -699,8 +706,9 @@ async function processInput(input) {
                 return result && result.valid;
             });
             
+            const processedRouterIps = aggregateEntriesForRouterConfig(validIps, routerAggregationEnabled);
             // 处理每个有效的IP地址
-            for (const ip of validIps) {
+            for (const ip of processedRouterIps) {
                 try {
                     const result = convertCidrToRouterOs(ip);
                     if (result) {
@@ -853,8 +861,9 @@ async function processInput(input) {
                 return;
             }
             
+            const inputsForProcessing = aggregateEntriesForRouterConfig(extractedIPs, routerAggregationEnabled);
             // 处理每个有效的IP地址
-            for (const ip of extractedIPs) {
+            for (const ip of inputsForProcessing) {
                 try {
                     let result;
                     switch (currentMode) {
@@ -1248,6 +1257,151 @@ function setupFooterNavigation() {
             }, 100);
         });
     });
+}
+
+/**
+ * Aggregate router-config entries when enabled
+ * @param {string[]} entries
+ * @param {boolean} aggregationEnabled
+ * @returns {string[]}
+ */
+function aggregateEntriesForRouterConfig(entries, aggregationEnabled) {
+    if (!aggregationEnabled || !Array.isArray(entries) || entries.length === 0 || typeof window.aggregateIpRanges !== 'function') {
+        return entries;
+    }
+    
+    const cidrCandidates = [];
+    const leftovers = [];
+    
+    for (const entry of entries) {
+        const normalized = normalizeEntryToCidr(entry);
+        if (normalized) {
+            cidrCandidates.push(normalized);
+        } else {
+            leftovers.push(entry);
+        }
+    }
+    
+    if (cidrCandidates.length === 0) {
+        return entries;
+    }
+    
+    let aggregatedCidrs = cidrCandidates;
+    try {
+        aggregatedCidrs = window.aggregateIpRanges(cidrCandidates);
+    } catch (error) {
+        console.warn('Aggregation failed, using original entries:', error);
+        return entries;
+    }
+    
+    return [...aggregatedCidrs, ...leftovers];
+}
+
+/**
+ * Normalize router entries into CIDR notation for aggregation
+ * @param {string} entry
+ * @returns {string|null}
+ */
+function normalizeEntryToCidr(entry) {
+    if (!entry || typeof entry !== 'string') {
+        return null;
+    }
+    
+    const trimmed = entry.trim();
+    if (!trimmed) {
+        return null;
+    }
+    
+    // Cisco route syntax
+    if (trimmed.startsWith('ip route ') && typeof window.extractIpFromCiscoRoute === 'function') {
+        const routeInfo = window.extractIpFromCiscoRoute(trimmed);
+        if (routeInfo && routeInfo.ip && routeInfo.mask) {
+            try {
+                return ensureNetworkBase(window.convertIpMaskToCidrFormat(routeInfo.ip, routeInfo.mask));
+            } catch (error) {
+                console.warn('Failed to normalize Cisco route for aggregation:', error);
+            }
+        }
+    }
+    
+    // IPv6 entries
+    const ipv6Pattern = /^[0-9A-Fa-f:.]+(?:\/\d{1,3})?$/;
+    if (trimmed.includes(':') && ipv6Pattern.test(trimmed)) {
+        if (trimmed.includes('/')) {
+            return trimmed;
+        }
+        return `${trimmed}/128`;
+    }
+    
+    // CIDR notation
+    if (trimmed.includes('/')) {
+        const [ipPart, cidrPart] = trimmed.split('/');
+        if (window.isValidIp && window.isValidIp(ipPart)) {
+            const cidr = parseInt(cidrPart, 10);
+            if (!Number.isNaN(cidr) && cidr >= 0 && cidr <= 32) {
+                return ensureNetworkBase(`${ipPart}/${cidr}`);
+            }
+        }
+        return null;
+    }
+    
+    // IP + mask (with optional gateway)
+    if (trimmed.includes(' ')) {
+        const parts = trimmed.split(/\s+/);
+        if (parts.length >= 2 && window.isValidIp && window.isValidMask &&
+            window.isValidIp(parts[0]) && window.isValidMask(parts[1])) {
+            try {
+                return ensureNetworkBase(window.convertIpMaskToCidrFormat(parts[0], parts[1]));
+            } catch (error) {
+                console.warn('Failed to normalize IP/mask for aggregation:', error);
+                return null;
+            }
+        }
+        return null;
+    }
+    
+    // Plain IPv4 address
+    if (window.isValidIp && window.isValidIp(trimmed)) {
+        return `${trimmed}/32`;
+    }
+    
+    return null;
+}
+
+/**
+ * Ensure CIDR strings start at network boundary
+ * @param {string} cidrString
+ * @returns {string}
+ */
+function ensureNetworkBase(cidrString) {
+    if (!cidrString || typeof cidrString !== 'string') {
+        return cidrString;
+    }
+    
+    if (cidrString.includes(':')) {
+        return cidrString;
+    }
+    
+    const [ip, prefix] = cidrString.split('/');
+    const cidr = parseInt(prefix, 10);
+    if (Number.isNaN(cidr)) {
+        return cidrString;
+    }
+    
+    if (window.cidrToMaskMap && typeof window.getNetworkAddress === 'function') {
+        const mask = window.cidrToMaskMap[cidr];
+        if (mask) {
+            try {
+                const network = window.getNetworkAddress(ip, mask);
+                return `${network}/${cidr}`;
+            } catch (error) {
+                console.warn('Failed to calculate network address for aggregation:', error);
+                return cidrString;
+            }
+        }
+    }
+    
+    return cidrString;
 }
 
 // Global variables

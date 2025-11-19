@@ -40,7 +40,9 @@ function extractIpPrefixesFromJson(jsonData) {
     // Get configuration options
     const ipv4Only = document.getElementById('ipv4Only') ? document.getElementById('ipv4Only').checked : false;
     const removeDuplicates = document.getElementById('removeDuplicates') ? document.getElementById('removeDuplicates').checked : true;
-    const aggregateSubnets = document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false;
+    const aggregateSubnets = typeof window.isAggregateSubnetsEnabled === 'function'
+        ? window.isAggregateSubnetsEnabled()
+        : (document.getElementById('aggregateSubnets') ? document.getElementById('aggregateSubnets').checked : false);
     
     console.log('Options - ipv4Only:', ipv4Only, 'removeDuplicates:', removeDuplicates, 'aggregateSubnets:', aggregateSubnets);
     
