@@ -320,15 +320,14 @@ function validateIpAddresses(ipAddresses) {
  */
 function aggregateIpRanges(ipRanges) {
     console.log('Starting aggregation for', ipRanges.length, 'IP ranges');
-    
+
     if (!ipRanges || ipRanges.length === 0) {
         return [];
     }
-    
-    // Separate IPv4 and IPv6 addresses
+
     const ipv4Ranges = [];
     const ipv6Ranges = [];
-    
+
     for (const range of ipRanges) {
         if (range.includes(':')) {
             ipv6Ranges.push(range);
@@ -336,130 +335,245 @@ function aggregateIpRanges(ipRanges) {
             ipv4Ranges.push(range);
         }
     }
-    
-    // Aggregate IPv4 ranges
-    const aggregatedIpv4 = aggregateIpv4Ranges(ipv4Ranges);
-    
-    // For IPv6, just remove duplicates for now (complex aggregation would require more sophisticated algorithm)
-    const aggregatedIpv6 = [...new Set(ipv6Ranges)];
-    
-    const result = [...aggregatedIpv4, ...aggregatedIpv6];
+
+    const result = [...aggregateIpv4Ranges(ipv4Ranges), ...aggregateIpv6Ranges(ipv6Ranges)];
     console.log('Aggregation completed:', ipRanges.length, '->', result.length);
-    
     return result;
 }
 
 /**
- * Aggregate IPv4 ranges specifically
- * @param {string[]} ipv4Ranges - Array of IPv4 ranges in CIDR notation
- * @returns {string[]} - Array of aggregated IPv4 ranges
+ * Aggregate IPv4 CIDR ranges.
+ * Algorithm: parse → [start,end] intervals → sort → merge adjacent/overlapping
+ * → decompose each merged interval into minimum valid CIDRs.
+ * All arithmetic uses unsigned 32-bit numbers to avoid JS signed-integer issues.
+ * @param {string[]} ipv4Ranges
+ * @returns {string[]}
  */
 function aggregateIpv4Ranges(ipv4Ranges) {
-    if (!ipv4Ranges || ipv4Ranges.length === 0) {
-        return [];
-    }
-    
-    // Parse and sort IP ranges
-    const parsedRanges = ipv4Ranges.map(range => {
-        const [ip, cidr] = range.split('/');
-        const cidrNum = parseInt(cidr, 10);
+    if (!ipv4Ranges || ipv4Ranges.length === 0) return [];
+
+    // Step 1: parse each CIDR to an unsigned [start, end] interval
+    const intervals = [];
+    for (const range of ipv4Ranges) {
+        const slashIdx = range.indexOf('/');
+        const ip = slashIdx >= 0 ? range.slice(0, slashIdx) : range;
+        const prefix = slashIdx >= 0 ? parseInt(range.slice(slashIdx + 1), 10) : 32;
+
         const ipNum = ipToNumber(ip);
-        const networkSize = Math.pow(2, 32 - cidrNum);
-        const networkStart = ipNum & (0xFFFFFFFF << (32 - cidrNum));
-        const networkEnd = networkStart + networkSize - 1;
-        
-        return {
-            original: range,
-            ip: ip,
-            cidr: cidrNum,
-            ipNum: ipNum,
-            networkStart: networkStart,
-            networkEnd: networkEnd,
-            networkSize: networkSize
-        };
-    }).filter(range => range.ipNum !== null);
-    
-    // Sort by network start address
-    parsedRanges.sort((a, b) => a.networkStart - b.networkStart);
-    
-    const aggregated = [];
-    
-    for (let i = 0; i < parsedRanges.length; i++) {
-        let current = parsedRanges[i];
-        
-        // Look for ranges that can be merged with current
-        for (let j = i + 1; j < parsedRanges.length; j++) {
-            const next = parsedRanges[j];
-            
-            // Check if ranges overlap or are adjacent
-            if (next.networkStart <= current.networkEnd + 1) {
-                // Merge ranges by expanding current to include next
-                current.networkEnd = Math.max(current.networkEnd, next.networkEnd);
-                
-                // Try to find the optimal CIDR that covers the merged range
-                const mergedRange = findOptimalCidr(current.networkStart, current.networkEnd);
-                if (mergedRange) {
-                    current = mergedRange;
-                }
-                
-                // Remove the merged range
-                parsedRanges.splice(j, 1);
-                j--; // Adjust index since we removed an element
-            } else {
-                break; // No more overlapping ranges (since array is sorted)
-            }
-        }
-        
-        aggregated.push(current);
+        if (ipNum === null || isNaN(prefix) || prefix < 0 || prefix > 32) continue;
+
+        // Align to network boundary and compute end; use >>> 0 for unsigned safety
+        const shift = 32 - prefix;
+        const start = prefix === 0 ? 0 : ((ipNum >>> shift) << shift) >>> 0;
+        const end = (start + Math.pow(2, shift) - 1) >>> 0;
+        intervals.push([start, end]);
     }
-    
-    // Convert back to CIDR notation
-    return aggregated.map(range => {
-        const ip = numberToIp(range.networkStart);
-        return `${ip}/${range.cidr}`;
+
+    if (intervals.length === 0) return [];
+
+    // Step 2: sort by start address (JS float handles 32-bit unsigned correctly)
+    intervals.sort((a, b) => {
+        if (a[0] < b[0]) return -1;
+        if (a[0] > b[0]) return 1;
+        return 0;
     });
+
+    // Step 3: single-pass merge of overlapping/adjacent intervals
+    const merged = [[intervals[0][0], intervals[0][1]]];
+    for (let i = 1; i < intervals.length; i++) {
+        const last = merged[merged.length - 1];
+        const [s, e] = intervals[i];
+        // adjacent condition: s === last[1] + 1, but last[1]+1 may overflow to
+        // 4294967296 which is fine in JS float; s can be at most 4294967295
+        if (s <= last[1] + 1) {
+            if (e > last[1]) last[1] = e;
+        } else {
+            merged.push([s, e]);
+        }
+    }
+
+    // Step 4: decompose each merged interval into minimum valid CIDR set
+    const result = [];
+    for (const [start, end] of merged) {
+        ipv4IntervalToCidrs(start, end, result);
+    }
+    return result;
 }
 
 /**
- * Find optimal CIDR notation for a range of IP addresses
- * @param {number} startIp - Start IP address as number
- * @param {number} endIp - End IP address as number
- * @returns {Object|null} - Object with optimal CIDR info or null
+ * Decompose an arbitrary IPv4 [start, end] interval into the minimum set of
+ * valid (aligned) CIDR blocks and push them into `out`.
+ * @param {number} start - unsigned 32-bit
+ * @param {number} end   - unsigned 32-bit
+ * @param {string[]} out
  */
-function findOptimalCidr(startIp, endIp) {
-    const rangeSize = endIp - startIp + 1;
-    
-    // Find the largest power of 2 that fits in the range
-    let cidrBits = 32;
-    let networkSize = 1;
-    
-    while (networkSize < rangeSize && cidrBits > 0) {
-        cidrBits--;
-        networkSize *= 2;
+function ipv4IntervalToCidrs(start, end, out) {
+    let cur = start >>> 0;
+    const last = end >>> 0;
+
+    while (cur <= last) {
+        // Count trailing zero bits of `cur` — this is the max alignment (block size = 2^bits)
+        let bits;
+        if (cur === 0) {
+            bits = 32;
+        } else {
+            bits = 0;
+            let n = cur;
+            while ((n & 1) === 0 && bits < 32) { bits++; n >>>= 1; }
+        }
+
+        // Shrink block until it fits within [cur, last]
+        while (bits > 0 && (cur + Math.pow(2, bits) - 1) >>> 0 > last) {
+            bits--;
+        }
+
+        out.push(`${numberToIp(cur)}/${32 - bits}`);
+
+        const blockSize = Math.pow(2, bits);
+        cur = (cur + blockSize) >>> 0;
+        if (cur === 0) break; // wrapped past 255.255.255.255
     }
-    
-    // Make sure the network start is aligned to the network size
-    const mask = 0xFFFFFFFF << (32 - cidrBits);
-    const alignedStart = startIp & mask;
-    
-    // Check if the aligned network covers the entire range
-    if (alignedStart <= startIp && (alignedStart + networkSize - 1) >= endIp) {
-        return {
-            networkStart: alignedStart,
-            networkEnd: alignedStart + networkSize - 1,
-            cidr: cidrBits,
-            networkSize: networkSize
-        };
+}
+
+// ---------------------------------------------------------------------------
+// IPv6 aggregation
+// ---------------------------------------------------------------------------
+
+/**
+ * Aggregate IPv6 CIDR ranges using BigInt-based interval merge + decomposition.
+ * @param {string[]} ipv6Ranges
+ * @returns {string[]}
+ */
+function aggregateIpv6Ranges(ipv6Ranges) {
+    if (!ipv6Ranges || ipv6Ranges.length === 0) return [];
+
+    const intervals = [];
+    for (const range of ipv6Ranges) {
+        const slashIdx = range.indexOf('/');
+        const ip = slashIdx >= 0 ? range.slice(0, slashIdx) : range;
+        const prefix = slashIdx >= 0 ? parseInt(range.slice(slashIdx + 1), 10) : 128;
+
+        const ipNum = ipv6ToNumber(ip);
+        if (ipNum === null || isNaN(prefix) || prefix < 0 || prefix > 128) continue;
+
+        const shift = BigInt(128 - prefix);
+        const mask = prefix === 0 ? 0n : ~((1n << shift) - 1n) & ((1n << 128n) - 1n);
+        const start = ipNum & mask;
+        const end = start + (1n << shift) - 1n;
+        intervals.push([start, end]);
     }
-    
-    // If perfect alignment isn't possible, return the original range with appropriate CIDR
-    cidrBits = 32 - Math.floor(Math.log2(rangeSize));
-    return {
-        networkStart: startIp,
-        networkEnd: endIp,
-        cidr: Math.max(0, cidrBits),
-        networkSize: Math.pow(2, 32 - Math.max(0, cidrBits))
-    };
+
+    if (intervals.length === 0) return [];
+
+    intervals.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+
+    const merged = [[intervals[0][0], intervals[0][1]]];
+    for (const [s, e] of intervals.slice(1)) {
+        const last = merged[merged.length - 1];
+        if (s <= last[1] + 1n) {
+            if (e > last[1]) last[1] = e;
+        } else {
+            merged.push([s, e]);
+        }
+    }
+
+    const result = [];
+    for (const [start, end] of merged) {
+        ipv6IntervalToCidrs(start, end, result);
+    }
+    return result;
+}
+
+/**
+ * Decompose an IPv6 [start, end] BigInt interval into minimum valid CIDRs.
+ */
+function ipv6IntervalToCidrs(start, end, out) {
+    let cur = start;
+
+    while (cur <= end) {
+        let bits = 0n;
+        if (cur === 0n) {
+            bits = 128n;
+        } else {
+            let n = cur;
+            while ((n & 1n) === 0n && bits < 128n) { bits++; n >>= 1n; }
+        }
+
+        while (bits > 0n && cur + (1n << bits) - 1n > end) {
+            bits--;
+        }
+
+        out.push(`${numberToIpv6(cur)}/${128n - bits}`);
+        cur = cur + (1n << bits);
+    }
+}
+
+/**
+ * Expand IPv6 shorthand (::) to full 8-group form.
+ * @param {string} ip
+ * @returns {string}
+ */
+function expandIpv6(ip) {
+    if (ip.includes('::')) {
+        const [left, right] = ip.split('::');
+        const leftGroups = left ? left.split(':') : [];
+        const rightGroups = right ? right.split(':') : [];
+        const missing = 8 - leftGroups.length - rightGroups.length;
+        return [...leftGroups, ...Array(missing).fill('0'), ...rightGroups].join(':');
+    }
+    return ip;
+}
+
+/**
+ * Parse an IPv6 address string to a BigInt.
+ * @param {string} ip
+ * @returns {BigInt|null}
+ */
+function ipv6ToNumber(ip) {
+    try {
+        const groups = expandIpv6(ip).split(':');
+        if (groups.length !== 8) return null;
+        let result = 0n;
+        for (const g of groups) {
+            const val = parseInt(g, 16);
+            if (isNaN(val)) return null;
+            result = (result << 16n) | BigInt(val);
+        }
+        return result;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Convert a 128-bit BigInt to a compressed IPv6 string (RFC 5952).
+ * @param {BigInt} num
+ * @returns {string}
+ */
+function numberToIpv6(num) {
+    const groups = [];
+    for (let i = 0; i < 8; i++) {
+        groups.unshift((num & 0xFFFFn).toString(16));
+        num >>= 16n;
+    }
+
+    // Find the longest run of '0' groups for :: compression
+    let bestStart = -1, bestLen = 0, curStart = -1, curLen = 0;
+    for (let i = 0; i < 8; i++) {
+        if (groups[i] === '0') {
+            if (curStart < 0) { curStart = i; curLen = 1; }
+            else curLen++;
+            if (curLen > bestLen) { bestLen = curLen; bestStart = curStart; }
+        } else {
+            curStart = -1; curLen = 0;
+        }
+    }
+
+    if (bestLen < 2) return groups.join(':');
+
+    const left = groups.slice(0, bestStart).join(':');
+    const right = groups.slice(bestStart + bestLen).join(':');
+    return `${left}::${right}`;
 }
 
 /**
