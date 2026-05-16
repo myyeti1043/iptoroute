@@ -31,7 +31,9 @@
     <title>IPToRoute | IP Address & Router Configuration Tool - CIDR Converter</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="canonical" href="https://iptoroute.com/">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Markdown alternate for AI tools (Claude Code, Cursor, etc.) -->
+    <link rel="alternate" type="text/markdown" href="https://raw.githubusercontent.com/myyeti1043/iptoroute/main/README.md" />
+    <link rel="icon" href="favicon.ico" type="text/x-icon">
     <!-- Add preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <!-- Add apple touch icon for better PWA support -->
@@ -97,7 +99,65 @@
       ]
     }
     </script>
-    
+
+    <!-- FAQ Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What router vendors does IPToRoute support?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "IPToRoute supports five major router vendors: MikroTik RouterOS (address lists and routes), Cisco IOS (static routes), Huawei VRP (static routes), Juniper JunOS (static routes), and Fortinet FortiOS (address objects and groups with FQDN support)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can IPToRoute extract IP addresses from JSON data?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, IPToRoute can extract IPv4 and IPv6 addresses as well as CIDR ranges from JSON files, plain text, network logs, and mixed content. It handles nested JSON structures automatically."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is IPToRoute free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, IPToRoute is completely free and open source under the MIT License. It runs entirely in your browser with no backend required, so no data leaves your device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does IPToRoute support CIDR to subnet mask conversion?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, IPToRoute supports bidirectional conversion between CIDR notation (e.g., 192.168.1.0/24) and IP + netmask format (e.g., 192.168.1.0 255.255.255.0), including batch processing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use IPToRoute offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, since IPToRoute is a pure frontend application with no backend dependencies, you can download the repository and open index.html locally in any modern browser to use it offline."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does IPToRoute support domain names (FQDN)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Fortinet FortiOS mode supports domain names and FQDN alongside IP addresses. Other router vendors that support FQDN in their configuration syntax can also utilize this feature."
+          }
+        }
+      ]
+    }
+    </script>
+
     <!-- 提前处理hash参数和语言设置以确保正确的初始显示 -->
     <script>
         (function() {

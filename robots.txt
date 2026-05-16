@@ -1,4 +1,67 @@
+# =====================================================
+# IPToRoute - robots.txt
+# Strategy: Allow search/retrieval crawlers and user-triggered crawlers
+#           Block training crawlers and undeclared crawlers
+# =====================================================
+
+# --- Search & retrieval crawlers: ALLOW ---
+# These crawlers fetch content in real-time to answer user queries.
+# They are the source of AI search citations.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# --- User-triggered crawlers: ALLOW ---
+# Triggered when a user pastes a URL into an AI chat.
+# Blocking these prevents AI from summarizing your page.
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# --- Training crawlers: BLOCK ---
+# These crawlers use your content to train models.
+# Block to prevent unattributed use in training data.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# --- Opt-out tokens ---
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# --- Undeclared crawlers: BLOCK ---
+# Do not identify themselves or respect robots.txt rules.
+User-agent: Bytespider
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+# --- General fallback ---
+# Unlisted crawlers are allowed (backwards compatible with search engines)
 User-agent: *
 Allow: /
 
+# Sitemap
 Sitemap: https://iptoroute.com/sitemap.xml

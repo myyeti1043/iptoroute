@@ -1,0 +1,38 @@
+# IPToRoute
+
+> Free online tool for IP address processing and router configuration generation. Built with vanilla JavaScript, zero dependencies, no backend required.
+
+## Links
+
+- [Live Tool](https://iptoroute.com)
+- [GitHub Repository](https://github.com/myyeti1043/iptoroute)
+- [Documentation](https://iptoroute.com/docs)
+- [Contributing Guide](https://github.com/myyeti1043/iptoroute/blob/main/CONTRIBUTING.md)
+
+## About
+
+IPToRoute is a lightweight, pure-frontend web tool that helps network administrators and developers process IP addresses and generate router configurations.
+
+### What It Does
+
+- **IP Extraction**: Parse IPv4/IPv6 addresses and CIDR ranges from any text, JSON, or mixed content (logs, cloud provider exports, config files)
+- **Router Config Generation**: Generate vendor-specific configuration commands for MikroTik RouterOS, Cisco IOS, Huawei VRP, Juniper JunOS, and Fortinet FortiOS
+- **Format Conversion**: Bidirectional conversion between CIDR notation and IP + netmask
+- **IP Aggregation**: Automatically merge overlapping and adjacent IP ranges for optimized configurations
+- **FQDN Support**: Compatible platforms support domain names alongside IP addresses
+
+### Key Differentiators
+
+- **Zero dependencies**: Pure vanilla JavaScript, no build step, no npm packages
+- **Offline capable**: Works entirely in the browser, no backend or API calls for core functionality
+- **Multi-language**: Full English and Chinese (Simplified) localization
+- **Privacy-first**: No data leaves your browser; processing happens client-side
+- **Export options**: Copy to clipboard or download as text files
+
+## Technical Details
+
+- **Tech Stack**: Vanilla JavaScript, CSS3, HTML5
+- **License**: MIT
+- **Languages**: English, Chinese
+- **Deployment**: Static site (GitHub Pages / any static host)
+- **Repository**: https://github.com/myyeti1043/iptoroute
